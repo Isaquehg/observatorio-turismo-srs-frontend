@@ -1,0 +1,84 @@
+/* Tokens do design system "Observatório do Turismo SRS".
+   Tamanhos de texto em rem para acompanhar o ajuste de fonte do painel de acessibilidade. */
+
+:root {
+  /* Marca */
+  --azul-institucional: #0A4AAD;
+  --roxo: #6C5CE0;
+  --magenta: #C750D6;
+  --magenta-texto: #9B2BAE;
+
+  /* Apoio */
+  --ciano: #5FE6E0;
+  --azul-ceu: #27B7FD;
+  --lilas: #B986ED;
+  --rosa: #F3B8F7;
+  --amarelo: #FADA77;
+
+  /* Neutros */
+  --papel: #FAF8F5;
+  --superficie: #FFFFFF;
+  --superficie-2: #F2EFF8;
+  --linha: #E4DFEE;
+  --linha-controle: #7D7697;
+  --tinta: #1C1838;
+  --tinta-suave: #4E4867;
+  --tinta-apagada: #6A6483;
+  --sobre-escuro: #FFFFFF;
+  --foco: #1C1838;
+
+  /* Estados */
+  --sucesso: #1C7C54;
+  --sucesso-fundo: #DDF6EC;
+  --alerta: #8A5A00;
+  --alerta-fundo: #FDF0C6;
+  --erro: #B42318;
+  --erro-fundo: #FDE7E4;
+
+  --gradiente: linear-gradient(135deg, var(--azul-institucional) 0%, var(--roxo) 55%, var(--magenta) 100%);
+  --gradiente-botao: linear-gradient(120deg, var(--azul-institucional), var(--roxo));
+
+  /* Tipografia */
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-texto: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
+
+  /* Espaço */
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 32px;
+  --esp-7: 48px;
+  --esp-8: 72px;
+  --esp-9: 112px;
+
+  /* Raios */
+  --raio-s: 10px;
+  --raio-m: 16px;
+  --raio-l: 24px;
+  --raio-xl: 40px;
+  --raio-pilula: 999px;
+
+  /* Sombras */
+  --sombra-cartao: 0 1px 0 rgba(28, 24, 56, .06), 0 10px 28px -14px rgba(28, 24, 56, .22);
+  --sombra-flutuante: 0 18px 40px -16px rgba(28, 24, 56, .35);
+  --sombra-carimbo: 4px 4px 0 var(--tinta);
+
+  /* Tamanhos */
+  --alvo-minimo: 48px;
+  --controle: 56px;
+  --conteudo-max: 1200px;
+  --leitura-max: 68ch;
+
+  /* Margem lateral: esp-4 no celular, esp-6 no desktop */
+  --calha: clamp(16px, 4vw, 32px);
+  --altura-topo: 84px;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --raio-xl: 28px;
+    --altura-topo: 68px;
+  }
+}

@@ -1,0 +1,73 @@
+.grafico { display: flex; flex-direction: column; height: 100%; padding: 28px; }
+.grafico__corpo { margin-top: var(--esp-3); flex: 1; }
+.grafico .ot-fonte { margin-top: var(--esp-3); }
+
+@media (max-width: 560px) {
+  .grafico { padding: 20px; }
+  .grafico .ot-cartao__cab { flex-wrap: wrap; }
+}
+
+/* Linha */
+.grafico-linha svg { display: block; overflow: visible; }
+.grafico-linha__traco { stroke-dasharray: 2000; stroke-dashoffset: 2000; animation: tracar 1.4s cubic-bezier(.3, .7, .2, 1) .15s forwards; }
+@keyframes tracar { to { stroke-dashoffset: 0; } }
+.grafico-dica {
+  position: absolute; z-index: 2; transform: translate(-50%, -100%);
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 14px; min-width: 132px;
+  background: var(--tinta); color: var(--sobre-escuro);
+  border-radius: var(--raio-m); box-shadow: var(--sombra-flutuante);
+  font-size: .9375rem; line-height: 1.4; pointer-events: none; white-space: nowrap;
+}
+.grafico-dica strong { text-transform: capitalize; font-family: var(--font-display); font-size: 1rem; }
+.grafico-dica span { display: flex; align-items: center; gap: 6px; }
+.grafico-dica i { width: 10px; height: 10px; border-radius: 3px; }
+
+/* Rosca */
+.rosca { display: flex; gap: 28px; align-items: center; }
+.rosca__svg { width: 200px; height: 200px; flex: none; }
+.rosca__svg circle { cursor: pointer; }
+.rosca__legenda { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; flex: 1; font-size: 1rem; min-width: 0; }
+.rosca__legenda li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; margin: 0 -8px; border-radius: var(--raio-s); transition: background-color .15s ease; }
+.rosca__legenda li[data-ativa="true"] { background: var(--superficie-2); }
+.rosca__legenda i { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+.rosca__legenda span { flex: 1; }
+
+@media (max-width: 1180px) and (min-width: 861px), (max-width: 480px) {
+  .rosca { flex-direction: column; align-items: stretch; }
+  .rosca__svg { align-self: center; width: 180px; height: 180px; }
+}
+
+/* Barras horizontais */
+.barras-h { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.barras-h li { display: grid; grid-template-columns: minmax(72px, min(38%, 170px)) 1fr 52px; gap: var(--esp-3); align-items: center; font-size: 1rem; }
+.barras-h__trilho { height: 26px; background: var(--superficie-2); border-radius: 13px; overflow: hidden; }
+.barras-h__trilho i { display: block; height: 100%; border-radius: 13px; transition: width .9s cubic-bezier(.2, .7, .2, 1); }
+.barras-h__valor { text-align: right; }
+.barras-h li { transition: opacity .25s ease; }
+.barras-h li[data-apagada="true"] { opacity: .3; }
+
+@media (max-width: 480px) {
+  .barras-h li { grid-template-columns: 1fr auto; gap: 6px var(--esp-3); }
+  .barras-h__trilho { grid-column: 1 / -1; grid-row: 2; height: 18px; }
+}
+
+/* Barras verticais */
+.barras-v { display: flex; align-items: stretch; gap: clamp(6px, 1.6vw, 18px); height: 250px; padding-top: var(--esp-2); }
+.barras-v__coluna { flex: 1; display: flex; flex-direction: column; gap: var(--esp-2); min-width: 0; transition: opacity .25s ease; }
+.barras-v__coluna[data-apagada="true"] { opacity: .3; }
+.barras-v__area { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; border-bottom: 2px solid var(--linha); }
+.barras-v__area strong { font-size: .9375rem; }
+.barras-v__area i { display: block; width: min(100%, 56px); border-radius: var(--raio-s) var(--raio-s) 4px 4px; transition: height .9s cubic-bezier(.2, .7, .2, 1); }
+.barras-v__rotulo { font-size: .875rem; line-height: 1.25; text-align: center; color: var(--tinta-suave); min-height: 2.5em; overflow-wrap: anywhere; hyphens: auto; }
+
+/* Comparação (você e a cidade) */
+.comparacao { display: grid; grid-template-columns: 150px 1fr 48px; gap: var(--esp-3); align-items: center; margin-top: var(--esp-4); font-size: 1rem; }
+.comparacao__barra { height: 16px; background: var(--superficie-2); border-radius: var(--raio-pilula); overflow: hidden; }
+.comparacao__barra i { display: block; height: 100%; border-radius: var(--raio-pilula); transition: width .9s cubic-bezier(.2, .7, .2, 1); }
+.comparacao strong { text-align: right; }
+
+@media (max-width: 400px) {
+  .comparacao { grid-template-columns: 1fr auto; gap: 6px var(--esp-3); }
+  .comparacao__barra { grid-column: 1 / -1; grid-row: 2; }
+}

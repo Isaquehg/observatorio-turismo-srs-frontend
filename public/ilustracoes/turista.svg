@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 460" width="360" height="460">
+  
+  <ellipse cx="190" cy="440" rx="120" ry="11" fill="#1C1838" opacity=".12"></ellipse>
+  
+  <path d="M40 120 c20 -30 40 30 60 0 s40 30 60 0" fill="none" stroke="#F3B8F7" stroke-width="12" stroke-linecap="round"></path>
+  <g transform="translate(300 90)"><path d="M0 -30 L7 -7 L30 0 L7 7 L0 30 L-7 7 L-30 0 L-7 -7 Z" fill="#FADA77"></path></g>
+  <circle cx="318" cy="250" r="14" fill="none" stroke="#5FE6E0" stroke-width="6"></circle>
+  
+  <rect x="210" y="178" width="64" height="104" rx="22" fill="#FADA77"></rect>
+  <rect x="222" y="232" width="40" height="30" rx="10" fill="#E9BE3F"></rect>
+  
+  <path d="M165 300 C160 350 150 385 140 418" fill="none" stroke="#0A4AAD" stroke-width="42" stroke-linecap="round"></path>
+  <path d="M205 300 C220 345 240 375 262 408" fill="none" stroke="#0A4AAD" stroke-width="42" stroke-linecap="round"></path>
+  <path d="M152 382 L128 388" stroke="#27B7FD" stroke-width="6" stroke-linecap="round"></path>
+  
+  <rect x="124" y="410" width="28" height="14" rx="4" fill="#F3B8F7"></rect>
+  <path d="M104 426 q2 -16 26 -16 h26 q10 0 10 14 v10 h-62 z" fill="#FFFFFF"></path>
+  <rect x="104" y="430" width="62" height="8" rx="4" fill="#1C1838"></rect>
+  <g transform="rotate(-14 266 418)">
+    <rect x="252" y="402" width="28" height="14" rx="4" fill="#F3B8F7"></rect>
+    <path d="M248 428 q2 -16 26 -16 h26 q10 0 10 14 v8 h-62 z" fill="#FFFFFF"></path>
+    <rect x="248" y="430" width="62" height="8" rx="4" fill="#1C1838"></rect>
+  </g>
+  
+  <path d="M128 190 Q182 164 236 190 L244 306 Q184 322 122 306 Z" fill="#5FE6E0"></path>
+  <path d="M150 222 c10 -12 20 12 30 0 s20 12 30 0" fill="none" stroke="#27B7FD" stroke-width="5" stroke-linecap="round"></path>
+  <path d="M146 262 c10 -12 20 12 30 0 s20 12 30 0 s20 12 30 0" fill="none" stroke="#27B7FD" stroke-width="5" stroke-linecap="round"></path>
+  
+  <path d="M226 186 L214 292" stroke="#E9BE3F" stroke-width="10" stroke-linecap="round"></path>
+  
+  <path d="M232 198 C258 226 258 250 236 262" fill="none" stroke="#5FE6E0" stroke-width="30" stroke-linecap="round"></path>
+  <path d="M244 244 C240 258 232 266 222 268" fill="none" stroke="#E9A27C" stroke-width="22" stroke-linecap="round"></path>
+  <circle cx="218" cy="268" r="14" fill="#E9A27C"></circle>
+  
+  <rect x="168" y="150" width="26" height="36" rx="10" fill="#D98B66"></rect>
+  <path d="M140 118 Q140 70 182 70 Q224 70 224 118 L228 166 Q214 178 204 162 Q196 150 182 150 Q168 150 160 162 Q150 178 136 166 Z" fill="#1C1838"></path>
+  <circle cx="182" cy="122" r="36" fill="#E9A27C"></circle>
+  
+  <ellipse cx="182" cy="94" rx="74" ry="16" fill="#FFFFFF"></ellipse>
+  <path d="M142 94 Q146 48 182 48 Q218 48 222 94 Z" fill="#FFFFFF"></path>
+  <path d="M144 86 Q182 78 220 86 L221 94 Q182 86 143 94 Z" fill="#C750D6"></path>
+  
+  <circle cx="168" cy="122" r="11" fill="#1C1838"></circle><circle cx="198" cy="122" r="11" fill="#1C1838"></circle>
+  <rect x="176" y="120" width="14" height="4" rx="2" fill="#1C1838"></rect>
+  <circle cx="171" cy="119" r="3" fill="#6C5CE0"></circle><circle cx="201" cy="119" r="3" fill="#6C5CE0"></circle>
+  <path d="M170 140 Q183 152 196 140" fill="none" stroke="#1C1838" stroke-width="4" stroke-linecap="round"></path>
+  
+  <path d="M136 200 C108 222 100 244 104 258" fill="none" stroke="#5FE6E0" stroke-width="30" stroke-linecap="round"></path>
+  <g transform="rotate(-8 80 250)">
+    <path d="M18 214 L56 222 L92 212 L128 222 L128 290 L92 280 L56 290 L18 282 Z" fill="#FFFFFF"></path>
+    <path d="M56 222 L92 212 L92 280 L56 290 Z" fill="#EEE9FB"></path>
+    <path d="M30 268 C48 240 74 270 88 244 S118 250 120 232" fill="none" stroke="#C750D6" stroke-width="4" stroke-dasharray="7 6" stroke-linecap="round"></path>
+    <circle cx="120" cy="232" r="7" fill="#0A4AAD"></circle>
+  </g>
+  <path d="M104 250 C106 262 112 268 122 266" fill="none" stroke="#E9A27C" stroke-width="22" stroke-linecap="round"></path>
+  <circle cx="124" cy="262" r="14" fill="#E9A27C"></circle>
+</svg>

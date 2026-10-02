@@ -1,0 +1,72 @@
+.entrar {
+  display: grid; grid-template-columns: minmax(400px, 520px) 1fr; gap: var(--esp-7);
+  min-height: 100vh; min-height: 100dvh;
+  padding: var(--esp-5);
+  max-width: 1440px; margin: 0 auto;
+}
+
+.entrar__arte {
+  position: sticky; top: var(--esp-5);
+  height: calc(100vh - 2 * var(--esp-5)); height: calc(100dvh - 2 * var(--esp-5)); min-height: 640px;
+  overflow: hidden; border-radius: var(--raio-xl);
+  padding: var(--esp-7) 44px; display: flex; flex-direction: column;
+}
+.entrar__logo { align-self: flex-start; border-radius: var(--raio-s); }
+.entrar__logo img { height: 64px; width: auto; }
+.entrar__boas-vindas { margin-top: clamp(40px, 10vh, 110px); position: relative; z-index: 1; }
+.entrar__abertura { margin-top: var(--esp-4); max-width: 30ch; }
+.entrar__cidade { position: absolute; left: -40px; right: -40px; bottom: -8px; width: calc(100% + 80px); max-width: none; }
+.entrar__explosao { right: 48px; top: 40px; animation: girar 30s linear infinite; }
+.entrar__serpentina { right: -24px; top: 58%; }
+.entrar__anel { left: 40px; bottom: 34%; }
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+.entrar__form { display: flex; flex-direction: column; gap: 28px; padding: var(--esp-5) var(--esp-6) var(--esp-5) 0; max-width: 720px; min-width: 0; }
+.entrar__voltar { align-self: flex-start; margin-left: -12px; }
+.entrar__perfis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.entrar__campos { display: flex; flex-direction: column; gap: 20px; }
+.entrar__senha-cab { display: flex; justify-content: space-between; align-items: baseline; gap: var(--esp-3); }
+.entrar__publico { display: flex; align-items: center; gap: var(--esp-4); padding: 18px 20px; border: 2px dashed var(--linha-controle); border-radius: var(--raio-l); }
+.entrar__publico p { flex: 1; font-size: 1.0625rem; line-height: 1.45; }
+
+@media (max-width: 1180px) {
+  .entrar { grid-template-columns: minmax(340px, 400px) 1fr; gap: var(--esp-6); }
+  .entrar__arte { padding: var(--esp-6) var(--esp-6); }
+  .entrar__form { padding-right: 0; }
+  .ot-perfil__arte { height: 140px; }
+  .ot-perfil__arte img { height: 160px; }
+}
+
+/* Tablet e celular: a arte vira uma faixa no topo */
+@media (max-width: 920px) {
+  .entrar { grid-template-columns: 1fr; gap: var(--esp-5); padding: var(--esp-3); }
+  .entrar__arte { position: relative; top: 0; height: auto; min-height: 0; padding: var(--esp-5) var(--esp-5) 190px; }
+  .entrar__logo img { height: 44px; }
+  .entrar__boas-vindas { margin-top: var(--esp-5); }
+  .entrar__boas-vindas .display-l { font-size: clamp(1.75rem, 1.3rem + 2.4vw, 2.5rem); }
+  .entrar__abertura { display: none; }
+  /* Só a paisagem: o céu da ilustração ficaria atrás do título */
+  .entrar__cidade { left: 50%; right: auto; width: 680px; transform: translateX(-50%); clip-path: inset(50% 0 0 0); }
+  .entrar__explosao { width: 60px; height: 60px; right: 24px; top: 24px; }
+  .entrar__serpentina, .entrar__anel { display: none; }
+  .entrar__form { padding: 0 var(--esp-2) var(--esp-6); max-width: none; gap: var(--esp-5); }
+  .entrar__voltar { order: -1; }
+}
+
+/* Celular: perfis em lista, com a personagem ao lado */
+@media (max-width: 640px) {
+  .entrar__arte { padding-bottom: 136px; border-radius: var(--raio-l); }
+  .entrar__cidade { width: 500px; }
+  .entrar__perfis { grid-template-columns: 1fr; gap: var(--esp-3); }
+  .entrar__perfis .ot-perfil { flex-direction: row; align-items: stretch; border-radius: var(--raio-m); }
+  .entrar__perfis .ot-perfil[aria-checked="true"] { box-shadow: 4px 4px 0 var(--tinta); transform: translate(-2px, -2px); }
+  .entrar__perfis .ot-perfil__arte { width: 96px; height: auto; min-height: 96px; flex: none; }
+  .entrar__perfis .ot-perfil__arte img { height: 104px; margin-bottom: -18px; }
+  .entrar__perfis .ot-perfil__corpo { padding: var(--esp-3) 56px var(--esp-3) var(--esp-4); justify-content: center; gap: 2px; }
+  .entrar__perfis .ot-perfil__titulo { font-size: 1.1875rem; }
+  .entrar__perfis .ot-perfil__texto { font-size: .9375rem; }
+  .entrar__perfis .ot-perfil__marca { top: 50%; right: 14px; transform: translateY(-50%); width: 32px; height: 32px; }
+  .entrar__publico { flex-wrap: wrap; padding: var(--esp-4); }
+  .entrar__publico .ot-btn { width: 100%; }
+}
