@@ -36,6 +36,11 @@
   .topo__nav, .topo__acoes .so-desktop { display: none; }
   .topo__menu-btn { display: inline-flex; }
 }
+/* Logado, o menu tem seis itens: vira gaveta mais cedo */
+@media (max-width: 1400px) {
+  .topo[data-logado="true"] .topo__nav, .topo[data-logado="true"] .topo__acoes .so-desktop { display: none; }
+  .topo[data-logado="true"] .topo__menu-btn { display: inline-flex; }
+}
 @media (max-width: 720px) {
   .topo__marca img { height: 40px; }
   .topo__barra { gap: var(--esp-3); }

@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import LayoutPublico from './componentes/LayoutPublico'
+import RotaRestrita from './componentes/RotaRestrita'
 import Inicio from './paginas/Inicio'
 import Indicadores from './paginas/Indicadores'
+import IndicadoresPublicos from './paginas/IndicadoresPublicos'
 import Relatorios from './paginas/Relatorios'
 import Cadastur from './paginas/Cadastur'
 import Sobre from './paginas/Sobre'
@@ -41,10 +43,14 @@ export default function App() {
       <Routes>
         <Route element={<LayoutPublico />}>
           <Route index element={<Inicio />} />
-          <Route path="indicadores" element={<Indicadores />} />
-          <Route path="relatorios" element={<Relatorios />} />
-          <Route path="cadastur" element={<Cadastur />} />
+          <Route path="indicadores-publicos" element={<IndicadoresPublicos />} />
           <Route path="sobre" element={<Sobre />} />
+          {/* Pedem login de qualquer perfil */}
+          <Route element={<RotaRestrita />}>
+            <Route path="indicadores" element={<Indicadores />} />
+            <Route path="relatorios" element={<Relatorios />} />
+            <Route path="cadastur" element={<Cadastur />} />
+          </Route>
           <Route path="*" element={<NaoEncontrada />} />
         </Route>
 

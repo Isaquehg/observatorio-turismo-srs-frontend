@@ -17,7 +17,7 @@ export default function NaoEncontrada() {
         </p>
         <div className="linha-acoes" style={{ marginTop: 24 }}>
           <Link to="/" className="ot-btn ot-btn--primario"><Icone nome="casa" /> Ir para o início</Link>
-          <Link to="/indicadores" className="ot-btn ot-btn--secundario">Ver indicadores</Link>
+          <Link to="/indicadores-publicos" className="ot-btn ot-btn--secundario">Ver indicadores públicos</Link>
         </div>
       </div>
       <div className="nao-encontrada__arte" aria-hidden="true">

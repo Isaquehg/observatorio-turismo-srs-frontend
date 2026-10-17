@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icone from './Icone'
+import { useSessao } from '../contexto/Sessao'
 
 // Hierarquia de marcas da SMCELT: nível 1 abre o rodapé, níveis 2 e 3 vêm juntos na faixa.
 const MARCAS = [
@@ -12,6 +13,7 @@ const MARCAS = [
 ]
 
 export default function Rodape() {
+  const { sessao } = useSessao()
   return (
     <footer className="rodape">
       <div className="container">
@@ -23,10 +25,17 @@ export default function Rodape() {
           <nav aria-labelledby="rodape-consultar">
             <p className="rodape__titulo" id="rodape-consultar">Consultar</p>
             <ul className="rodape__lista">
-              <li><Link to="/indicadores">Indicadores</Link></li>
-              <li><Link to="/relatorios">Relatórios</Link></li>
-              <li><Link to="/cadastur">Cadastur e FNRH</Link></li>
-              <li><Link to="/indicadores#dados-abertos">Dados em CSV</Link></li>
+              <li><Link to="/indicadores-publicos">Indicadores públicos</Link></li>
+              {sessao ? (
+                <>
+                  <li><Link to="/indicadores">Indicadores completos</Link></li>
+                  <li><Link to="/relatorios">Relatórios</Link></li>
+                  <li><Link to="/cadastur">Cadastur e FNRH</Link></li>
+                  <li><Link to="/indicadores#dados-abertos">Dados em CSV</Link></li>
+                </>
+              ) : (
+                <li><Link to="/entrar?perfil=turista">Relatórios e dados completos</Link></li>
+              )}
             </ul>
           </nav>
           <nav aria-labelledby="rodape-participar">

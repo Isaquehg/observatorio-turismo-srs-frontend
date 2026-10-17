@@ -7,13 +7,21 @@ import { useAcessibilidade } from '../contexto/Acessibilidade'
 import { useFecharFora, useRolou, useTravarRolagem } from '../util/ganchos'
 import { iniciais } from '../util/formatar'
 
-export const LINKS_PUBLICOS = [
+// Sem login, o site mostra só Início, Indicadores públicos e Sobre
+const LINKS_PUBLICOS = [
   { para: '/', rotulo: 'Início', fim: true },
+  { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
+  { para: '/sobre', rotulo: 'Sobre' },
+]
+const LINKS_COM_LOGIN = [
+  { para: '/', rotulo: 'Início', fim: true },
+  { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
   { para: '/indicadores', rotulo: 'Indicadores' },
   { para: '/relatorios', rotulo: 'Relatórios' },
   { para: '/cadastur', rotulo: 'Cadastur e FNRH' },
   { para: '/sobre', rotulo: 'Sobre' },
 ]
+export const linksDoSite = (sessao) => (sessao ? LINKS_COM_LOGIN : LINKS_PUBLICOS)
 
 export function OpcoesAcessibilidade() {
   const { prefs, definir, restaurar } = useAcessibilidade()
@@ -137,7 +145,7 @@ function Gaveta({ fechar }) {
         </button>
       </div>
       <nav className="gaveta__nav" aria-label="Principal">
-        {LINKS_PUBLICOS.map((l, i) => (
+        {linksDoSite(sessao).map((l, i) => (
           <NavLink key={l.para} to={l.para} end={l.fim} className="gaveta__link" ref={i === 0 ? primeiroLink : undefined} onClick={fechar}>
             {l.rotulo}
             <Icone nome="chevron-dir" />
@@ -173,13 +181,13 @@ export default function Topo() {
   useEffect(() => setGaveta(false), [local.pathname])
 
   return (
-    <header className="topo" data-rolou={rolou}>
+    <header className="topo" data-rolou={rolou} data-logado={!!sessao}>
       <div className="topo__barra">
         <Link className="topo__marca" to="/" aria-label="Observatório do Turismo de Santa Rita do Sapucaí — início">
           <img src="logos/observatorio.png" alt="" width="146" height="52" />
         </Link>
         <nav className="topo__nav" aria-label="Principal">
-          {LINKS_PUBLICOS.map((l) => (
+          {linksDoSite(sessao).map((l) => (
             <NavLink key={l.para} to={l.para} end={l.fim} className="topo__link">
               {l.rotulo}
             </NavLink>

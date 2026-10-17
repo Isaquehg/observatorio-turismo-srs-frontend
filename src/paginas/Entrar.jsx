@@ -66,7 +66,7 @@ export default function Entrar() {
   const escolher = (id) => {
     setPerfil(id)
     setUsuario('')
-    setParams({ perfil: id }, { replace: true })
+    setParams({ perfil: id }, { replace: true, state: local.state })
   }
 
   // Setas do teclado entre os perfis, como num grupo de rádio
@@ -123,6 +123,12 @@ export default function Entrar() {
           <h2 className="titulo-1">Como você quer entrar?</h2>
           <p className="corpo suave" style={{ marginTop: 8 }}>Escolha seu perfil. Cada um vê o que precisa.</p>
         </div>
+
+        {local.state?.restrita && (
+          <Aviso tipo="alerta" icone="cadeado" titulo="Essa página pede login">
+            Entre com qualquer perfil para ver indicadores completos, relatórios e o guia do Cadastur.
+          </Aviso>
+        )}
 
         <div className="entrar__perfis" role="radiogroup" aria-label="Perfil de acesso" onKeyDown={aoTeclarPerfis}>
           {Object.values(PERFIS).map((item) => (
@@ -244,9 +250,9 @@ export default function Entrar() {
           <p>
             <strong>Só quer ver os dados?</strong>
             <br />
-            <span className="suave">Indicadores e relatórios são públicos. Não precisa de conta.</span>
+            <span className="suave">Os indicadores públicos estão abertos. Não precisa de conta.</span>
           </p>
-          <Link className="ot-btn ot-btn--secundario ot-btn--p" to="/indicadores">Acessar sem login</Link>
+          <Link className="ot-btn ot-btn--secundario ot-btn--p" to="/indicadores-publicos">Acessar sem login</Link>
         </div>
       </section>
     </div>

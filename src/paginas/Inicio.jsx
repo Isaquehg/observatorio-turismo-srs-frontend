@@ -7,6 +7,7 @@ import { resumoDoAno, serie } from '../dados/indicadores'
 import { relatorios } from '../dados/relatorios'
 import { numero, variacao, diferenca } from '../util/formatar'
 import { useTitulo } from '../util/ganchos'
+import { useSessao } from '../contexto/Sessao'
 import './publico.css'
 
 const PUBLICOS = [
@@ -18,6 +19,7 @@ const PUBLICOS = [
 
 export default function Inicio() {
   useTitulo()
+  const { sessao } = useSessao()
   const { aberto, abrir, fechar } = useResumo()
   const atual = resumoDoAno(2025)
   const anterior = resumoDoAno(2024)
@@ -54,8 +56,8 @@ export default function Inicio() {
             <Sobretitulo>Destaques de 2025</Sobretitulo>
             <h2 className="titulo-1">Como está o turismo agora</h2>
           </div>
-          <Link className="ot-btn ot-btn--fantasma" to="/indicadores">
-            Todos os indicadores <Icone nome="seta" />
+          <Link className="ot-btn ot-btn--fantasma" to="/indicadores-publicos">
+            Ver indicadores públicos <Icone nome="seta" />
           </Link>
         </div>
         <div className="grade-4">
@@ -86,22 +88,25 @@ export default function Inicio() {
         </div>
       </section>
 
-      <section className="container secao">
-        <div className="secao__cab">
-          <div>
-            <Sobretitulo>Relatórios</Sobretitulo>
-            <h2 className="titulo-1">Publicados recentemente</h2>
+      {/* Relatórios pedem login: a seção só aparece para quem entrou */}
+      {sessao && (
+        <section className="container secao">
+          <div className="secao__cab">
+            <div>
+              <Sobretitulo>Relatórios</Sobretitulo>
+              <h2 className="titulo-1">Publicados recentemente</h2>
+            </div>
+            <Link className="ot-btn ot-btn--fantasma" to="/relatorios">
+              Ver todos <Icone nome="seta" />
+            </Link>
           </div>
-          <Link className="ot-btn ot-btn--fantasma" to="/relatorios">
-            Ver todos <Icone nome="seta" />
-          </Link>
-        </div>
-        <div className="pilha" style={{ gap: 16 }}>
-          {relatorios.slice(0, 3).map((r) => (
-            <CartaoRelatorio key={r.id} relatorio={r} aoAbrir={abrir} />
-          ))}
-        </div>
-      </section>
+          <div className="pilha" style={{ gap: 16 }}>
+            {relatorios.slice(0, 3).map((r) => (
+              <CartaoRelatorio key={r.id} relatorio={r} aoAbrir={abrir} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="container secao">
         <div className="convite">
