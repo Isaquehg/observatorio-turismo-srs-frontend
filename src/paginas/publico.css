@@ -145,20 +145,7 @@
   .relatorios__ordem { width: 100%; }
 }
 
-/* ================= Cadastur ================= */
-.cad-hero { position: relative; overflow: hidden; background: var(--ciano); margin: var(--esp-5) var(--esp-5) 0; border-radius: var(--raio-xl); max-width: 1440px; }
-@media (min-width: 1489px) { .cad-hero { margin-inline: auto; } }
-.cad-hero__grade { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; padding-top: var(--esp-6); }
-.cad-hero__texto { padding-bottom: 64px; position: relative; z-index: 1; }
-.cad-hero__arte { width: 340px; justify-self: center; margin-bottom: -4px; }
-.cad-hero .ot-adesivo:first-of-type { right: 40px; top: 32px; }
-@media (max-width: 900px) {
-  .cad-hero { margin: var(--esp-3) var(--esp-3) 0; }
-  .cad-hero__grade { grid-template-columns: 1fr; gap: 0; }
-  .cad-hero__texto { padding-bottom: var(--esp-5); }
-  .cad-hero__arte { width: 240px; }
-}
-
+/* ================= Guia do Cadastur ================= */
 .explica { padding: 36px; display: flex; flex-direction: column; gap: var(--esp-4); align-items: flex-start; }
 .explica__icone { width: 64px !important; height: 64px !important; }
 @media (max-width: 560px) {

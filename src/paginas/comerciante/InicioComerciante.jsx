@@ -144,7 +144,7 @@ export default function InicioComerciante() {
               <strong>Cadastur ativo</strong>
               <p className="corpo-s suave">Válido até {MEU_NEGOCIO.cadasturValidade}</p>
             </div>
-            <Link className="ot-btn ot-btn--fantasma ot-btn--p" to="/cadastur">Ver guia</Link>
+            <Link className="ot-btn ot-btn--fantasma ot-btn--p" to="/comerciante/guia">Ver guia</Link>
           </section>
         </div>
       </div>

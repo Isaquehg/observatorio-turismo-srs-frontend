@@ -25,10 +25,8 @@ function validar(perfil, usuario, senha) {
   if (!u) {
     erros.usuario = PERFIS[perfil].vazio
   } else if (perfil === 'comerciante') {
-    const digitos = u.replace(/\D/g, '')
-    const pareceCnpj = /^[\d./-]+$/.test(u)
-    if (pareceCnpj && digitos.length !== 14) erros.usuario = 'O CNPJ tem 14 números. Confira se faltou algum.'
-    if (!pareceCnpj && !EMAIL.test(u)) erros.usuario = 'Digite um CNPJ ou um e-mail válido, como nome@empresa.com.br.'
+    if (!/^[\d./-]+$/.test(u)) erros.usuario = 'Digite só os números do CNPJ, como 12.345.678/0001-90.'
+    else if (u.replace(/\D/g, '').length !== 14) erros.usuario = 'O CNPJ tem 14 números. Confira se faltou algum.'
   } else if (!EMAIL.test(u)) {
     erros.usuario = 'Esse e-mail não parece completo. Confira se tem @ e o domínio.'
   } else if (perfil === 'prefeitura' && !u.toLowerCase().endsWith('@pmsrs.mg.gov.br')) {
@@ -91,7 +89,7 @@ export default function Entrar() {
     setEnviando(true)
     setTimeout(() => {
       const sessao = entrar(perfil, usuario.trim(), manter)
-      avisar(`Olá, ${sessao.nome.split(' ')[0]}!`, { texto: perfil === 'turista' ? 'Agora você pode salvar relatórios e receber avisos.' : 'Você entrou na sua área.' })
+      avisar(`Olá, ${sessao.nome.split(' ')[0]}!`, { texto: perfil === 'turista' ? 'Separamos dicas de onde ficar, comer e passear.' : 'Você entrou na sua área.' })
       navegar(local.state?.voltarPara || p.inicio, { replace: true })
     }, 650)
   }
@@ -126,7 +124,7 @@ export default function Entrar() {
 
         {local.state?.restrita && (
           <Aviso tipo="alerta" icone="cadeado" titulo="Essa página pede login">
-            Entre com qualquer perfil para ver indicadores completos, relatórios e o guia do Cadastur.
+            Entre com o perfil indicado para continuar de onde parou.
           </Aviso>
         )}
 
@@ -172,9 +170,9 @@ export default function Entrar() {
               value={usuario}
               onChange={(e) => {
                 const v = e.target.value
-                setUsuario(perfil === 'comerciante' && /^[\d./-]+$/.test(v) ? mascaraCnpj(v) : v)
+                setUsuario(perfil === 'comerciante' ? mascaraCnpj(v) : v)
               }}
-              inputMode={perfil === 'comerciante' ? 'text' : 'email'}
+              inputMode={perfil === 'comerciante' ? 'numeric' : 'email'}
               autoComplete={perfil === 'comerciante' ? 'username' : 'email'}
               placeholder={{ turista: 'voce@email.com', comerciante: '00.000.000/0000-00', prefeitura: 'nome@pmsrs.mg.gov.br' }[perfil]}
               aria-invalid={!!erros.usuario}

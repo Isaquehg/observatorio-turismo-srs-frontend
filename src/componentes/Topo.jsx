@@ -18,10 +18,14 @@ const LINKS_COM_LOGIN = [
   { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
   { para: '/indicadores', rotulo: 'Indicadores' },
   { para: '/relatorios', rotulo: 'Relatórios' },
-  { para: '/cadastur', rotulo: 'Cadastur e FNRH' },
   { para: '/sobre', rotulo: 'Sobre' },
 ]
-export const linksDoSite = (sessao) => (sessao ? LINKS_COM_LOGIN : LINKS_PUBLICOS)
+const LINKS_TURISTA = [
+  { para: '/', rotulo: 'Início', fim: true },
+  { para: '/turista', rotulo: 'Explorar a cidade' },
+  ...LINKS_COM_LOGIN.slice(1),
+]
+export const linksDoSite = (sessao) => (!sessao ? LINKS_PUBLICOS : sessao.perfil === 'turista' ? LINKS_TURISTA : LINKS_COM_LOGIN)
 
 export function OpcoesAcessibilidade() {
   const { prefs, definir, restaurar } = useAcessibilidade()
@@ -101,11 +105,9 @@ function MenuConta() {
           <p className="corpo-s suave">Conectado como</p>
           <p style={{ fontWeight: 700, marginBottom: 12 }}>{perfil.titulo}</p>
           <div className="suspenso__lista">
-            {sessao.perfil !== 'turista' && (
-              <Link to={perfil.inicio} onClick={fechar}>
-                <Icone nome="painel" /> {sessao.perfil === 'prefeitura' ? 'Painel da Prefeitura' : 'Área do comerciante'}
-              </Link>
-            )}
+            <Link to={perfil.inicio} onClick={fechar}>
+              <Icone nome={sessao.perfil === 'turista' ? 'mapa' : 'painel'} /> {{ turista: 'Explorar a cidade', comerciante: 'Área do comerciante', prefeitura: 'Painel da Prefeitura' }[sessao.perfil]}
+            </Link>
             <button
               type="button"
               onClick={() => {

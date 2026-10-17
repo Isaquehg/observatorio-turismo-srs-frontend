@@ -30,7 +30,6 @@ export default function Rodape() {
                 <>
                   <li><Link to="/indicadores">Indicadores completos</Link></li>
                   <li><Link to="/relatorios">Relatórios</Link></li>
-                  <li><Link to="/cadastur">Cadastur e FNRH</Link></li>
                   <li><Link to="/indicadores#dados-abertos">Dados em CSV</Link></li>
                 </>
               ) : (

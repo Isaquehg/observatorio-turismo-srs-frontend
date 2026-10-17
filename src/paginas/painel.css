@@ -176,3 +176,30 @@
 @media (max-width: 480px) {
   .inventario__filtros .ot-selecao { flex-basis: 100%; }
 }
+
+/* Guia de cadastro do comerciante */
+.guia-cadastro { padding: var(--esp-6); }
+.guia-cadastro__cab { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--esp-5); }
+.guia-cadastro__passos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--esp-4); counter-reset: none; }
+.guia-cadastro__passos li { position: relative; display: flex; flex-direction: column; gap: var(--esp-2); padding: var(--esp-5) var(--esp-4) var(--esp-4); border-radius: var(--raio-m); background: var(--papel); }
+.guia-cadastro__passos li > .ot-icone { color: var(--roxo); }
+.guia-cadastro__num { position: absolute; top: var(--esp-4); right: var(--esp-4); font: 700 .875rem/1 var(--font-display); color: var(--tinta-apagada); }
+@media (max-width: 1100px) { .guia-cadastro__passos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .guia-cadastro { padding: var(--esp-5) var(--esp-4); } .guia-cadastro__passos { grid-template-columns: 1fr; } }
+
+/* Estabelecimentos e relatórios da Prefeitura */
+/* Rosca e tipos lado a lado; o ranking ocupa a linha de baixo inteira */
+.painel__grade--tres { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+.painel__grade--tres > :last-child { grid-column: 1 / -1; }
+@media (max-width: 760px) { .painel__grade--tres { grid-template-columns: 1fr; } }
+.estab__barra { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--esp-3); margin-bottom: var(--esp-3); }
+.estab__filtros { display: flex; flex-wrap: wrap; gap: var(--esp-2); }
+.estab__filtros .ot-entrada-icone { width: 260px; }
+.estab__filtros .ot-selecao { width: 220px; }
+@media (max-width: 640px) { .estab__filtros, .estab__filtros .ot-entrada-icone, .estab__filtros .ot-selecao { width: 100%; } }
+
+.gerar { display: flex; flex-direction: column; gap: var(--esp-2); padding: 28px; }
+.gerar__resumo { margin: var(--esp-3) 0 var(--esp-4); }
+.gerar__resumo div { display: flex; justify-content: space-between; gap: var(--esp-3); padding: 10px 0; border-bottom: 1px solid var(--linha); font-size: 1rem; }
+.gerar__resumo dt { color: var(--tinta-suave); }
+.gerar__resumo dd { font-weight: 700; }

@@ -1,0 +1,62 @@
+/* ================= Área do turista ================= */
+
+/* Foto com crédito */
+.ot-foto { position: relative; margin: 0; overflow: hidden; background: var(--superficie-2); }
+.ot-foto img { width: 100%; height: 100%; object-fit: cover; }
+.ot-foto__credito {
+  position: absolute; right: 8px; bottom: 8px; max-width: calc(100% - 16px);
+  padding: 2px 8px; border-radius: var(--raio-pilula);
+  background: rgba(28, 24, 56, .62); font-size: .75rem; line-height: 1.5;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ot-foto__credito a { color: #fff; text-decoration: none; }
+.ot-foto__credito a:hover { text-decoration: underline; }
+
+.explorar-hero {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--esp-6); align-items: center;
+  margin: var(--esp-5) var(--esp-5) 0; padding: 48px clamp(24px, 5vw, 64px);
+  border-radius: var(--raio-xl); max-width: 1440px;
+}
+@media (min-width: 1489px) { .explorar-hero { margin-inline: auto; } }
+.explorar-hero__abertura { margin-top: 16px; max-width: 40ch; opacity: .95; }
+.explorar-hero__atalhos { display: flex; flex-wrap: wrap; gap: var(--esp-2); margin-top: 28px; }
+.explorar-hero__atalhos .ot-chip { text-decoration: none; border-color: rgba(255, 255, 255, .6); }
+.explorar-hero__foto { border-radius: var(--raio-l); box-shadow: var(--sombra-flutuante); }
+@media (max-width: 900px) {
+  .explorar-hero { grid-template-columns: 1fr; margin: var(--esp-3) var(--esp-3) 0; padding: 36px var(--esp-5) var(--esp-5); gap: var(--esp-5); }
+}
+
+/* Curiosidades */
+.curiosidades { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.curiosidade { display: flex; flex-direction: column; overflow: hidden; background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); }
+.curiosidade--foto { grid-row: span 2; }
+.curiosidade__corpo { display: flex; flex-direction: column; gap: var(--esp-2); padding: var(--esp-5); }
+.curiosidade__corpo .ot-indicador__icone { margin-bottom: 4px; }
+.curiosidade__destaque { font: 700 .875rem/1.2 var(--font-texto); letter-spacing: .08em; text-transform: uppercase; color: var(--magenta-texto); }
+@media (max-width: 1080px) { .curiosidades { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .curiosidades { grid-template-columns: 1fr; } .curiosidade--foto { grid-row: auto; } }
+
+/* Cartões com foto: hospedagens e sabores */
+.cartoes-foto { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.cartoes-foto--sabores { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.cartao-foto { display: flex; flex-direction: column; overflow: hidden; background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); transition: box-shadow .2s ease; }
+.cartao-foto:hover { box-shadow: var(--sombra-flutuante); }
+.cartao-foto__corpo { display: flex; flex-direction: column; gap: var(--esp-2); padding: 20px var(--esp-5) var(--esp-5); flex: 1; }
+.cartao-foto__tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--esp-2); }
+.cartao-foto__tags .ot-selo { font-size: .8125rem; padding: 2px 10px 2px 6px; }
+.cartao-foto__tags .ot-selo .ot-icone { width: 16px; height: 16px; }
+.cartao-foto__meta { display: flex; flex-wrap: wrap; gap: var(--esp-1) var(--esp-4); font-size: .9375rem; color: var(--tinta-suave); margin-top: auto; padding-top: 4px; }
+.cartao-foto__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.cartao-foto__destaques { display: flex; flex-wrap: wrap; gap: 6px; }
+.cartao-foto__destaques li { padding: 2px 10px; border-radius: var(--raio-pilula); background: var(--superficie-2); font-size: .875rem; }
+@media (max-width: 1240px) { .cartoes-foto--sabores { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 960px) { .cartoes-foto, .cartoes-foto--sabores { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .cartoes-foto, .cartoes-foto--sabores { grid-template-columns: 1fr; } }
+
+/* Pontos turísticos */
+.pontos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.ponto { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); }
+.ponto .ot-foto { height: 100%; min-height: 260px; }
+.ponto__corpo { display: flex; flex-direction: column; gap: var(--esp-2); padding: var(--esp-5); }
+@media (max-width: 1080px) { .pontos { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .ponto { grid-template-columns: 1fr; } .ponto .ot-foto { aspect-ratio: 3 / 2 !important; min-height: 0; } }

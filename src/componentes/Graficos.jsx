@@ -171,7 +171,7 @@ export function GraficoLinha({ series, rotulos, max = 100, sufixo = '%', altura 
   )
 }
 
-export function Rosca({ fatias, centro, subcentro, descricao }) {
+export function Rosca({ fatias, centro, subcentro, descricao, sufixo = '%' }) {
   const [ref, visivel] = useEntrada()
   const [ativa, setAtiva] = useState(null)
   const total = fatias.reduce((a, f) => a + f.valor, 0)
@@ -207,7 +207,7 @@ export function Rosca({ fatias, centro, subcentro, descricao }) {
           )
         })}
         <text x="100" y="104" textAnchor="middle" fontFamily="Bricolage Grotesque, sans-serif" fontSize="38" fontWeight="800" fill={TINTA}>
-          {ativa == null ? centro : `${fatias[ativa].valor}%`}
+          {ativa == null ? centro : `${fatias[ativa].valor}${sufixo}`}
         </text>
         <text x="100" y="128" textAnchor="middle" fontFamily={FONTE} fontSize="14" fill={TINTA_SUAVE}>
           {ativa == null ? subcentro : fatias[ativa].nome.length > 16 ? `${fatias[ativa].nome.slice(0, 15)}…` : fatias[ativa].nome}
@@ -218,7 +218,7 @@ export function Rosca({ fatias, centro, subcentro, descricao }) {
           <li key={f.nome} onPointerEnter={() => setAtiva(i)} onPointerLeave={() => setAtiva(null)} data-ativa={ativa === i}>
             <i style={{ background: f.hex }} />
             <span>{f.nome}</span>
-            <strong className="ot-num">{f.valor}%</strong>
+            <strong className="ot-num">{f.valor}{sufixo}</strong>
           </li>
         ))}
       </ul>
@@ -226,7 +226,7 @@ export function Rosca({ fatias, centro, subcentro, descricao }) {
   )
 }
 
-export function BarrasHorizontais({ itens, descricao, destaque }) {
+export function BarrasHorizontais({ itens, descricao, destaque, sufixo = '' }) {
   const [ref, visivel] = useEntrada()
   const max = Math.max(...itens.map((i) => i.valor))
   return (
@@ -237,7 +237,7 @@ export function BarrasHorizontais({ itens, descricao, destaque }) {
           <span className="barras-h__trilho">
             <i style={{ width: visivel ? `${(item.valor / max) * 100}%` : 0, background: item.hex, transitionDelay: `${i * 70}ms` }} />
           </span>
-          <strong className="barras-h__valor ot-num">{numero(item.valor)}</strong>
+          <strong className="barras-h__valor ot-num">{numero(item.valor)}{sufixo}</strong>
         </li>
       ))}
     </ul>

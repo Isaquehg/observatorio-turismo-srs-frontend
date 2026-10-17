@@ -6,14 +6,14 @@ export const PERFIS = {
   turista: {
     id: 'turista',
     titulo: 'Turista ou visitante',
-    texto: 'Consulte dados, relatórios e salve seus favoritos.',
+    texto: 'Onde ficar, o que comer e o que visitar na cidade.',
     cor: 'var(--azul-ceu)',
     arte: 'ilustracoes/turista.svg',
     icone: 'mala',
     campo: 'E-mail',
     vazio: 'Preencha o seu e-mail.',
     dica: 'Use o e-mail que você cadastrou.',
-    inicio: '/',
+    inicio: '/turista',
   },
   comerciante: {
     id: 'comerciante',
@@ -22,9 +22,9 @@ export const PERFIS = {
     cor: 'var(--rosa)',
     arte: 'ilustracoes/comerciante.svg',
     icone: 'loja',
-    campo: 'CNPJ ou e-mail',
-    vazio: 'Preencha o CNPJ ou o e-mail do estabelecimento.',
-    dica: 'Use o CNPJ ou o e-mail cadastrado do seu estabelecimento.',
+    campo: 'CNPJ do estabelecimento',
+    vazio: 'Preencha o CNPJ do estabelecimento.',
+    dica: 'Use o CNPJ cadastrado do seu estabelecimento. Só você vê os dados dele.',
     inicio: '/comerciante',
   },
   prefeitura: {
@@ -36,7 +36,7 @@ export const PERFIS = {
     icone: 'prefeitura',
     campo: 'E-mail institucional',
     vazio: 'Preencha o seu e-mail institucional.',
-    dica: 'Use seu e-mail @pmsrs.mg.gov.br.',
+    dica: 'Use o e-mail cadastrado na Prefeitura, terminado em @pmsrs.mg.gov.br.',
     inicio: '/prefeitura',
   },
 }

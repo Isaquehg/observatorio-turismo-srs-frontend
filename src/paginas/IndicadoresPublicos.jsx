@@ -16,7 +16,7 @@ const COM_LOGIN = [
   { icone: 'filtro', texto: 'Indicadores completos, com filtros por ano e por setor' },
   { icone: 'arquivo', texto: 'Relatórios e pesquisas em PDF' },
   { icone: 'download', texto: 'Séries históricas em CSV' },
-  { icone: 'escudo', texto: 'Guia do Cadastur e da FNRH' },
+  { icone: 'mapa', texto: 'Dicas de onde ficar, comer e passear (turistas)' },
 ]
 
 export default function IndicadoresPublicos() {
