@@ -11,11 +11,13 @@ import { iniciais } from '../util/formatar'
 const LINKS_PUBLICOS = [
   { para: '/', rotulo: 'Início', fim: true },
   { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
+  { para: '/explorar', rotulo: 'Explorar' },
   { para: '/sobre', rotulo: 'Sobre' },
 ]
 const LINKS_COM_LOGIN = [
   { para: '/', rotulo: 'Início', fim: true },
   { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
+  { para: '/explorar', rotulo: 'Explorar' },
   { para: '/indicadores', rotulo: 'Indicadores' },
   { para: '/relatorios', rotulo: 'Relatórios' },
   { para: '/sobre', rotulo: 'Sobre' },

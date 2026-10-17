@@ -80,6 +80,7 @@ export function resumoDoAno(ano, setor = 'todos') {
   return {
     leitos: d.leitosPorTipo.reduce((a, b) => a + b, 0),
     hospedagens: d.hospedagens,
+    visitantes: d.visitantes,
     ocupacao: Math.round(media(d.ocupacaoMensal)),
     empresas: filtrado(d.empresas),
     empregos: filtrado(d.empregos),

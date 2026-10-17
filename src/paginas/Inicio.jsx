@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom'
 import Icone from '../componentes/Icone'
+import Foto from '../componentes/Foto'
 import { Adesivo } from '../componentes/Adesivo'
 import { Sobretitulo } from '../componentes/Basicos'
 import { Indicador, CartaoRelatorio, ResumoRelatorio, useResumo } from '../componentes/Cartoes'
 import { resumoDoAno, serie } from '../dados/indicadores'
 import { relatorios } from '../dados/relatorios'
+import { CURIOSIDADES } from '../dados/turismo'
 import { numero, variacao, diferenca } from '../util/formatar'
 import { useTitulo } from '../util/ganchos'
 import { useSessao } from '../contexto/Sessao'
 import './publico.css'
+import './turista/turista.css'
 
 const PUBLICOS = [
   { titulo: 'Gestores públicos', texto: 'Decisões com base em dados e histórico preservado entre gestões.', icone: 'prefeitura', cor: 'var(--ciano)' },
@@ -25,6 +28,7 @@ export default function Inicio() {
   const anterior = resumoDoAno(2024)
 
   const destaques = [
+    { rotulo: 'Visitantes por ano', valor: numero(atual.visitantes), icone: 'pessoas', cor: 'var(--azul-ceu)', variacao: variacao(atual.visitantes, anterior.visitantes), serie: serie('visitantes', 2025) },
     { rotulo: 'Leitos disponíveis', valor: numero(atual.leitos), icone: 'cama', cor: 'var(--ciano)', variacao: variacao(atual.leitos, anterior.leitos), serie: serie('leitos', 2025) },
     { rotulo: 'Meios de hospedagem', valor: atual.hospedagens, icone: 'predio', cor: 'var(--amarelo)', variacao: diferenca(atual.hospedagens, anterior.hospedagens), serie: serie('hospedagens', 2025) },
     { rotulo: 'Empresas do turismo', valor: atual.empresas, icone: 'loja', cor: 'var(--rosa)', variacao: variacao(atual.empresas, anterior.empresas), serie: serie('empresas', 2025) },
@@ -60,12 +64,52 @@ export default function Inicio() {
             Ver indicadores públicos <Icone nome="seta" />
           </Link>
         </div>
-        <div className="grade-4">
+        <div className="grade-5">
           {destaques.map((d) => (
             <Indicador key={d.rotulo} {...d} comparacao="vs. 2024" />
           ))}
         </div>
         <p className="ot-fonte" style={{ marginTop: 12 }}>Valores ilustrativos para o protótipo. Fonte prevista: OT-SRS / SMCELT.</p>
+      </section>
+
+      <section className="container secao">
+        <div className="proposito">
+          <div className="proposito__texto">
+          <Sobretitulo>Nosso propósito</Sobretitulo>
+          <h2 className="titulo-1">Unindo tecnologia, turismo e dados estratégicos</h2>
+          <p className="corpo">
+            Santa Rita do Sapucaí é reconhecida por seu ecossistema tecnológico. O Observatório do Turismo nasce para trazer o rigor dos dados à compreensão e ao fortalecimento do turismo criativo, corporativo e tecnológico da cidade.
+          </p>
+          <p className="corpo suave">
+            Com análises mensais e pesquisas de demanda, o painel é transparente para investidores, empresários e a gestão pública construírem um destino cada vez mais atrativo.
+          </p>
+          </div>
+          <Foto chave="vista-cidade" alt="Vista de Santa Rita do Sapucaí com casas, prédios e a serra ao fundo" className="proposito__foto" proporcao="4 / 3" />
+        </div>
+      </section>
+
+      <section className="container secao">
+        <div className="secao__cab">
+          <div>
+            <Sobretitulo>Você sabia?</Sobretitulo>
+            <h2 className="titulo-1">Curiosidades de Santa Rita do Sapucaí</h2>
+          </div>
+          <Link className="ot-btn ot-btn--fantasma" to="/explorar">
+            Explorar lugares <Icone nome="seta" />
+          </Link>
+        </div>
+        <ul className="curiosidades">
+          {CURIOSIDADES.slice(0, 3).map((c) => (
+            <li key={c.titulo} className="curiosidade">
+              <div className="curiosidade__corpo">
+                <span className="ot-indicador__icone" style={{ '--cor': c.cor }}><Icone nome={c.icone} /></span>
+                <span className="curiosidade__destaque">{c.destaque}</span>
+                <h3 className="titulo-3">{c.titulo}</h3>
+                <p className="corpo-s suave">{c.texto}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="container secao">

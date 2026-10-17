@@ -1,5 +1,6 @@
 // Conteúdo da área do turista. Fotos do Wikimedia Commons, com autor e licença em FOTOS.
 // Hospedagens são exemplos do protótipo: nomes fictícios e fotos ilustrativas de outras cidades de Minas.
+// Fatos das curiosidades: ETE FMC (1959) e Inatel (1965) conferidos na Wikipédia (FMC Electronic Technical School, Inatel). Estação e Delfim Moreira: só o que consta nas fontes consultadas; confirmar com a SMCELT antes de publicar.
 
 export const FOTOS = {
   'vista-cidade': { autor: 'Fronteira', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Vista_de_Santa_Rita_do_Sapuca%C3%AD.JPG' },
@@ -27,7 +28,7 @@ export const CURIOSIDADES = [
   { destaque: '1965', titulo: 'Inatel, o instituto de telecomunicações', texto: 'O Instituto Nacional de Telecomunicações forma engenheiros desde a década de 1960 e mantém um centro de inovação aberto às empresas.', icone: 'nuvem', cor: 'var(--lilas)' },
   { destaque: 'Cidade Criativa', titulo: '“Cidade Criativa, Cidade Feliz”', texto: 'O lema resume o jeito da cidade: tradição mineira, praça cheia e muita gente criando coisa nova.', icone: 'pessoas', cor: 'var(--rosa)' },
   { destaque: 'Rio Sapucaí', titulo: 'A cidade leva o nome do rio', texto: 'O Sapucaí corta a cidade e dá nome a ela. Antigamente era atravessado por uma ponte pênsil, a Ponte Afonso Pena.', icone: 'mapa', cor: 'var(--azul-ceu)', foto: 'ponte-pensil', legenda: 'Ponte pênsil Afonso Pena, em foto histórica' },
-  { destaque: 'Presidente', titulo: 'Terra de Delfim Moreira', texto: 'O presidente da República Delfim Moreira (1918–1919) viveu em Santa Rita do Sapucaí, onde está sepultado.', icone: 'prefeitura', cor: 'var(--amarelo)' },
+  { destaque: 'Presidente', titulo: 'Terra de Delfim Moreira', texto: 'Delfim Moreira, que presidiu o Brasil entre 1918 e 1919, viveu em Santa Rita do Sapucaí e morreu aqui em 1920. A cidade tem um museu com o nome dele.', icone: 'prefeitura', cor: 'var(--amarelo)' },
 ]
 
 export const TIPOS_HOSPEDAGEM_TURISTA = ['Todos', 'Hotel', 'Pousada', 'Chalé', 'Hostel']
@@ -52,6 +53,6 @@ export const SABORES = [
 export const PONTOS_TURISTICOS = [
   { nome: 'Praça Santa Rita', foto: 'praca-santa-rita', categoria: 'Centro histórico', texto: 'O coração da cidade, com coqueiros, bancos à sombra e movimento o dia todo. No fim do ano, ganha iluminação de Natal.', local: 'Centro' },
   { nome: 'Rio Sapucaí', foto: 'rio-sapucai', categoria: 'Natureza', texto: 'O rio que dá nome à cidade. Bom para uma caminhada no fim da tarde pelas margens arborizadas.', local: 'Centro' },
-  { nome: 'Antiga estação ferroviária', foto: 'estacao-ferroviaria', categoria: 'Patrimônio', texto: 'Prédio de 1894, da época em que o trem ligava a cidade ao resto do Sul de Minas.', local: 'Centro' },
+  { nome: 'Antiga estação ferroviária', foto: 'estacao-ferroviaria', categoria: 'Patrimônio', texto: 'Construída no fim do século XIX, da época em que o trem ligava a cidade ao resto do Sul de Minas.', local: 'Centro' },
   { nome: 'Natal na praça', foto: 'natal-praca', categoria: 'Evento', texto: 'Em dezembro, a praça vira um cartão-postal iluminado, com árvore de luzes e presépio.', local: 'Praça Santa Rita' },
 ]
