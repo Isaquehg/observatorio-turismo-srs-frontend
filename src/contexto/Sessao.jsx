@@ -47,13 +47,13 @@ const CHAVE = 'ot-srs:sessao'
 export function SessaoProvider({ children }) {
   const [sessao, setSessao] = useState(() => ler(CHAVE, null))
 
-  const entrar = useCallback((perfil, identificador, manter) => {
+  const entrar = useCallback((perfil, identificador, manter, nomeInformado) => {
     const nomes = {
       turista: identificador.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
       comerciante: MEU_NEGOCIO.responsavel,
       prefeitura: 'SMCELT',
     }
-    const nova = { perfil, nome: nomes[perfil] || 'Visitante', identificador }
+    const nova = { perfil, nome: nomeInformado || nomes[perfil] || 'Visitante', identificador }
     setSessao(nova)
     if (manter) gravar(CHAVE, nova)
     return nova
