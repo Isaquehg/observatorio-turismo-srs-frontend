@@ -16,6 +16,7 @@ import Estabelecimento from './paginas/comerciante/Estabelecimento'
 import VisaoGeral from './paginas/prefeitura/VisaoGeral'
 import Envios from './paginas/prefeitura/Envios'
 import Inventario from './paginas/prefeitura/Inventario'
+import { comportamentoRolagem } from './util/ganchos'
 
 // Ao trocar de página: volta ao topo, ou rola até a âncora (#contato etc.)
 function GerenciarRolagem() {
@@ -24,7 +25,7 @@ function GerenciarRolagem() {
     if (hash) {
       const alvo = document.getElementById(hash.slice(1))
       if (alvo) {
-        requestAnimationFrame(() => alvo.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+        requestAnimationFrame(() => alvo.scrollIntoView({ behavior: comportamentoRolagem(), block: 'start' }))
         return
       }
     }

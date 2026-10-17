@@ -50,7 +50,6 @@ export default function Rodape() {
           {MARCAS.map((m) => (
             <img key={m.src} src={m.src} alt={m.alt} style={{ height: m.altura }} loading="lazy" />
           ))}
-          <span className="rodape__credito">Projeto HEIComp 2026.2 · Inatel</span>
         </div>
       </div>
     </footer>

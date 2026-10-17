@@ -5,7 +5,7 @@ import { Migalhas, Sobretitulo } from '../componentes/Basicos'
 import { CartaoRelatorio, ResumoRelatorio, useResumo, useDownloadRelatorio } from '../componentes/Cartoes'
 import { relatorios, CATEGORIAS_RELATORIO, categoriaDe } from '../dados/relatorios'
 import { mesAnoLongo, normalizar } from '../util/formatar'
-import { useTitulo } from '../util/ganchos'
+import { useTitulo, comportamentoRolagem } from '../util/ganchos'
 import './publico.css'
 
 const POR_PAGINA = 5
@@ -63,7 +63,7 @@ export default function Relatorios() {
         role="search"
         onSubmit={(e) => {
           e.preventDefault()
-          listaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          listaRef.current?.scrollIntoView({ behavior: comportamentoRolagem(), block: 'start' })
         }}
       >
         <div className="ot-entrada-icone busca__texto">
@@ -102,7 +102,6 @@ export default function Relatorios() {
             <Sobretitulo>Relatório OT · {ano_}</Sobretitulo>
             <p className="titulo-1 destaque__capa-titulo">Perfil do turista em eventos</p>
             <Adesivo tipo="explosao" cor="var(--amarelo)" tamanho={120} />
-            <Adesivo tipo="serpentina" cor="var(--rosa)" tamanho={130} style={{ right: -36, top: '40%' }} />
           </div>
           <div className="destaque__txt">
             <div className="linha-acoes" style={{ gap: 10 }}>

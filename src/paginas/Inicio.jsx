@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icone from '../componentes/Icone'
-import { Adesivo, Rabisco } from '../componentes/Adesivo'
+import { Adesivo } from '../componentes/Adesivo'
 import { Sobretitulo } from '../componentes/Basicos'
 import { Indicador, CartaoRelatorio, ResumoRelatorio, useResumo } from '../componentes/Cartoes'
 import { resumoDoAno, serie } from '../dados/indicadores'
@@ -40,21 +40,12 @@ export default function Inicio() {
           <p className="corpo-l hero__abertura">
             Hospedagem, leitos, empresas e empregos — atualizados pela Prefeitura e abertos para qualquer pessoa consultar.
           </p>
-          <div className="hero__acoes">
-            <Link className="ot-btn ot-btn--claro ot-btn--carimbo ot-btn--g" to="/indicadores">
-              <Icone nome="grafico" /> Ver indicadores
-            </Link>
-            <Link className="ot-btn ot-btn--contorno-claro ot-btn--g" to="/relatorios">
-              <Icone nome="download" /> Baixar relatórios
-            </Link>
-          </div>
         </div>
         <div className="hero__arte" aria-hidden="true">
           <img className="hero__cidade" src="ilustracoes/cidade.svg" alt="" />
           <img className="hero__turista" src="ilustracoes/turista.svg" alt="" />
         </div>
         <Adesivo tipo="explosao" cor="var(--ciano)" tamanho={84} className="hero__explosao" />
-        <Adesivo tipo="anel" cor="var(--rosa)" tamanho={34} className="hero__anel" />
       </section>
 
       <section className="container secao">
@@ -62,7 +53,6 @@ export default function Inicio() {
           <div>
             <Sobretitulo>Destaques de 2025</Sobretitulo>
             <h2 className="titulo-1">Como está o turismo agora</h2>
-            <Rabisco />
           </div>
           <Link className="ot-btn ot-btn--fantasma" to="/indicadores">
             Todos os indicadores <Icone nome="seta" />
@@ -130,7 +120,6 @@ export default function Inicio() {
             </div>
           </div>
           <Adesivo tipo="estrela" cor="var(--amarelo)" tamanho={60} className="convite__estrela" />
-          <Adesivo tipo="serpentina" cor="#FFFFFF" tamanho={140} className="convite__serpentina" />
         </div>
       </section>
 

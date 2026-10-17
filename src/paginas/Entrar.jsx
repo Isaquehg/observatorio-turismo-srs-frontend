@@ -113,8 +113,6 @@ export default function Entrar() {
         </div>
         <img className="entrar__cidade" src="ilustracoes/cidade.svg" alt="" />
         <Adesivo tipo="explosao" cor="var(--amarelo)" tamanho={96} className="entrar__explosao" />
-        <Adesivo tipo="serpentina" cor="var(--rosa)" tamanho={130} className="entrar__serpentina" />
-        <Adesivo tipo="anel" cor="var(--ciano)" tamanho={30} className="entrar__anel" />
       </section>
 
       <section className="entrar__form surgir">

@@ -36,8 +36,7 @@
 }
 .ot-marca--bloco::after { content: none; }
 
-.ot-rabisco { display: block; width: 132px; height: 14px; margin-top: var(--esp-3); color: var(--magenta); }
-.ot-bolha { border-radius: 44% 56% 38% 62% / 52% 40% 60% 48%; }
+.ot-bolha { border-radius: var(--raio-m); }
 .ot-adesivo { position: absolute; pointer-events: none; }
 
 /* ---------- Botões ---------- */
@@ -45,16 +44,15 @@
   display: inline-flex; align-items: center; justify-content: center; gap: var(--esp-2);
   min-height: var(--controle); padding: 0 var(--esp-5);
   font-family: var(--font-texto); font-size: 1.0625rem; line-height: 1.2; font-weight: 700;
-  border-radius: var(--raio-pilula); border: 2px solid transparent;
+  border-radius: var(--raio-pilula); border: 1.5px solid transparent;
   cursor: pointer; text-decoration: none; white-space: nowrap;
   transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease;
 }
 .ot-btn:active { transform: translateY(1px); }
 .ot-btn--primario { color: var(--sobre-escuro); background: var(--gradiente-botao); }
 .ot-btn--primario:hover { box-shadow: var(--sombra-flutuante); }
-.ot-btn--carimbo { box-shadow: var(--sombra-carimbo); border-color: var(--tinta); }
-.ot-btn--carimbo:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--tinta); }
-.ot-btn--carimbo:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
+.ot-btn--carimbo { box-shadow: var(--sombra-carimbo); }
+.ot-btn--carimbo:hover { box-shadow: var(--sombra-flutuante); }
 .ot-btn--solido { color: var(--sobre-escuro); background: var(--azul-institucional); }
 .ot-btn--solido:hover { background: #083c8d; }
 .ot-btn--claro { color: var(--tinta); background: var(--superficie); }
@@ -100,7 +98,7 @@
 .ot-entrada, .ot-selecao {
   width: 100%; min-height: var(--controle); padding: 0 var(--esp-4);
   font: inherit; font-size: 1.125rem; color: var(--tinta);
-  background: var(--superficie); border: 2px solid var(--linha-controle); border-radius: var(--raio-m);
+  background: var(--superficie); border: 1.5px solid var(--linha-controle); border-radius: var(--raio-s);
   transition: border-color .15s ease;
 }
 textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: vertical; line-height: 1.5; }
@@ -130,7 +128,7 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 .ot-check { display: flex; gap: var(--esp-3); align-items: center; font-size: 1.0625rem; cursor: pointer; min-height: var(--alvo-minimo); }
 .ot-check input {
   appearance: none; flex: none; width: 26px; height: 26px; margin: 0; cursor: pointer;
-  border: 2px solid var(--linha-controle); border-radius: 8px; background: var(--superficie);
+  border: 1.5px solid var(--linha-controle); border-radius: 6px; background: var(--superficie);
   display: grid; place-content: center;
 }
 .ot-check input:checked { background: var(--azul-institucional); border-color: var(--azul-institucional); }
@@ -145,11 +143,11 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
   display: inline-flex; align-items: center; gap: var(--esp-2);
   min-height: var(--alvo-minimo); padding: 0 var(--esp-4);
   font: 700 1rem/1.25 var(--font-texto); color: var(--tinta);
-  background: var(--superficie); border: 2px solid var(--linha); border-radius: var(--raio-pilula);
+  background: var(--superficie); border: 1px solid var(--linha-controle); border-radius: var(--raio-pilula);
   cursor: pointer; white-space: nowrap;
   transition: background-color .15s ease, border-color .15s ease, color .15s ease;
 }
-.ot-chip:hover { border-color: var(--tinta-suave); }
+.ot-chip:hover { border-color: var(--tinta); }
 .ot-chip[aria-pressed="true"] { background: var(--tinta); color: var(--sobre-escuro); border-color: var(--tinta); }
 .ot-chip .ot-ponto { width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .ot-chip[aria-pressed="true"] .ot-ponto { box-shadow: 0 0 0 2px var(--sobre-escuro); }
@@ -161,10 +159,10 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 }
 .ot-filtros__grupo { display: flex; flex-wrap: wrap; gap: var(--esp-2); align-items: center; min-width: 0; }
 .ot-filtros__rotulo { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1rem; margin-right: var(--esp-1); color: var(--tinta-suave); }
-.ot-filtros__divisor { width: 2px; height: 36px; background: var(--linha); margin: 0 var(--esp-2); }
+.ot-filtros__divisor { width: 1px; height: 36px; background: var(--linha); margin: 0 var(--esp-2); }
 @media (max-width: 1300px) { .ot-filtros__divisor { display: none; } }
 
-.ot-segmentado { display: inline-flex; padding: 4px; background: var(--superficie); border-radius: var(--raio-pilula); border: 2px solid var(--linha); }
+.ot-segmentado { display: inline-flex; padding: 4px; background: var(--superficie); border-radius: var(--raio-pilula); border: 1px solid var(--linha); }
 .ot-segmentado button {
   min-height: 44px; padding: 0 var(--esp-4); border: 0; background: transparent;
   border-radius: var(--raio-pilula); font: 700 1rem/1.25 var(--font-texto); color: var(--tinta-suave);
@@ -209,11 +207,11 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 .ot-selo--publicado { background: var(--sucesso-fundo); color: var(--sucesso); }
 .ot-selo--analise { background: var(--alerta-fundo); color: var(--alerta); }
 .ot-selo--recusado { background: var(--erro-fundo); color: var(--erro); }
-.ot-selo--novo { background: var(--amarelo); color: var(--tinta); transform: rotate(-3deg); padding: 2px 12px; }
+.ot-selo--novo { background: var(--amarelo); color: var(--tinta); padding: 2px 10px; }
 
 /* ---------- Cartões ---------- */
 .ot-cartao { background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); padding: var(--esp-5); }
-.ot-cartao--contorno { box-shadow: none; border: 2px solid var(--linha); }
+.ot-cartao--contorno { box-shadow: none; border: 1px solid var(--linha); }
 .ot-cartao__cab { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--esp-4); margin-bottom: var(--esp-3); }
 .ot-cartao__cab p { margin-top: 4px; }
 
@@ -233,18 +231,18 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
   background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao);
   transition: transform .2s ease, box-shadow .2s ease;
 }
-.ot-indicador:hover { transform: translateY(-3px); box-shadow: var(--sombra-flutuante); }
+.ot-indicador:hover { box-shadow: var(--sombra-flutuante); }
 .ot-indicador__topo { display: flex; align-items: center; gap: var(--esp-3); }
 .ot-indicador__icone {
   width: 48px; height: 48px; flex: none;
-  border-radius: 16px 22px 14px 20px;
+  border-radius: var(--raio-m);
   display: grid; place-items: center;
   background: var(--cor, var(--ciano)); color: var(--tinta);
 }
 .ot-indicador__rotulo { font-weight: 700; font-size: 1.0625rem; line-height: 1.3; }
 .ot-indicador__valor {
-  font-family: var(--font-display); font-size: clamp(2.75rem, 2.3rem + 1.6vw, 3.5rem); line-height: 1;
-  font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+  font-family: var(--font-display); font-size: clamp(2.5rem, 2.2rem + 1.2vw, 3.125rem); line-height: 1;
+  font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums;
 }
 .ot-indicador__valor small { font-size: 1.375rem; letter-spacing: 0; font-weight: 700; margin-left: 4px; color: var(--tinta-suave); }
 .ot-indicador__rodape {
@@ -253,12 +251,9 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 }
 .ot-indicador__rodape > span:first-child { white-space: nowrap; }
 .ot-indicador__blob {
-  position: absolute; z-index: -1; right: -36px; top: -40px; width: 130px; height: 120px;
-  background: var(--cor, var(--ciano)); opacity: .35;
-  border-radius: 42% 58% 60% 40% / 50% 44% 56% 50%;
-  transition: transform .4s ease;
+  position: absolute; z-index: -1; left: 0; right: 0; top: 0; height: 4px;
+  background: var(--cor, var(--ciano));
 }
-.ot-indicador:hover .ot-indicador__blob { transform: scale(1.15) rotate(8deg); }
 .ot-variacao { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; padding: 2px 10px 2px 6px; border-radius: var(--raio-pilula); white-space: nowrap; }
 .ot-variacao--sobe { background: var(--sucesso-fundo); color: var(--sucesso); }
 .ot-variacao--desce { background: var(--erro-fundo); color: var(--erro); }
@@ -269,24 +264,24 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
   --cor: var(--ciano);
   position: relative; display: flex; flex-direction: column; text-align: left;
   padding: 0; background: var(--superficie);
-  border: 3px solid var(--linha); border-radius: var(--raio-l);
+  border: 1.5px solid var(--linha); border-radius: var(--raio-l);
   cursor: pointer; overflow: hidden; font: inherit; color: inherit;
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
 }
-.ot-perfil:hover { border-color: var(--tinta); transform: translateY(-3px); }
-.ot-perfil[aria-checked="true"] { border-color: var(--tinta); box-shadow: 6px 6px 0 var(--tinta); transform: translate(-3px, -3px); }
+.ot-perfil:hover { border-color: var(--tinta-suave); box-shadow: var(--sombra-cartao); }
+.ot-perfil[aria-checked="true"] { border-color: var(--tinta); box-shadow: 0 0 0 1.5px var(--tinta), var(--sombra-cartao); }
 .ot-perfil__arte { height: 168px; background: var(--cor); display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
 .ot-perfil__arte img { height: 190px; width: auto; max-width: none; margin-bottom: -26px; transition: transform .25s ease; }
 .ot-perfil:hover .ot-perfil__arte img, .ot-perfil[aria-checked="true"] .ot-perfil__arte img { transform: translateY(-6px); }
 .ot-perfil__corpo { padding: var(--esp-4) var(--esp-5) var(--esp-5); display: flex; flex-direction: column; gap: 6px; }
-.ot-perfil__titulo { font-family: var(--font-display); font-size: 1.375rem; line-height: 1.18; font-weight: 800; }
+.ot-perfil__titulo { font-family: var(--font-display); font-size: 1.3125rem; line-height: 1.2; font-weight: 700; }
 .ot-perfil__texto { font-size: 1rem; line-height: 1.44; color: var(--tinta-suave); }
 .ot-perfil__marca {
   position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%;
-  background: var(--superficie); border: 3px solid var(--tinta);
+  background: var(--superficie); border: 2px solid var(--linha-controle);
   display: grid; place-items: center;
 }
-.ot-perfil[aria-checked="true"] .ot-perfil__marca { background: var(--tinta); color: var(--sobre-escuro); }
+.ot-perfil[aria-checked="true"] .ot-perfil__marca { background: var(--tinta); border-color: var(--tinta); color: var(--sobre-escuro); }
 
 /* Relatório */
 .ot-relatorio {
@@ -298,13 +293,11 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 .ot-relatorio__capa {
   position: relative; overflow: hidden;
   width: 84px; height: 108px; padding: 10px;
-  border-radius: 8px 18px 8px 8px;
+  border-radius: 6px;
   background: linear-gradient(150deg, var(--azul-institucional), var(--roxo) 60%, var(--magenta));
   color: #fff; display: flex; flex-direction: column; justify-content: space-between;
-  font: 800 .8125rem/1.15 var(--font-display);
-  transition: transform .25s ease;
+  font: 700 .8125rem/1.15 var(--font-display);
 }
-.ot-relatorio:hover .ot-relatorio__capa { transform: rotate(-3deg) translateY(-2px); }
 .ot-relatorio__capa::after { content: ""; position: absolute; right: -22px; top: -22px; width: 60px; height: 60px; border-radius: 50%; background: var(--cor-capa, var(--amarelo)); }
 .ot-relatorio__capa span { position: relative; z-index: 1; }
 .ot-relatorio__tag { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 6px; }
@@ -335,7 +328,7 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 /* ---------- Tabela ---------- */
 .ot-tabela-moldura { overflow-x: auto; }
 .ot-tabela { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 1.0625rem; }
-.ot-tabela th { text-align: left; font-size: .9375rem; font-weight: 700; color: var(--tinta-suave); padding: 12px 16px; border-bottom: 2px solid var(--linha); white-space: nowrap; }
+.ot-tabela th { text-align: left; font-size: .9375rem; font-weight: 700; color: var(--tinta-suave); padding: 12px 16px; border-bottom: 1px solid var(--linha-controle); white-space: nowrap; }
 .ot-tabela td { padding: 16px; border-bottom: 1px solid var(--linha); vertical-align: middle; }
 .ot-tabela tbody tr { transition: background-color .15s ease; }
 .ot-tabela tbody tr:hover td { background: var(--papel); }
@@ -362,12 +355,12 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 }
 
 /* ---------- Abas ---------- */
-.ot-abas { display: flex; gap: 4px; border-bottom: 2px solid var(--linha); margin: var(--esp-2) 0 4px; overflow-x: auto; scrollbar-width: none; }
+.ot-abas { display: flex; gap: 4px; border-bottom: 1px solid var(--linha); margin: var(--esp-2) 0 4px; overflow-x: auto; scrollbar-width: none; }
 .ot-abas::-webkit-scrollbar { display: none; }
 .ot-abas button {
   flex: none; background: none; border: 0; padding: 14px 18px;
   font: 700 1.0625rem/1.2 var(--font-texto); color: var(--tinta-suave);
-  border-bottom: 4px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap;
+  border-bottom: 3px solid transparent; margin-bottom: -1px; cursor: pointer; white-space: nowrap;
 }
 .ot-abas button:hover { color: var(--tinta); }
 .ot-abas button[aria-selected="true"] { color: var(--tinta); border-bottom-color: var(--magenta); }
@@ -375,7 +368,7 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 /* ---------- Passos ---------- */
 .ot-passos { display: flex; gap: var(--esp-2); counter-reset: passo; }
 .ot-passos li { flex: 1; display: flex; flex-direction: column; gap: var(--esp-2); font-weight: 700; font-size: 1rem; color: var(--tinta-suave); min-width: 0; }
-.ot-passos li::before { content: ""; height: 8px; border-radius: var(--raio-pilula); background: var(--linha); transition: background .3s ease; }
+.ot-passos li::before { content: ""; height: 4px; border-radius: var(--raio-pilula); background: var(--linha); transition: background .3s ease; }
 .ot-passos li[data-estado="feito"]::before { background: var(--azul-institucional); }
 .ot-passos li[data-estado="atual"] { color: var(--tinta); }
 .ot-passos li[data-estado="atual"]::before { background: var(--gradiente-botao); }
@@ -404,12 +397,12 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
   width: 40px; height: 40px; flex: none; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--cor, var(--amarelo)); color: var(--tinta);
-  font-family: var(--font-display); font-weight: 800; font-size: 1rem;
+  font-family: var(--font-display); font-weight: 700; font-size: 1rem;
 }
 
 /* ---------- FAQ ---------- */
-.ot-faq { background: var(--superficie); border-radius: var(--raio-m); border: 2px solid var(--linha); transition: border-color .15s ease; }
-.ot-faq[open] { border-color: var(--tinta); }
+.ot-faq { background: var(--superficie); border-radius: var(--raio-m); border: 1px solid var(--linha); transition: border-color .15s ease; }
+.ot-faq[open] { border-color: var(--linha-controle); }
 .ot-faq summary {
   list-style: none; display: flex; justify-content: space-between; align-items: center; gap: var(--esp-4);
   min-height: 64px; padding: 14px var(--esp-5); font-weight: 700; font-size: 1.125rem; cursor: pointer;
@@ -428,7 +421,7 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 .ot-drop {
   display: flex; align-items: center; justify-content: center; gap: var(--esp-4);
   padding: var(--esp-5); text-align: left;
-  border: 2px dashed var(--linha-controle); border-radius: var(--raio-l); background: var(--papel);
+  border: 1.5px dashed var(--linha-controle); border-radius: var(--raio-l); background: var(--papel);
   transition: background-color .15s ease, border-color .15s ease;
 }
 .ot-drop[data-arrastando="true"] { background: var(--superficie-2); border-color: var(--roxo); }
@@ -486,7 +479,7 @@ textarea.ot-entrada { padding: 14px var(--esp-4); min-height: 120px; resize: ver
 
 /* ---------- Mini KPIs (painéis) ---------- */
 .ot-mini { background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); padding: 22px 24px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.ot-mini__v { font: 800 clamp(2rem, 1.7rem + 1vw, 2.5rem)/1.1 var(--font-display); letter-spacing: -.02em; }
+.ot-mini__v { font: 700 clamp(2rem, 1.7rem + 1vw, 2.5rem)/1.1 var(--font-display); letter-spacing: -.02em; }
 .ot-mini__v--texto { font-size: 1.75rem; line-height: 1.3; }
 
 /* ---------- Estado vazio ---------- */

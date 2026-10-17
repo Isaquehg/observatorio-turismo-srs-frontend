@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icone from '../componentes/Icone'
-import { Adesivo, Rabisco } from '../componentes/Adesivo'
+import { Adesivo } from '../componentes/Adesivo'
 import { Migalhas, Sobretitulo } from '../componentes/Basicos'
 import { useTitulo } from '../util/ganchos'
 import './publico.css'
@@ -37,14 +37,12 @@ export default function Sobre() {
         <div className="sobre-hero__arte" aria-hidden="true">
           <img src="ilustracoes/gestora.svg" alt="" />
           <Adesivo tipo="brilho" cor="#FFFFFF" tamanho={40} />
-          <Adesivo tipo="explosao" cor="var(--amarelo)" tamanho={70} style={{ right: 24, bottom: 40 }} />
         </div>
       </section>
 
       <section className="secao" id="como-funciona">
         <Sobretitulo>Como funciona</Sobretitulo>
         <h2 className="titulo-1" style={{ marginTop: 10 }}>Do balcão da pousada ao gráfico do site</h2>
-        <Rabisco />
         <ol className="fluxo" style={{ marginTop: 48 }}>
           {FLUXO.map((f) => (
             <li key={f.titulo} className="fluxo__passo">

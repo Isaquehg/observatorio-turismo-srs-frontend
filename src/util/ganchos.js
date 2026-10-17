@@ -47,3 +47,10 @@ export function useRolou(limite = 8) {
   }, [limite])
   return rolou
 }
+
+// Rolagem suave só quando a pessoa não pediu para reduzir animações (no painel ou no sistema)
+export function comportamentoRolagem() {
+  const reduzido = document.documentElement.dataset.movimento === 'reduzido'
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return reduzido ? 'auto' : 'smooth'
+}

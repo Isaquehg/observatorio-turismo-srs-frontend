@@ -9,11 +9,11 @@
   --magenta-texto: #9B2BAE;
 
   /* Apoio */
-  --ciano: #5FE6E0;
+  --ciano: #74DCD6;
   --azul-ceu: #27B7FD;
   --lilas: #B986ED;
-  --rosa: #F3B8F7;
-  --amarelo: #FADA77;
+  --rosa: #EEC5F1;
+  --amarelo: #F6D57C;
 
   /* Neutros */
   --papel: #FAF8F5;
@@ -54,16 +54,16 @@
   --esp-9: 112px;
 
   /* Raios */
-  --raio-s: 10px;
-  --raio-m: 16px;
-  --raio-l: 24px;
-  --raio-xl: 40px;
+  --raio-s: 8px;
+  --raio-m: 12px;
+  --raio-l: 16px;
+  --raio-xl: 24px;
   --raio-pilula: 999px;
 
   /* Sombras */
   --sombra-cartao: 0 1px 0 rgba(28, 24, 56, .06), 0 10px 28px -14px rgba(28, 24, 56, .22);
   --sombra-flutuante: 0 18px 40px -16px rgba(28, 24, 56, .35);
-  --sombra-carimbo: 4px 4px 0 var(--tinta);
+  --sombra-carimbo: 0 1px 2px rgba(28, 24, 56, .12), 0 8px 20px -10px rgba(28, 24, 56, .4);
 
   /* Tamanhos */
   --alvo-minimo: 48px;
@@ -78,7 +78,7 @@
 
 @media (max-width: 720px) {
   :root {
-    --raio-xl: 28px;
+    --raio-xl: 20px;
     --altura-topo: 68px;
   }
 }

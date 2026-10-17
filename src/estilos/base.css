@@ -38,12 +38,19 @@ a:hover { text-decoration-thickness: 3px; }
 
 ::selection { background: var(--amarelo); color: var(--tinta); }
 
+/* Movimento reduzido: cada animação roda uma única vez, instantânea, e para no quadro final.
+   Só encurtar a duração não basta: animações infinitas passariam a girar milhares de vezes por segundo. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important;
+    transition-duration: .01ms !important; transition-delay: 0s !important;
+  }
 }
+html[data-movimento="reduzido"] { scroll-behavior: auto; }
 html[data-movimento="reduzido"] *, html[data-movimento="reduzido"] *::before, html[data-movimento="reduzido"] *::after {
-  animation-duration: .01ms !important; transition-duration: .01ms !important;
+  animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important;
+  transition-duration: .01ms !important; transition-delay: 0s !important;
 }
 
 /* ---------- Tipografia ---------- */
@@ -51,12 +58,12 @@ html[data-movimento="reduzido"] *, html[data-movimento="reduzido"] *::before, ht
   font-family: var(--font-display);
   text-wrap: balance;
 }
-.display-xl { font-size: clamp(2.5rem, 1.55rem + 3.6vw, 4rem); line-height: 1; font-weight: 800; letter-spacing: -.02em; }
-.display-l  { font-size: clamp(2.125rem, 1.6rem + 2vw, 3rem); line-height: 1.08; font-weight: 800; letter-spacing: -.02em; }
-.titulo-1   { font-size: clamp(1.75rem, 1.4rem + 1.3vw, 2.25rem); line-height: 1.17; font-weight: 700; letter-spacing: -.01em; }
+.display-xl { font-size: clamp(2.375rem, 1.6rem + 3vw, 3.5rem); line-height: 1.06; font-weight: 700; letter-spacing: -.025em; }
+.display-l  { font-size: clamp(2rem, 1.6rem + 1.6vw, 2.75rem); line-height: 1.1; font-weight: 700; letter-spacing: -.02em; }
+.titulo-1   { font-size: clamp(1.75rem, 1.45rem + 1.1vw, 2.125rem); line-height: 1.18; font-weight: 700; letter-spacing: -.015em; }
 .titulo-2   { font-size: clamp(1.5rem, 1.32rem + .7vw, 1.75rem); line-height: 1.22; font-weight: 700; }
 .titulo-3   { font-size: clamp(1.25rem, 1.18rem + .3vw, 1.375rem); line-height: 1.27; font-weight: 700; }
-.numero-xl  { font-size: clamp(2.75rem, 2.2rem + 2vw, 3.5rem); line-height: 1; font-weight: 800; letter-spacing: -.03em; }
+.numero-xl  { font-size: clamp(2.75rem, 2.2rem + 2vw, 3.5rem); line-height: 1; font-weight: 700; letter-spacing: -.03em; }
 .numero     { font-size: 2rem; line-height: 1.125; font-weight: 700; letter-spacing: -.02em; }
 
 .corpo-l { font-size: clamp(1.125rem, 1.07rem + .25vw, 1.25rem); line-height: 1.5; }

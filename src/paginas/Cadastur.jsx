@@ -53,7 +53,6 @@ export default function Cadastur() {
           <img src="ilustracoes/comerciante.svg" alt="" className="cad-hero__arte" />
         </div>
         <Adesivo tipo="estrela" cor="var(--amarelo)" tamanho={56} />
-        <Adesivo tipo="anel" cor="#FFFFFF" tamanho={30} style={{ left: '46%', bottom: 48 }} />
       </section>
 
       <div className="container" style={{ paddingTop: 40 }}>

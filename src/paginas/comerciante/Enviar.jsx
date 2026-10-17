@@ -153,8 +153,6 @@ export default function Enviar() {
           <div className="concluido__arte" aria-hidden="true">
             <img src="ilustracoes/comerciante.svg" alt="" />
             <Adesivo tipo="explosao" cor="var(--amarelo)" tamanho={90} style={{ left: 20, top: 20 }} />
-            <Adesivo tipo="estrela" cor="#FFFFFF" tamanho={44} style={{ right: 36, top: 44 }} />
-            <Adesivo tipo="serpentina" cor="var(--ciano)" tamanho={120} style={{ right: -10, bottom: 40 }} />
           </div>
           <div className="concluido__texto">
             <span className="ot-selo ot-selo--publicado"><Icone nome="check-circulo" /> Envio recebido</span>
