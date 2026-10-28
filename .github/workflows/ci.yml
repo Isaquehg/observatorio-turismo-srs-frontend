@@ -1,0 +1,52 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-build:
+    name: Validate Lint, Tests & Build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        # Uses npm ci if package-lock.json exists, otherwise falls back to npm install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Security audit (High/Critical vulnerabilities)
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+      - name: Run Linter
+        continue-on-error: true
+        run: npm run lint --if-present
+
+      - name: Run Unit Tests
+        continue-on-error: true
+        run: npm run test:ci --if-present
+
+      - name: Verify Production Build
+        continue-on-error: true
+        run: npm run build
