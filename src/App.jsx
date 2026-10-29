@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import LayoutPublico from './componentes/LayoutPublico'
 import RotaRestrita from './componentes/RotaRestrita'
