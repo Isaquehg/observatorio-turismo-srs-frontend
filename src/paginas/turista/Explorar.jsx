@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import Icone from '../../componentes/Icone'
 import Foto from '../../componentes/Foto'
+import BotaoFavorito from '../../componentes/BotaoFavorito'
 import { Sobretitulo } from '../../componentes/Basicos'
 import { useSessao } from '../../contexto/Sessao'
-import { CURIOSIDADES, HOSPEDAGENS, PONTOS_TURISTICOS, SABORES, TIPOS_HOSPEDAGEM_TURISTA } from '../../dados/turismo'
+import { CURIOSIDADES, PONTOS_TURISTICOS, SABORES, TIPOS_HOSPEDAGEM_TURISTA } from '../../dados/turismo'
+import { hospedagensVisiveis, todosOsLugares } from '../../dados/explorar'
+import { useFavoritos } from '../../util/favoritos'
 import { useTitulo } from '../../util/ganchos'
 import '../publico.css'
 import './turista.css'
 
 const SECOES = [
+  { id: 'favoritos', rotulo: 'Favoritos' },
   { id: 'curiosidades', rotulo: 'Curiosidades' },
   { id: 'onde-ficar', rotulo: 'Onde ficar' },
   { id: 'sabores', rotulo: 'Sabores' },
@@ -21,7 +25,10 @@ export default function Explorar() {
   useTitulo('Explorar a cidade')
   const { sessao } = useSessao()
   const [tipo, setTipo] = useState('Todos')
-  const hospedagens = tipo === 'Todos' ? HOSPEDAGENS : HOSPEDAGENS.filter((h) => h.tipo === tipo)
+  const { ids, alternar } = useFavoritos()
+  const todas = hospedagensVisiveis()
+  const hospedagens = tipo === 'Todos' ? todas : todas.filter((h) => h.tipo === tipo)
+  const favoritos = todosOsLugares().filter((l) => ids.includes(l.id))
   const primeiroNome = sessao.nome.split(' ')[0]
 
   return (
@@ -30,13 +37,13 @@ export default function Explorar() {
         <div className="explorar-hero__texto">
           <Sobretitulo>Área do turista</Sobretitulo>
           <h1 className="display-l" style={{ marginTop: 16 }}>
-            Olá, {primeiroNome}! Boas-vindas a <span className="ot-marca ot-marca--bloco">Santa Rita</span>
+            Olá, {primeiroNome}! <span style={{ whiteSpace: 'nowrap' }}>Boas-vindas</span> a <span className="ot-marca ot-marca--bloco">Santa Rita</span>
           </h1>
           <p className="corpo-l explorar-hero__abertura">
             Curiosidades, onde ficar, o que comer e o que visitar na Cidade Criativa do Sul de Minas.
           </p>
           <nav className="explorar-hero__atalhos" aria-label="Nesta página">
-            {SECOES.map((s) => (
+            {SECOES.filter((s) => s.id !== 'favoritos' || favoritos.length > 0).map((s) => (
               <a key={s.id} href={`#${s.id}`} className="ot-chip" onClick={(e) => { e.preventDefault(); document.getElementById(s.id)?.scrollIntoView() }}>
                 {s.rotulo}
               </a>
@@ -47,6 +54,25 @@ export default function Explorar() {
       </section>
 
       <div className="container">
+        {favoritos.length > 0 && (
+          <section className="secao" id="favoritos">
+            <div className="secao__cab">
+              <div>
+                <Sobretitulo>Salvos por você</Sobretitulo>
+                <h2 className="titulo-1">Meus favoritos</h2>
+              </div>
+            </div>
+            <ul className="favoritos-lista">
+              {favoritos.map((f) => (
+                <li key={f.id}>
+                  <span><strong>{f.nome}</strong><span className="corpo-s suave">{f.local}</span></span>
+                  <button type="button" className="ot-btn ot-btn--fantasma ot-btn--p" onClick={() => alternar(f.id)} aria-label={`Tirar ${f.nome} dos favoritos`}>Remover</button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <section className="secao" id="curiosidades">
           <div className="secao__cab">
             <div>
@@ -87,6 +113,7 @@ export default function Explorar() {
           <ul className="cartoes-foto">
             {hospedagens.map((h) => (
               <li key={h.id} className="cartao-foto">
+                <BotaoFavorito ativo={ids.includes(`hosp-${h.id}`)} nome={h.nome} aoAlternar={() => alternar(`hosp-${h.id}`)} />
                 <Foto chave={h.foto} alt={`Foto ilustrativa de ${h.tipo.toLowerCase()}`} />
                 <div className="cartao-foto__corpo">
                   <div className="cartao-foto__tags">
@@ -94,6 +121,7 @@ export default function Explorar() {
                     {h.cadastur && <span className="ot-selo ot-selo--publicado"><Icone nome="escudo" /> Cadastur</span>}
                   </div>
                   <h3 className="titulo-3">{h.nome}</h3>
+                  {h.descricao && <p className="corpo-s suave">{h.descricao}</p>}
                   <p className="cartao-foto__meta">
                     <span><Icone nome="pin" tamanho="s" /> {h.bairro}</span>
                     <span title={PRECO[h.preco]}><strong>{h.preco}</strong> · {PRECO[h.preco]}</span>
@@ -139,8 +167,9 @@ export default function Explorar() {
             </div>
           </div>
           <ul className="pontos">
-            {PONTOS_TURISTICOS.map((p) => (
+            {PONTOS_TURISTICOS.map((p, i) => (
               <li key={p.nome} className="ponto">
+                <BotaoFavorito ativo={ids.includes(`ponto-${i}`)} nome={p.nome} aoAlternar={() => alternar(`ponto-${i}`)} />
                 <Foto chave={p.foto} alt={p.nome} proporcao="auto" />
                 <div className="ponto__corpo">
                   <span className="ot-sobretitulo ot-sobretitulo--azul">{p.categoria}</span>

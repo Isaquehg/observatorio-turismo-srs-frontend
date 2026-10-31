@@ -229,3 +229,24 @@
   .mais-dados__lista { grid-template-columns: 1fr; }
   .mais-dados .ot-btn { white-space: normal; text-align: center; }
 }
+
+/* ---------- Explore o turismo ---------- */
+.explorar__filtros { display: flex; flex-direction: column; gap: var(--esp-3); margin: var(--esp-6) 0 var(--esp-5); }
+.explorar__abas { display: flex; flex-wrap: wrap; gap: var(--esp-2); }
+.explorar__abas .ot-btn[aria-pressed="true"] { background: var(--tinta); color: var(--sobre-escuro); }
+.explorar__lista { list-style: none; padding: 0; }
+.explorar__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--esp-2); }
+.explorar__foto { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; flex: none; border-radius: var(--raio-m); margin-bottom: var(--esp-2); }
+.explorar__foto--vazia { display: grid; place-items: center; color: var(--tinta); }
+.explorar__local { display: flex; align-items: center; gap: 6px; margin-top: auto; font-weight: 700; }
+@media (max-width: 860px) { .explorar__lista { grid-template-columns: 1fr; } }
+
+/* ---------- Home: 5 destaques, propósito ---------- */
+.grade-5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; }
+.proposito { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--esp-7); align-items: center; }
+.proposito__texto { display: flex; flex-direction: column; gap: var(--esp-3); }
+.proposito__foto { border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); }
+@media (max-width: 860px) { .proposito { grid-template-columns: 1fr; gap: var(--esp-5); } }
+@media (max-width: 1280px) { .grade-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .grade-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .grade-5 { grid-template-columns: 1fr; } }

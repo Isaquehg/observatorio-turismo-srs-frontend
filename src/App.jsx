@@ -6,8 +6,9 @@ import Inicio from './paginas/Inicio'
 import Indicadores from './paginas/Indicadores'
 import IndicadoresPublicos from './paginas/IndicadoresPublicos'
 import Relatorios from './paginas/Relatorios'
-import Explorar from './paginas/turista/Explorar'
+import ExplorarTurista from './paginas/turista/Explorar'
 import Sobre from './paginas/Sobre'
+import Explorar from './paginas/Explorar'
 import Entrar from './paginas/Entrar'
 import NaoEncontrada from './paginas/NaoEncontrada'
 import { AreaComerciante, AreaPrefeitura } from './paginas/Areas'
@@ -85,6 +86,7 @@ export default function App() {
         <Route element={<LayoutPublico />}>
           <Route index element={<Inicio />} />
           <Route path="indicadores-publicos" element={<IndicadoresPublicos />} />
+          <Route path="explorar" element={<Explorar />} />
           <Route path="sobre" element={<Sobre />} />
           <Route path="status-api" element={<StatusApi />} />
           {/* Pedem login de qualquer perfil */}
@@ -93,7 +95,7 @@ export default function App() {
             <Route path="relatorios" element={<Relatorios />} />
           </Route>
           <Route element={<RotaRestrita perfil="turista" />}>
-            <Route path="turista" element={<Explorar />} />
+            <Route path="turista" element={<ExplorarTurista />} />
           </Route>
           {/* O guia do Cadastur agora fica na área do comerciante */}
           <Route path="cadastur" element={<Navigate to="/comerciante/guia" replace />} />

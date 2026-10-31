@@ -203,3 +203,4 @@
 .gerar__resumo div { display: flex; justify-content: space-between; gap: var(--esp-3); padding: 10px 0; border-bottom: 1px solid var(--linha); font-size: 1rem; }
 .gerar__resumo dt { color: var(--tinta-suave); }
 .gerar__resumo dd { font-weight: 700; }
+.form-grade__largo { grid-column: 1 / -1; }

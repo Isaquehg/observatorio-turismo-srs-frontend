@@ -4,6 +4,7 @@ import { Selo } from '../../componentes/Basicos'
 import { BarrasHorizontais, BarrasVerticais, Rosca } from '../../componentes/Graficos'
 import { useEnvios } from '../../contexto/Envios'
 import { naoEnviaram } from '../../dados/painel'
+import { resumoDoAno } from '../../dados/indicadores'
 import { baixarCsv, mesAno, normalizar, numero } from '../../util/formatar'
 import { useTitulo } from '../../util/ganchos'
 import { TopoPainel } from '../comerciante/InicioComerciante'
@@ -30,11 +31,14 @@ function tipoPeloNome(nome) {
   return TIPOS.some((t) => t.id === p) ? p : 'Pousada'
 }
 
+const LIMITE = 10
+
 export default function Estabelecimentos() {
   useTitulo('Estabelecimentos')
   const { envios } = useEnvios()
   const [termo, setTermo] = useState('')
   const [filtro, setFiltro] = useState('todos')
+  const [todos, setTodos] = useState(false)
 
   // Um registro por estabelecimento, com o envio mais recente
   const lista = useMemo(() => {
@@ -59,7 +63,8 @@ export default function Estabelecimentos() {
   const ranking = [...validos].sort((a, b) => b.ocupacao - a.ocupacao).slice(0, 8)
     .map((e) => ({ nome: e.nome, valor: e.ocupacao, hex: TIPOS.find((t) => t.id === e.tipo)?.hex || '#6C5CE0' }))
 
-  const visiveis = lista.filter((e) => (filtro === 'todos' || e.situacao === filtro) && (!termo || normalizar(e.nome).includes(normalizar(termo))))
+  const filtrados = lista.filter((e) => (filtro === 'todos' || e.situacao === filtro) && (!termo || normalizar(e.nome).includes(normalizar(termo))))
+  const visiveis = todos ? filtrados : filtrados.slice(0, LIMITE)
 
   const exportar = () =>
     baixarCsv('estabelecimentos-observatorio.csv', [
@@ -79,7 +84,7 @@ export default function Estabelecimentos() {
         <div className="ot-mini">
           <span className="corpo-s" style={{ fontWeight: 700 }}>Cadastrados</span>
           <span className="ot-mini__v ot-num">{lista.length}</span>
-          <span className="corpo-s suave">meios de hospedagem</span>
+          <span className="corpo-s suave">de {resumoDoAno(2025).hospedagens} meios de hospedagem (amostra do protótipo)</span>
         </div>
         <div className="ot-mini">
           <span className="corpo-s" style={{ fontWeight: 700 }}>Taxa de resposta</span>
@@ -152,7 +157,7 @@ export default function Estabelecimentos() {
                 <tr key={e.nome}>
                   <td><strong>{e.nome}</strong><span className="ot-tabela__sub">{e.tipo}</span></td>
                   <td data-rotulo="Último envio">{e.mes ? mesAno(e.ano, e.mes) : '—'}</td>
-                  <td className="ot-num" data-rotulo="Ocupação">{e.ocupacao == null ? '—' : `${e.ocupacao}%`}</td>
+                  <td className="ot-num" data-rotulo="Ocupação">{e.ocupacao == null ? '—' : e.ocupacao > 100 ? <span title="Ocupação acima de 100%: o envio precisa de correção" style={{ color: 'var(--erro)', fontWeight: 700 }}><Icone nome="alerta" tamanho="s" /> {e.ocupacao}%</span> : `${e.ocupacao}%`}</td>
                   <td className="ot-num" data-rotulo="Leitos">{e.leitos ?? '—'}</td>
                   <td data-rotulo="Situação">
                     {e.situacao === 'pendente' ? <Selo icone="relogio">Não enviou</Selo> : <Selo situacao={e.situacao} />}
@@ -162,6 +167,13 @@ export default function Estabelecimentos() {
             </tbody>
           </table>
           {visiveis.length === 0 && <p className="corpo suave" style={{ padding: '24px 0' }}>Nenhum estabelecimento encontrado.</p>}
+          {filtrados.length > LIMITE && (
+            <div style={{ padding: '16px 0', textAlign: 'center' }}>
+              <button type="button" className="ot-btn ot-btn--secundario" onClick={() => setTodos((v) => !v)}>
+                {todos ? 'Mostrar menos' : `Mostrar todos (${filtrados.length})`}
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </div>

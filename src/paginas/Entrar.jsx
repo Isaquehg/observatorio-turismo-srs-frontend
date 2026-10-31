@@ -8,6 +8,13 @@ import { useAvisos } from '../contexto/Avisos'
 import { useTitulo } from '../util/ganchos'
 import './entrar.css'
 
+// Textos de ajuda do modo "Criar conta"
+const DICA_CADASTRO = {
+  turista: 'Use um e-mail que você consulta com frequência. Ele será o seu acesso.',
+  comerciante: 'Informe o CNPJ do estabelecimento e o nome de quem responde por ele.',
+  prefeitura: 'O acesso é liberado pela SMCELT depois de conferir o e-mail institucional.',
+}
+
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function mascaraCnpj(valor) {
@@ -19,8 +26,12 @@ function mascaraCnpj(valor) {
     .replace(/(\d{4})(\d)/, '$1-$2')
 }
 
-function validar(perfil, usuario, senha) {
+function validar(perfil, usuario, senha, cadastro) {
   const erros = {}
+  if (cadastro) {
+    if (cadastro.nome.trim().length < 3) erros.nome = 'Digite seu nome completo.'
+    if (senha && senha !== cadastro.confirmar) erros.confirmar = 'As senhas não são iguais.'
+  }
   const u = usuario.trim()
   if (!u) {
     erros.usuario = PERFIS[perfil].vazio
@@ -51,20 +62,24 @@ export default function Entrar() {
   const [senha, setSenha] = useState('')
   const [verSenha, setVerSenha] = useState(false)
   const [manter, setManter] = useState(true)
+  const [criar, setCriar] = useState(params.get('modo') === 'criar')
+  const [nome, setNome] = useState('')
+  const [confirmar, setConfirmar] = useState('')
   const [erros, setErros] = useState({})
   const [enviando, setEnviando] = useState(false)
   const usuarioRef = useRef(null)
   const senhaRef = useRef(null)
+  const nomeRef = useRef(null)
   const p = PERFIS[perfil]
 
   useEffect(() => {
     setErros({})
-  }, [perfil])
+  }, [perfil, criar])
 
   const escolher = (id) => {
     setPerfil(id)
     setUsuario('')
-    setParams({ perfil: id }, { replace: true, state: local.state })
+    setParams(criar ? { perfil: id, modo: 'criar' } : { perfil: id }, { replace: true, state: local.state })
   }
 
   // Setas do teclado entre os perfis, como num grupo de rádio
@@ -79,17 +94,36 @@ export default function Entrar() {
     e.currentTarget.querySelector(`[data-perfil="${proximo}"]`)?.focus()
   }
 
+  const alternarModo = () => {
+    const proximo = !criar
+    setCriar(proximo)
+    setSenha('')
+    setConfirmar('')
+    setParams(proximo ? { perfil, modo: 'criar' } : { perfil }, { replace: true, state: local.state })
+  }
+
   const enviar = (e) => {
     e.preventDefault()
-    const encontrados = validar(perfil, usuario, senha)
+    const encontrados = validar(perfil, usuario, senha, criar && { nome, confirmar })
     setErros(encontrados)
+    if (encontrados.nome) return nomeRef.current?.focus()
     if (encontrados.usuario) return usuarioRef.current?.focus()
     if (encontrados.senha) return senhaRef.current?.focus()
+    if (encontrados.confirmar) return document.getElementById('confirmar')?.focus()
 
     setEnviando(true)
     setTimeout(() => {
-      const sessao = entrar(perfil, usuario.trim(), manter)
-      avisar(`Olá, ${sessao.nome.split(' ')[0]}!`, { texto: perfil === 'turista' ? 'Separamos dicas de onde ficar, comer e passear.' : 'Você entrou na sua área.' })
+      setEnviando(false)
+      // Prefeitura: o acesso é liberado pela SMCELT, então o cadastro vira um pedido
+      if (criar && perfil === 'prefeitura') {
+        avisar('Pedido enviado', { texto: 'A SMCELT confere o seu e-mail institucional e libera o acesso. Você recebe a resposta por e-mail.', duracao: 8000 })
+        alternarModo()
+        return
+      }
+      const sessao = entrar(perfil, usuario.trim(), manter, criar ? nome.trim() : undefined)
+      avisar(criar ? `Conta criada, ${sessao.nome.split(' ')[0]}!` : `Olá, ${sessao.nome.split(' ')[0]}!`, {
+        texto: perfil === 'turista' ? 'Separamos dicas de onde ficar, comer e passear.' : 'Você entrou na sua área.',
+      })
       navegar(local.state?.voltarPara || p.inicio, { replace: true })
     }, 650)
   }
@@ -118,7 +152,7 @@ export default function Entrar() {
           <Icone nome="seta-esq" tamanho="s" /> Voltar para o site
         </Link>
         <div>
-          <h2 className="titulo-1">Como você quer entrar?</h2>
+          <h2 className="titulo-1">{criar ? 'Criar sua conta' : 'Como você quer entrar?'}</h2>
           <p className="corpo suave" style={{ marginTop: 8 }}>Escolha seu perfil. Cada um vê o que precisa.</p>
         </div>
 
@@ -155,10 +189,18 @@ export default function Entrar() {
           <div className="ot-aviso" style={{ background: p.cor }}>
             <Icone nome={p.icone} />
             <div>
-              <strong>Entrando como {p.titulo.toLowerCase()}</strong>
-              {p.dica}
+              <strong>{criar ? 'Cadastro' : 'Entrando'} como {p.titulo.toLowerCase()}</strong>
+              {criar ? DICA_CADASTRO[perfil] : p.dica}
             </div>
           </div>
+
+          {criar && (
+            <div className="ot-campo">
+              <label className="ot-rotulo" htmlFor="nome">{perfil === 'comerciante' ? 'Nome do responsável' : 'Nome completo'}</label>
+              <input ref={nomeRef} className="ot-entrada" id="nome" name="nome" value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" aria-invalid={!!erros.nome} aria-describedby={erros.nome ? 'nome-erro' : undefined} />
+              {erros.nome && <span className="ot-ajuda ot-ajuda--erro" id="nome-erro"><Icone nome="alerta" tamanho="s" /> {erros.nome}</span>}
+            </div>
+          )}
 
           <div className="ot-campo">
             <label className="ot-rotulo" htmlFor="usuario">{p.campo}</label>
@@ -186,9 +228,9 @@ export default function Entrar() {
           <div className="ot-campo">
             <div className="entrar__senha-cab">
               <label className="ot-rotulo" htmlFor="senha">Senha</label>
-              <button type="button" className="link-botao" onClick={() => avisar('Enviamos as instruções', { texto: 'Se o cadastro existir, um link para criar nova senha chega no seu e-mail em alguns minutos.', tipo: 'info', duracao: 7000 })}>
+              {!criar && <button type="button" className="link-botao" onClick={() => avisar('Enviamos as instruções', { texto: 'Se o cadastro existir, um link para criar nova senha chega no seu e-mail em alguns minutos.', tipo: 'info', duracao: 7000 })}>
                 Esqueci minha senha
-              </button>
+              </button>}
             </div>
             <div className="ot-entrada-icone">
               <Icone nome="cadeado" />
@@ -200,7 +242,7 @@ export default function Entrar() {
                 type={verSenha ? 'text' : 'password'}
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                autoComplete="current-password"
+                autoComplete={criar ? 'new-password' : 'current-password'}
                 aria-invalid={!!erros.senha}
                 aria-describedby={erros.senha ? 'senha-erro' : 'senha-ajuda'}
                 style={{ paddingRight: 92 }}
@@ -216,6 +258,14 @@ export default function Entrar() {
             )}
           </div>
 
+          {criar && (
+            <div className="ot-campo">
+              <label className="ot-rotulo" htmlFor="confirmar">Confirmar senha</label>
+              <input className="ot-entrada" id="confirmar" name="confirmar" type={verSenha ? 'text' : 'password'} value={confirmar} onChange={(e) => setConfirmar(e.target.value)} autoComplete="new-password" aria-invalid={!!erros.confirmar} aria-describedby={erros.confirmar ? 'confirmar-erro' : undefined} />
+              {erros.confirmar && <span className="ot-ajuda ot-ajuda--erro" id="confirmar-erro"><Icone nome="alerta" tamanho="s" /> {erros.confirmar}</span>}
+            </div>
+          )}
+
           <label className="ot-check">
             <input type="checkbox" checked={manter} onChange={(e) => setManter(e.target.checked)} /> Manter conectado neste aparelho
           </label>
@@ -223,20 +273,21 @@ export default function Entrar() {
           <button className="ot-btn ot-btn--primario ot-btn--g ot-btn--largo" type="submit" disabled={enviando} aria-busy={enviando}>
             {enviando ? (
               <>
-                <span className="girando" aria-hidden="true" /> Entrando…
+                <span className="girando" aria-hidden="true" /> {criar ? 'Criando…' : 'Entrando…'}
               </>
             ) : (
               <>
-                Entrar <Icone nome="seta" />
+                {criar ? (perfil === 'prefeitura' ? 'Pedir acesso' : 'Criar conta') : 'Entrar'} <Icone nome="seta" />
               </>
             )}
           </button>
 
-          {perfil === 'comerciante' && (
-            <p style={{ textAlign: 'center', fontSize: '1.0625rem' }}>
-              Primeiro acesso do seu negócio? <Link to="/sobre#contato" style={{ fontWeight: 700 }}>Peça seu cadastro</Link>
-            </p>
-          )}
+          <p style={{ textAlign: 'center', fontSize: '1.0625rem' }}>
+            {criar ? 'Já tem conta?' : 'Primeiro acesso?'}{' '}
+            <button type="button" className="link-botao" style={{ fontWeight: 700 }} onClick={alternarModo}>
+              {criar ? 'Entrar' : 'Criar conta'}
+            </button>
+          </p>
         </form>
 
         {Object.keys(erros).length > 0 && (

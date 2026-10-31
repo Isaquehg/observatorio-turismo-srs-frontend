@@ -60,3 +60,17 @@
 .ponto__corpo { display: flex; flex-direction: column; gap: var(--esp-2); padding: var(--esp-5); }
 @media (max-width: 1080px) { .pontos { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .ponto { grid-template-columns: 1fr; } .ponto .ot-foto { aspect-ratio: 3 / 2 !important; min-height: 0; } }
+
+/* Favoritos */
+.cartao-foto, .ponto, .explorar__card { position: relative; }
+.favorito {
+  position: absolute; top: 12px; right: 12px; z-index: 1;
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255, 255, 255, .92); color: var(--tinta); box-shadow: var(--sombra-cartao); cursor: pointer;
+}
+.favorito[aria-pressed="true"] { background: var(--amarelo); }
+.favorito[aria-pressed="true"] svg { fill: currentColor; }
+.favoritos-lista { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.favoritos-lista li { display: flex; align-items: center; justify-content: space-between; gap: var(--esp-3); padding: 14px 16px; background: var(--superficie); border-radius: var(--raio-m); box-shadow: var(--sombra-cartao); }
+.favoritos-lista .corpo-s { display: block; }
+@media (max-width: 960px) { .favoritos-lista { grid-template-columns: 1fr; } }
