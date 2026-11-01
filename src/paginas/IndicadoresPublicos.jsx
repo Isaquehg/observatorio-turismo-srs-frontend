@@ -11,6 +11,9 @@ import './publico.css'
 
 const ANO = ANOS[ANOS.length - 1]
 const ANTERIOR = ANO - 1
+// Gráficos e destaques usam o último ano fechado (o ano corrente ainda está em andamento)
+const ANO_GRAFICO = ANO - 1
+const ANTERIOR_GRAFICO = ANO_GRAFICO - 1
 
 const COM_LOGIN = [
   { icone: 'filtro', texto: 'Indicadores completos, com filtros por ano e por setor' },
@@ -24,6 +27,8 @@ export default function IndicadoresPublicos() {
   const { sessao } = useSessao()
   const d = dadosPorAno[ANO]
   const ant = dadosPorAno[ANTERIOR]
+  const g = dadosPorAno[ANO_GRAFICO]
+  const gAnt = dadosPorAno[ANTERIOR_GRAFICO]
   const atual = resumoDoAno(ANO)
   const anterior = resumoDoAno(ANTERIOR)
 
@@ -35,11 +40,11 @@ export default function IndicadoresPublicos() {
     { rotulo: 'Empregos no setor', valor: numero(atual.empregos), icone: 'pessoas', cor: 'var(--lilas)', variacao: variacao(atual.empregos, anterior.empregos), serie: serie('empregos', ANO) },
   ]
 
-  const pico = d.ocupacaoMensal.indexOf(Math.max(...d.ocupacaoMensal))
-  const origemPrincipal = d.origem.indexOf(Math.max(...d.origem))
+  const pico = g.ocupacaoMensal.indexOf(Math.max(...g.ocupacaoMensal))
+  const origemPrincipal = g.origem.indexOf(Math.max(...g.origem))
   const fatos = [
-    { valor: `${d.ocupacaoMensal[pico]}%`, texto: `foi a ocupação em ${MESES_LONGOS[pico]}, o mês mais movimentado de ${ANO}.` },
-    { valor: `${d.origem[origemPrincipal]}%`, texto: `dos visitantes vieram da principal região de origem: ${ORIGENS[origemPrincipal].nome}.` },
+    { valor: `${g.ocupacaoMensal[pico]}%`, texto: `foi a ocupação em ${MESES_LONGOS[pico]}, o mês mais movimentado de ${ANO_GRAFICO}.` },
+    { valor: `${g.origem[origemPrincipal]}%`, texto: `dos visitantes vieram da principal região de origem: ${ORIGENS[origemPrincipal].nome}.` },
     { valor: numero(atual.leitos), texto: `leitos disponíveis em ${atual.hospedagens} hotéis, pousadas, hostels e chalés.` },
   ]
 
@@ -71,20 +76,20 @@ export default function IndicadoresPublicos() {
           <div className="ot-cartao__cab">
             <div>
               <h2 className="titulo-3">Ocupação dos hotéis e pousadas</h2>
-              <p className="corpo-s suave">Média de cada mês, em {ANO} e {ANTERIOR}</p>
+              <p className="corpo-s suave">Média de cada mês, em {ANO_GRAFICO} e {ANTERIOR_GRAFICO}</p>
             </div>
           </div>
           <div className="ot-legenda-grafico">
-            <span><i style={{ background: 'var(--roxo)' }} />{ANO}</span>
-            <span><i style={{ background: 'var(--lilas)', height: 4 }} />{ANTERIOR}</span>
+            <span><i style={{ background: 'var(--roxo)' }} />{ANO_GRAFICO}</span>
+            <span><i style={{ background: 'var(--lilas)', height: 4 }} />{ANTERIOR_GRAFICO}</span>
           </div>
           <div className="grafico__corpo">
             <GraficoLinha
-              descricao={`Taxa de ocupação hoteleira mês a mês em ${ANO}, comparada a ${ANTERIOR}`}
+              descricao={`Taxa de ocupação hoteleira mês a mês em ${ANO_GRAFICO}, comparada a ${ANTERIOR_GRAFICO}`}
               rotulos={MESES_CURTOS}
               series={[
-                { nome: String(ANO), valores: d.ocupacaoMensal, cor: '#6C5CE0', area: '#B986ED' },
-                { nome: String(ANTERIOR), valores: ant.ocupacaoMensal, cor: '#B986ED' },
+                { nome: String(ANO_GRAFICO), valores: g.ocupacaoMensal, cor: '#6C5CE0', area: '#B986ED' },
+                { nome: String(ANTERIOR_GRAFICO), valores: gAnt.ocupacaoMensal, cor: '#B986ED' },
               ]}
             />
           </div>
@@ -95,15 +100,15 @@ export default function IndicadoresPublicos() {
           <div className="ot-cartao__cab">
             <div>
               <h2 className="titulo-3">De onde vêm os visitantes</h2>
-              <p className="corpo-s suave">Pesquisa de perfil do turista, {ANO}</p>
+              <p className="corpo-s suave">Pesquisa de perfil do turista, {ANO_GRAFICO}</p>
             </div>
           </div>
           <div className="grafico__corpo" style={{ display: 'flex', alignItems: 'center' }}>
             <Rosca
-              descricao={`Origem dos visitantes em ${ANO}`}
-              centro={`${Math.round(d.visitantes / 1000)} mil`}
+              descricao={`Origem dos visitantes em ${ANO_GRAFICO}`}
+              centro={`${Math.round(g.visitantes / 1000)} mil`}
               subcentro="visitantes"
-              fatias={ORIGENS.map((o, i) => ({ ...o, valor: d.origem[i] }))}
+              fatias={ORIGENS.map((o, i) => ({ ...o, valor: g.origem[i] }))}
             />
           </div>
           <p className="ot-fonte">Fonte: OT-SRS · valores ilustrativos</p>

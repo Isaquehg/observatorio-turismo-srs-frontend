@@ -86,7 +86,8 @@ export default function App() {
         <Route element={<LayoutPublico />}>
           <Route index element={<Inicio />} />
           <Route path="indicadores-publicos" element={<IndicadoresPublicos />} />
-          <Route path="explorar" element={<Explorar />} />
+          <Route path="conheca-a-cidade" element={<Explorar />} />
+          <Route path="explorar" element={<Navigate to="/conheca-a-cidade" replace />} />
           <Route path="sobre" element={<Sobre />} />
           <Route path="status-api" element={<StatusApi />} />
           {/* Pedem login de qualquer perfil */}

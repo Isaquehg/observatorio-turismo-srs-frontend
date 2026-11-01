@@ -1,6 +1,9 @@
 // Valores ilustrativos para o protótipo. Fonte prevista: OT-SRS / SMCELT.
 
-export const ANOS = [2023, 2024, 2025]
+export const ANOS = [2023, 2024, 2025, 2026]
+// Ano corrente e o anterior, usados nos cartões de destaque
+export const ANO_ATUAL = ANOS[ANOS.length - 1]
+export const ANO_ANTERIOR = ANO_ATUAL - 1
 export const ATUALIZADO_EM = '2026-09-12'
 
 export const SETORES = [
@@ -49,7 +52,20 @@ export const dadosPorAno = {
     empresas: { hospedagem: 42, alimentacao: 128, eventos: 26, agencias: 22, transporte: 31, comercio: 69 },
     categorias: [
       [14, 612, 61, 'publicado'], [17, 388, 56, 'publicado'], [3, 124, 49, 'publicado'],
-      [5, 96, 52, 'analise'], [3, 64, null, 'analise'],
+      [5, 96, 52, 'publicado'], [3, 64, null, 'publicado'],
+    ],
+  },
+  2026: {
+    hospedagens: 44,
+    ocupacaoMensal: [48, 50, 54, 52, 51, 57, 64, 80, 66, 60, 57, 69],
+    visitantes: 92000,
+    origem: [37, 28, 16, 9, 10],
+    leitosPorTipo: [628, 402, 130, 104, 70],
+    empregos: { hospedagem: 545, alimentacao: 716, eventos: 198, agencias: 99, transporte: 214, comercio: 272 },
+    empresas: { hospedagem: 44, alimentacao: 133, eventos: 28, agencias: 23, transporte: 32, comercio: 71 },
+    categorias: [
+      [15, 628, 63, 'publicado'], [18, 402, 58, 'publicado'], [3, 130, 51, 'publicado'],
+      [5, 104, 54, 'analise'], [3, 70, null, 'analise'],
     ],
   },
 }

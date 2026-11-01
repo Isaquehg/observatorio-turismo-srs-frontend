@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import Icone from '../../componentes/Icone'
 import { Aviso, Campo } from '../../componentes/Basicos'
 import { useAvisos } from '../../contexto/Avisos'
@@ -10,7 +9,7 @@ import { useTitulo } from '../../util/ganchos'
 import { TopoPainel } from './InicioComerciante'
 import '../painel.css'
 
-// Como o negócio aparece para turistas em /explorar e /turista
+// Como o negócio aparece para turistas na área do turista (/turista)
 const VITRINE = {
   area: 'Centro',
   descricao: 'Pousada tranquila no Centro, com café da manhã mineiro e jardim.',
@@ -88,7 +87,7 @@ export default function Estabelecimento() {
 
           <h2 className="titulo-3" style={{ marginTop: 36 }}>Como os turistas veem você</h2>
           <p className="corpo-s suave" style={{ marginTop: 4 }}>
-            Aparece em <Link to="/explorar">Explorar</Link> e na área do turista. A foto é cadastrada pela SMCELT.
+            Aparece na área do turista, em “Onde ficar”. A foto é cadastrada pela SMCELT.
           </p>
           <label className="ot-check" style={{ marginTop: 16 }}>
             <input type="checkbox" checked={dados.publicar} onChange={(e) => setDados((d) => ({ ...d, publicar: e.target.checked }))} /> Mostrar meu estabelecimento para turistas

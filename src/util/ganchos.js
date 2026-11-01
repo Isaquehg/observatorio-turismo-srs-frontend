@@ -54,3 +54,28 @@ export function comportamentoRolagem() {
     || window.matchMedia('(prefers-reduced-motion: reduce)').matches
   return reduzido ? 'auto' : 'smooth'
 }
+
+// Marca com data-visivel="true" os elementos .revelar de dentro de `ref` quando entram na tela.
+// A animação em si é CSS; com "reduzir animações" ela vira instantânea.
+export function useRevelar(ref) {
+  useEffect(() => {
+    const raiz = ref.current
+    if (!raiz) return
+    const alvos = raiz.querySelectorAll('.revelar')
+    if (typeof IntersectionObserver === 'undefined') {
+      alvos.forEach((el) => { el.dataset.visivel = 'true' })
+      return
+    }
+    const observador = new IntersectionObserver(
+      (entradas) => entradas.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.dataset.visivel = 'true'
+          observador.unobserve(e.target)
+        }
+      }),
+      { rootMargin: '0px 0px -5% 0px', threshold: 0.01 },
+    )
+    alvos.forEach((el) => observador.observe(el))
+    return () => observador.disconnect()
+  }, [ref])
+}

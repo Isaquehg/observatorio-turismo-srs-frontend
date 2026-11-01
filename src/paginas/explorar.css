@@ -1,0 +1,208 @@
+/* ================= Conheça a cidade ================= */
+/* Visual limpo: fundo papel, cartões brancos, linhas finas. Cor da marca só em detalhes. */
+
+/* Revelar ao rolar. Sem data-visivel, o bloco espera fora de vista; com "reduzir animações",
+   a transição vira instantânea pelas regras globais de base.css. */
+.revelar { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.2, .7, .2, 1), transform .7s cubic-bezier(.2, .7, .2, 1); transition-delay: var(--atraso, 0ms); }
+.revelar[data-visivel="true"] { opacity: 1; transform: none; }
+
+/* Espaço reservado das fotos que ainda vão chegar */
+.ot-foto--reservada {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--esp-2);
+  background: var(--superficie-2); color: var(--roxo); font-weight: 700; font-size: .9375rem;
+  border: 1px dashed var(--linha-controle);
+}
+.ot-foto--reservada span { color: var(--tinta-suave); }
+
+/* Cabeçalho das seções */
+.cidade-cab { display: flex; flex-direction: column; gap: var(--esp-3); max-width: 62ch; margin-bottom: var(--esp-6); }
+
+/* ----- Abertura ----- */
+.cidade-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--esp-6); align-items: center; padding-top: var(--esp-6); }
+.cidade-hero__texto > * { animation: surgir .8s cubic-bezier(.2, .7, .2, 1) both; }
+.cidade-hero__texto > :nth-child(2) { animation-delay: .1s; }
+.cidade-hero__texto > :nth-child(3) { animation-delay: .2s; }
+.cidade-hero__texto > :nth-child(4) { animation-delay: .3s; }
+.cidade-hero__titulo { margin-top: var(--esp-4); }
+.cidade-hero__abertura { margin-top: var(--esp-4); max-width: 44ch; }
+.cidade-hero__indice { display: flex; flex-wrap: wrap; gap: var(--esp-1) var(--esp-5); margin-top: var(--esp-6); padding-top: var(--esp-4); border-top: 1px solid var(--linha); }
+.cidade-hero__indice a {
+  display: inline-flex; align-items: center; min-height: 40px;
+  color: var(--tinta); font-weight: 700; font-size: 1rem; text-decoration: none;
+  background: linear-gradient(var(--magenta), var(--magenta)) left bottom / 0 2px no-repeat;
+  transition: background-size .25s ease, color .2s ease;
+}
+.cidade-hero__indice a:hover { color: var(--magenta-texto); background-size: 100% 2px; }
+.cidade-hero__arte { display: flex; justify-content: center; }
+.cidade-hero__arte img { width: min(100%, 480px); height: auto; animation: surgir 1s .25s cubic-bezier(.2, .7, .2, 1) both; }
+@media (max-width: 900px) {
+  .cidade-hero { grid-template-columns: 1fr; gap: var(--esp-4); padding-top: var(--esp-5); }
+  .cidade-hero__arte img { width: min(80%, 380px); }
+}
+
+/* ----- Números ----- */
+/* Espaçamento no hero e nos itens: a regra global ul[class] zera margem e padding da lista */
+.cidade-hero { padding-bottom: var(--esp-7); }
+.numeros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--linha); list-style: none; }
+.numeros li { display: flex; flex-direction: column; gap: 4px; padding: var(--esp-5); }
+.numeros li + li { border-left: 1px solid var(--linha); }
+.numeros__valor { font: 700 clamp(2rem, 1.6rem + 1.4vw, 2.75rem)/1.1 var(--font-display); letter-spacing: -.02em; color: var(--azul-institucional); }
+@media (max-width: 860px) {
+  .numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--esp-5); }
+  .numeros li:nth-child(3) { border-left: 0; }
+}
+@media (max-width: 480px) { .numeros li { padding: 0 var(--esp-3); } }
+
+/* ----- Linha do tempo: [marco 120px][ponto 32px][cartão] ----- */
+.linha-tempo { position: relative; display: flex; flex-direction: column; gap: var(--esp-5); list-style: none; margin: 0; padding: 0; }
+.linha-tempo::before { content: ""; position: absolute; left: 135px; top: 12px; bottom: 12px; width: 1px; background: var(--linha-controle); opacity: .5; }
+.linha-tempo__item { position: relative; display: grid; grid-template-columns: 120px 32px minmax(0, 1fr); align-items: start; }
+.linha-tempo__item::before {
+  content: ""; position: absolute; left: 129px; top: 22px; width: 13px; height: 13px; border-radius: 50%;
+  background: var(--papel); border: 2px solid var(--roxo);
+  transform: scale(0); transition: transform .5s cubic-bezier(.3, 1.4, .5, 1) .2s;
+}
+.linha-tempo__item[data-visivel="true"]::before { transform: none; }
+.linha-tempo__marco { grid-column: 1; padding-top: 18px; font: 700 1.125rem/1.2 var(--font-display); color: var(--azul-institucional); }
+.linha-tempo__cartao { grid-column: 3; display: flex; flex-direction: column; gap: var(--esp-3); padding: var(--esp-5); background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); }
+.linha-tempo__foto { border-radius: var(--raio-m); margin-top: var(--esp-2); max-width: 560px; }
+.linha-tempo__foto--inteira { max-width: 300px; }
+@media (max-width: 640px) {
+  .linha-tempo::before { left: 6px; }
+  .linha-tempo__item { grid-template-columns: 1fr; padding-left: 30px; gap: var(--esp-2); }
+  .linha-tempo__item::before { left: 0; top: 2px; }
+  .linha-tempo__marco, .linha-tempo__cartao { grid-column: 1; padding-top: 0; }
+  .linha-tempo__cartao { padding: var(--esp-4); }
+}
+
+/* ----- Polo de tecnologia: linha horizontal fina, anos em destaque ----- */
+.polo { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--esp-5); list-style: none; margin: 0; padding: 0; }
+.polo::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--linha-controle); opacity: .5; }
+.polo__passo { position: relative; display: flex; flex-direction: column; gap: var(--esp-2); padding-top: var(--esp-6); }
+.polo__passo::before {
+  content: ""; position: absolute; left: 0; top: 0; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--papel); border: 2px solid var(--azul-institucional);
+}
+.polo__passo:last-child::before { background: var(--azul-institucional); }
+.polo__marco { font: 700 1.5rem/1.1 var(--font-display); color: var(--azul-institucional); letter-spacing: -.01em; }
+@media (max-width: 1080px) {
+  .polo { grid-template-columns: 1fr; gap: 0; padding-left: 32px; }
+  .polo::before { left: 7px; right: auto; top: 8px; bottom: 8px; width: 1px; height: auto; }
+  .polo__passo { padding: 0 0 var(--esp-5); }
+  .polo__passo::before { left: -32px; top: 4px; }
+}
+
+/* ----- Eventos ----- */
+.eventos { display: flex; flex-direction: column; list-style: none; border-top: 1px solid var(--linha); }
+.evento { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--esp-6); align-items: center; padding: var(--esp-5) 0; border-bottom: 1px solid var(--linha); }
+.evento__foto { border-radius: var(--raio-m); }
+.evento__texto { max-width: 640px; }
+.evento__texto { display: flex; flex-direction: column; gap: var(--esp-3); }
+.evento__quando { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .9375rem; color: var(--roxo); }
+.evento__resumo { color: var(--magenta-texto); font-weight: 700; }
+@media (max-width: 860px) {
+  .evento { grid-template-columns: 1fr; gap: var(--esp-4); }
+  .evento__foto { max-width: 360px; }
+}
+
+.calendario__titulo { margin: var(--esp-8) 0 var(--esp-4); }
+.calendario { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; list-style: none; margin: 0; padding: 0; }
+.calendario__item { display: flex; flex-direction: column; gap: var(--esp-2); padding: var(--esp-5); background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio-l); }
+.calendario__mes { font: 700 .8125rem/1.2 var(--font-texto); letter-spacing: .1em; text-transform: uppercase; color: var(--magenta-texto); }
+@media (max-width: 860px) { .calendario { grid-template-columns: 1fr; } }
+
+/* ----- Rotas ----- */
+.rotas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; list-style: none; margin: 0; padding: 0; }
+.rota {
+  display: flex; align-items: flex-start; gap: var(--esp-4); height: 100%;
+  padding: var(--esp-5); background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio-l);
+  color: var(--tinta); text-decoration: none; text-align: left; font: inherit; width: 100%; cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.rota[aria-expanded="true"] { border-color: var(--roxo); box-shadow: var(--sombra-cartao); }
+.rota__ver { display: inline-flex; align-items: center; gap: 4px; margin-top: var(--esp-2); font-size: .875rem; font-weight: 600; color: var(--tinta-suave); }
+.rota__ver .ot-icone { width: 16px; height: 16px; transition: transform .2s ease; }
+.rota:hover .rota__ver { color: var(--tinta); }
+.rota[aria-expanded="true"] .rota__ver { color: var(--roxo); }
+.rota[aria-expanded="true"] .rota__ver .ot-icone { transform: rotate(180deg); }
+.rota:hover { border-color: var(--linha-controle); box-shadow: var(--sombra-cartao); }
+.rota__icone { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--raio-m); background: var(--superficie-2); color: var(--roxo); }
+.rota__texto { display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 1000px) { .rotas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .rotas { grid-template-columns: 1fr; } }
+
+/* Roteiro aberto: foto + paradas, abaixo das rotas */
+.roteiro-area { scroll-margin-top: 96px; }
+.roteiro {
+  display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: var(--esp-6); align-items: start;
+  margin-top: var(--esp-5); padding: var(--esp-4);
+  background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao);
+  animation: roteiro-entra .35s ease both;
+}
+@keyframes roteiro-entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.roteiro__foto { border-radius: var(--raio-m); background: transparent; }
+.roteiro__foto img { height: auto; max-height: 440px; object-fit: contain; border-radius: var(--raio-m); }
+.roteiro__texto { display: flex; flex-direction: column; gap: var(--esp-3); padding: var(--esp-3) var(--esp-4) var(--esp-3) 0; }
+.roteiro__topo { display: flex; align-items: center; justify-content: space-between; gap: var(--esp-3); }
+.roteiro__paradas { counter-reset: parada; list-style: none; border-top: 1px solid var(--linha); }
+.roteiro__paradas li { counter-increment: parada; display: grid; grid-template-columns: 32px 1fr; column-gap: var(--esp-3); padding: var(--esp-3) 0; border-bottom: 1px solid var(--linha); }
+.roteiro__paradas li::before { content: counter(parada); grid-row: span 2; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--superficie-2); color: var(--roxo); font-weight: 700; font-size: .875rem; }
+.roteiro__contato { display: inline-flex; align-items: center; gap: 6px; color: var(--tinta-suave); }
+@media (max-width: 860px) {
+  .roteiro { grid-template-columns: 1fr; gap: var(--esp-3); }
+  .roteiro__texto { padding: var(--esp-2) var(--esp-2) var(--esp-3); }
+}
+
+/* ----- Culinária ----- */
+.destaque-sabor {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--esp-6); align-items: center;
+  padding: var(--esp-4); margin-bottom: var(--esp-5);
+  background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao);
+}
+.destaque-sabor__foto { border-radius: var(--raio-m); }
+.destaque-sabor__texto { display: flex; flex-direction: column; gap: var(--esp-3); padding: var(--esp-4) var(--esp-5) var(--esp-4) 0; }
+.destaque-sabor__selo { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; padding: 4px 12px; border-radius: var(--raio-pilula); background: var(--amarelo); color: var(--tinta); font-weight: 700; font-size: .875rem; }
+.destaque-sabor__dica { display: inline-flex; align-items: center; gap: 6px; font-size: .9375rem; color: var(--tinta-suave); }
+@media (max-width: 860px) {
+  .destaque-sabor { grid-template-columns: 1fr; gap: var(--esp-3); }
+  .destaque-sabor__texto { padding: var(--esp-2) var(--esp-3) var(--esp-4); }
+}
+
+.sub-titulo { margin: var(--esp-7) 0 var(--esp-4); }
+.onde-comer { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; list-style: none; }
+@media (max-width: 1000px) { .onde-comer { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .onde-comer { grid-template-columns: 1fr; } }
+
+.sabor { overflow: hidden; background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); }
+.sabor .ot-foto img { transition: transform .6s ease; }
+.sabor:hover .ot-foto img { transform: scale(1.05); }
+.sabor__texto { display: flex; flex-direction: column; gap: var(--esp-2); padding: 18px 20px 22px; }
+
+
+/* ----- O que visitar ----- */
+.lugares { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--esp-6); list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linha); }
+.lugar { display: flex; gap: var(--esp-3); padding: var(--esp-4) 0; border-bottom: 1px solid var(--linha); }
+.lugar > div { display: flex; flex-direction: column; gap: 2px; }
+.lugar__icone { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--raio-s); background: var(--superficie-2); color: var(--roxo); }
+.lugar__quando { display: inline-flex; align-items: center; gap: 6px; color: var(--tinta-suave); margin-top: 2px; }
+.lugar__quando .ot-icone { width: 16px; height: 16px; }
+@media (max-width: 1000px) { .lugares { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .lugares { grid-template-columns: 1fr; } }
+
+/* ----- Convite para a área do turista ----- */
+.convite-turista {
+  display: flex; flex-direction: column; align-items: center; gap: var(--esp-3); text-align: center;
+  margin: var(--esp-8) auto var(--esp-8); max-width: 560px; padding-top: var(--esp-7);
+  border-top: 1px solid var(--linha);
+}
+.convite-turista__rotulo { font: 600 .8125rem/1.2 var(--font-texto); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-apagada); }
+.convite-turista .corpo { margin-bottom: var(--esp-2); }
+
+/* Botão só com ícone (fechar roteiro) */
+.botao-icone {
+  flex: none; width: 36px; height: 36px; display: grid; place-items: center;
+  border: 1px solid var(--linha); border-radius: 50%; background: transparent; color: var(--tinta-suave); cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+.botao-icone:hover { border-color: var(--linha-controle); color: var(--tinta); }
+.botao-icone .ot-icone { width: 16px; height: 16px; }

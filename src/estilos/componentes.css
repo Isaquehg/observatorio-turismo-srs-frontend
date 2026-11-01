@@ -42,30 +42,30 @@
 /* ---------- Botões ---------- */
 .ot-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--esp-2);
-  min-height: var(--controle); padding: 0 var(--esp-5);
-  font-family: var(--font-texto); font-size: 1.0625rem; line-height: 1.2; font-weight: 700;
-  border-radius: var(--raio-pilula); border: 1.5px solid transparent;
+  min-height: var(--alvo-minimo); padding: 0 22px;
+  font-family: var(--font-texto); font-size: 1rem; line-height: 1.2; font-weight: 600;
+  border-radius: 10px; border: 1px solid transparent;
   cursor: pointer; text-decoration: none; white-space: nowrap;
-  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
 }
+.ot-btn .ot-icone { transition: transform .2s ease; }
+.ot-btn--primario:hover .ot-icone:last-child, .ot-btn--secundario:hover .ot-icone:last-child { transform: translateX(2px); }
 .ot-btn:active { transform: translateY(1px); }
-.ot-btn--primario { color: var(--sobre-escuro); background: var(--gradiente-botao); }
-.ot-btn--primario:hover { box-shadow: var(--sombra-flutuante); }
-.ot-btn--carimbo { box-shadow: var(--sombra-carimbo); }
-.ot-btn--carimbo:hover { box-shadow: var(--sombra-flutuante); }
-.ot-btn--solido { color: var(--sobre-escuro); background: var(--azul-institucional); }
-.ot-btn--solido:hover { background: #083c8d; }
+.ot-btn--primario { color: var(--superficie); background: var(--tinta); }
+.ot-btn--primario:hover { background: var(--roxo); }
+.ot-btn--solido { color: var(--superficie); background: var(--tinta); }
+.ot-btn--solido:hover { background: var(--roxo); }
 .ot-btn--claro { color: var(--tinta); background: var(--superficie); }
 .ot-btn--contorno-claro { color: var(--sobre-escuro); border-color: var(--sobre-escuro); background: transparent; }
 .ot-btn--contorno-claro:hover { background: rgba(255, 255, 255, .14); }
-.ot-btn--secundario { color: var(--tinta); background: var(--superficie); border-color: var(--tinta); }
-.ot-btn--secundario:hover { background: var(--superficie-2); }
+.ot-btn--secundario { color: var(--tinta); background: var(--superficie); border-color: var(--linha-controle); }
+.ot-btn--secundario:hover { border-color: var(--tinta); background: var(--superficie); }
 .ot-btn--fantasma { color: var(--azul-institucional); background: transparent; padding: 0 var(--esp-3); }
 .ot-btn--fantasma:hover { background: var(--superficie-2); }
 .ot-btn--perigo { color: var(--erro); background: var(--superficie); border-color: var(--erro); }
 .ot-btn--perigo:hover { background: var(--erro-fundo); }
-.ot-btn--p { min-height: var(--alvo-minimo); padding: 0 var(--esp-4); font-size: 1rem; }
-.ot-btn--g { min-height: 64px; padding: 0 var(--esp-6); font-size: 1.1875rem; }
+.ot-btn--p { min-height: 44px; padding: 0 var(--esp-4); font-size: .9375rem; }
+.ot-btn--g { min-height: 52px; padding: 0 28px; font-size: 1.0625rem; }
 .ot-btn--icone { padding: 0; width: var(--alvo-minimo); }
 .ot-btn--largo { width: 100%; }
 .ot-btn[disabled], .ot-btn[aria-disabled="true"] {

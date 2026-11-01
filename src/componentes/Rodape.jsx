@@ -26,6 +26,7 @@ export default function Rodape() {
             <p className="rodape__titulo" id="rodape-consultar">Consultar</p>
             <ul className="rodape__lista">
               <li><Link to="/indicadores-publicos">Indicadores públicos</Link></li>
+              <li><Link to="/conheca-a-cidade">Conheça a cidade</Link></li>
               {sessao ? (
                 <>
                   <li><Link to="/indicadores">Indicadores completos</Link></li>

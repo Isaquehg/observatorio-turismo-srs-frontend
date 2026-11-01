@@ -11,20 +11,20 @@ import { iniciais } from '../util/formatar'
 const LINKS_PUBLICOS = [
   { para: '/', rotulo: 'Início', fim: true },
   { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
-  { para: '/explorar', rotulo: 'Explorar' },
+  { para: '/conheca-a-cidade', rotulo: 'Conheça a cidade' },
   { para: '/sobre', rotulo: 'Sobre' },
 ]
 const LINKS_COM_LOGIN = [
   { para: '/', rotulo: 'Início', fim: true },
   { para: '/indicadores-publicos', rotulo: 'Indicadores públicos' },
-  { para: '/explorar', rotulo: 'Explorar' },
+  { para: '/conheca-a-cidade', rotulo: 'Conheça a cidade' },
   { para: '/indicadores', rotulo: 'Indicadores' },
   { para: '/relatorios', rotulo: 'Relatórios' },
   { para: '/sobre', rotulo: 'Sobre' },
 ]
 const LINKS_TURISTA = [
   { para: '/', rotulo: 'Início', fim: true },
-  { para: '/turista', rotulo: 'Explorar a cidade' },
+  { para: '/turista', rotulo: 'Área do turista' },
   ...LINKS_COM_LOGIN.slice(1),
 ]
 export const linksDoSite = (sessao) => (!sessao ? LINKS_PUBLICOS : sessao.perfil === 'turista' ? LINKS_TURISTA : LINKS_COM_LOGIN)
@@ -108,7 +108,7 @@ function MenuConta() {
           <p style={{ fontWeight: 700, marginBottom: 12 }}>{perfil.titulo}</p>
           <div className="suspenso__lista">
             <Link to={perfil.inicio} onClick={fechar}>
-              <Icone nome={sessao.perfil === 'turista' ? 'mapa' : 'painel'} /> {{ turista: 'Explorar a cidade', comerciante: 'Área do comerciante', prefeitura: 'Painel da Prefeitura' }[sessao.perfil]}
+              <Icone nome={sessao.perfil === 'turista' ? 'mapa' : 'painel'} /> {{ turista: 'Área do turista', comerciante: 'Área do comerciante', prefeitura: 'Painel da Prefeitura' }[sessao.perfil]}
             </Link>
             <button
               type="button"

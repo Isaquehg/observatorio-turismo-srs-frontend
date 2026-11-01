@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 520" width="480" height="520">
+  <!-- Estátua de Santa Rita de Cássia na entrada da cidade, no estilo das ilustrações do Observatório -->
+
+  <defs>
+    <!-- Paisagem recortada no círculo de fundo, alongado para baixo para o chão ficar inteiro -->
+    <clipPath id="paisagem"><circle cx="246" cy="250" r="212"></circle><rect x="40" y="250" width="412" height="230" rx="60"></rect></clipPath>
+  </defs>
+
+  <!-- Fundo -->
+  <circle cx="246" cy="250" r="212" fill="#EDE7FA"></circle>
+  <rect x="64" y="96" width="96" height="26" rx="13" fill="#FFFFFF"></rect>
+  <rect x="92" y="78" width="52" height="26" rx="13" fill="#FFFFFF"></rect>
+  <rect x="330" y="132" width="78" height="22" rx="11" fill="#FFFFFF"></rect>
+
+  <g clip-path="url(#paisagem)">
+  <!-- Prédios da avenida -->
+  <g>
+    <rect x="334" y="214" width="46" height="250" rx="6" fill="#B986ED"></rect>
+    <rect x="386" y="246" width="40" height="218" rx="6" fill="#9F7BE6"></rect>
+    <g fill="#FFFFFF" opacity=".85">
+      <rect x="342" y="228" width="10" height="8" rx="2"></rect><rect x="362" y="228" width="10" height="8" rx="2"></rect>
+      <rect x="342" y="248" width="10" height="8" rx="2"></rect><rect x="362" y="248" width="10" height="8" rx="2"></rect>
+      <rect x="342" y="268" width="10" height="8" rx="2"></rect><rect x="362" y="268" width="10" height="8" rx="2"></rect>
+      <rect x="342" y="288" width="10" height="8" rx="2"></rect><rect x="362" y="288" width="10" height="8" rx="2"></rect>
+      <rect x="342" y="308" width="10" height="8" rx="2"></rect><rect x="362" y="308" width="10" height="8" rx="2"></rect>
+      <rect x="394" y="260" width="9" height="8" rx="2"></rect><rect x="410" y="260" width="9" height="8" rx="2"></rect>
+      <rect x="394" y="280" width="9" height="8" rx="2"></rect><rect x="410" y="280" width="9" height="8" rx="2"></rect>
+      <rect x="394" y="300" width="9" height="8" rx="2"></rect><rect x="410" y="300" width="9" height="8" rx="2"></rect>
+      <rect x="394" y="320" width="9" height="8" rx="2"></rect><rect x="410" y="320" width="9" height="8" rx="2"></rect>
+    </g>
+  </g>
+
+  <!-- Morros e chão -->
+  <path d="M34 400 L110 330 Q124 318 138 330 L200 384 L280 340 Q294 332 308 340 L452 410 V470 H34 Z" fill="#B986ED" opacity=".55"></path>
+  <path d="M30 430 Q140 392 250 418 T462 412 V480 H30 Z" fill="#F3B8F7"></path>
+  <path d="M22 460 Q160 432 260 452 T470 448 V490 H22 Z" fill="#5FE6E0"></path>
+  </g>
+  <ellipse cx="240" cy="474" rx="118" ry="10" fill="#1C1838" opacity=".12"></ellipse>
+
+  <!-- Pedestal: tronco de árvore -->
+  <path d="M188 384 L182 462 Q240 478 298 462 L292 384 Z" fill="#D9A62E"></path>
+  <path d="M206 396 L202 452 M240 398 L240 462 M272 396 L276 452" stroke="#C08A1E" stroke-width="5" stroke-linecap="round"></path>
+  <path d="M182 462 Q164 470 160 478 H200 Z M298 462 Q316 470 320 478 H280 Z" fill="#C08A1E"></path>
+  <ellipse cx="240" cy="384" rx="54" ry="11" fill="#F0C85A"></ellipse>
+  <ellipse cx="240" cy="384" rx="34" ry="6" fill="none" stroke="#D9A62E" stroke-width="3"></ellipse>
+
+  <!-- Hábito -->
+  <path d="M198 168 Q240 148 282 168 L302 376 Q240 394 178 376 Z" fill="#FADA77"></path>
+  <path d="M224 206 L214 372 M240 214 L240 384 M258 206 L268 372" stroke="#E9BE3F" stroke-width="6" stroke-linecap="round"></path>
+
+  <!-- Véu -->
+  <path d="M204 124 Q240 76 276 124 L292 204 Q240 188 188 204 Z" fill="#E9BE3F"></path>
+
+  <!-- Rosto -->
+  <ellipse cx="240" cy="130" rx="27" ry="31" fill="#FFF0BF"></ellipse>
+  <ellipse cx="240" cy="132" rx="20" ry="24" fill="#F6D98A"></ellipse>
+  <path d="M229 130 q4 4 8 0 M243 130 q4 4 8 0" fill="none" stroke="#1C1838" stroke-width="2.5" stroke-linecap="round"></path>
+  <path d="M236 144 q4 3 8 0" fill="none" stroke="#C08A1E" stroke-width="2.5" stroke-linecap="round"></path>
+
+  <!-- Braço com a palma -->
+  <path d="M272 186 Q298 178 302 152" fill="none" stroke="#FADA77" stroke-width="26" stroke-linecap="round"></path>
+  <path d="M304 160 L334 62" stroke="#C08A1E" stroke-width="5" stroke-linecap="round"></path>
+  <g stroke="#E9BE3F" stroke-width="7" stroke-linecap="round">
+    <path d="M326 88 L350 80 M322 104 L346 100 M318 120 L340 118 M330 74 L350 62"></path>
+    <path d="M326 88 L306 74 M322 104 L300 94 M318 120 L298 112 M330 74 L316 58"></path>
+  </g>
+  <circle cx="303" cy="150" r="11" fill="#F6D98A"></circle>
+
+  <!-- Braço com o crucifixo -->
+  <path d="M206 192 Q206 232 238 238" fill="none" stroke="#FADA77" stroke-width="26" stroke-linecap="round"></path>
+  <path d="M206 192 Q206 232 238 238" fill="none" stroke="#E9BE3F" stroke-width="4" stroke-linecap="round" opacity=".7"></path>
+  <rect x="242" y="196" width="7" height="50" rx="3" fill="#1C1838"></rect>
+  <rect x="230" y="210" width="31" height="7" rx="3" fill="#1C1838"></rect>
+  <circle cx="244" cy="238" r="11" fill="#F6D98A"></circle>
+
+  <!-- Rosas de Santa Rita -->
+  <g>
+    <path d="M196 380 q-6 -14 6 -18 M282 380 q8 -14 -4 -18" fill="none" stroke="#2BB5AE" stroke-width="4" stroke-linecap="round"></path>
+    <ellipse cx="190" cy="372" rx="9" ry="5" fill="#2BB5AE" transform="rotate(-30 190 372)"></ellipse>
+    <ellipse cx="290" cy="372" rx="9" ry="5" fill="#2BB5AE" transform="rotate(30 290 372)"></ellipse>
+    <circle cx="204" cy="378" r="11" fill="#C750D6"></circle><circle cx="204" cy="378" r="5" fill="#9B2BAE"></circle>
+    <circle cx="224" cy="384" r="9" fill="#F3B8F7"></circle><circle cx="224" cy="384" r="4" fill="#C750D6"></circle>
+    <circle cx="258" cy="384" r="9" fill="#F3B8F7"></circle><circle cx="258" cy="384" r="4" fill="#C750D6"></circle>
+    <circle cx="278" cy="378" r="11" fill="#C750D6"></circle><circle cx="278" cy="378" r="5" fill="#9B2BAE"></circle>
+    <circle cx="150" cy="456" r="9" fill="#C750D6"></circle><circle cx="150" cy="456" r="4" fill="#9B2BAE"></circle>
+    <circle cx="332" cy="458" r="8" fill="#F3B8F7"></circle><circle cx="332" cy="458" r="3.5" fill="#C750D6"></circle>
+  </g>
+
+  <!-- Adesivos -->
+  <g transform="translate(96 200)"><path d="M0 -24 L6 -6 L24 0 L6 6 L0 24 L-6 6 L-24 0 L-6 -6 Z" fill="#FADA77"></path></g>
+  <circle cx="420" cy="196" r="12" fill="none" stroke="#5FE6E0" stroke-width="6"></circle>
+  <path d="M70 300 c14 -18 28 18 42 0 s28 18 42 0" fill="none" stroke="#F3B8F7" stroke-width="9" stroke-linecap="round"></path>
+</svg>

@@ -4,9 +4,8 @@ import Foto from '../componentes/Foto'
 import { Adesivo } from '../componentes/Adesivo'
 import { Sobretitulo } from '../componentes/Basicos'
 import { Indicador, CartaoRelatorio, ResumoRelatorio, useResumo } from '../componentes/Cartoes'
-import { resumoDoAno, serie } from '../dados/indicadores'
+import { ANO_ATUAL, ANO_ANTERIOR, resumoDoAno, serie } from '../dados/indicadores'
 import { relatorios } from '../dados/relatorios'
-import { CURIOSIDADES } from '../dados/turismo'
 import { numero, variacao, diferenca } from '../util/formatar'
 import { useTitulo } from '../util/ganchos'
 import { useSessao } from '../contexto/Sessao'
@@ -24,15 +23,15 @@ export default function Inicio() {
   useTitulo()
   const { sessao } = useSessao()
   const { aberto, abrir, fechar } = useResumo()
-  const atual = resumoDoAno(2025)
-  const anterior = resumoDoAno(2024)
+  const atual = resumoDoAno(ANO_ATUAL)
+  const anterior = resumoDoAno(ANO_ANTERIOR)
 
   const destaques = [
-    { rotulo: 'Visitantes por ano', valor: numero(atual.visitantes), icone: 'pessoas', cor: 'var(--azul-ceu)', variacao: variacao(atual.visitantes, anterior.visitantes), serie: serie('visitantes', 2025) },
-    { rotulo: 'Leitos disponíveis', valor: numero(atual.leitos), icone: 'cama', cor: 'var(--ciano)', variacao: variacao(atual.leitos, anterior.leitos), serie: serie('leitos', 2025) },
-    { rotulo: 'Meios de hospedagem', valor: atual.hospedagens, icone: 'predio', cor: 'var(--amarelo)', variacao: diferenca(atual.hospedagens, anterior.hospedagens), serie: serie('hospedagens', 2025) },
-    { rotulo: 'Empresas do turismo', valor: atual.empresas, icone: 'loja', cor: 'var(--rosa)', variacao: variacao(atual.empresas, anterior.empresas), serie: serie('empresas', 2025) },
-    { rotulo: 'Empregos no setor', valor: numero(atual.empregos), icone: 'pessoas', cor: 'var(--lilas)', variacao: variacao(atual.empregos, anterior.empregos), serie: serie('empregos', 2025) },
+    { rotulo: 'Visitantes por ano', valor: numero(atual.visitantes), icone: 'pessoas', cor: 'var(--azul-ceu)', variacao: variacao(atual.visitantes, anterior.visitantes), serie: serie('visitantes', ANO_ATUAL) },
+    { rotulo: 'Leitos disponíveis', valor: numero(atual.leitos), icone: 'cama', cor: 'var(--ciano)', variacao: variacao(atual.leitos, anterior.leitos), serie: serie('leitos', ANO_ATUAL) },
+    { rotulo: 'Meios de hospedagem', valor: atual.hospedagens, icone: 'predio', cor: 'var(--amarelo)', variacao: diferenca(atual.hospedagens, anterior.hospedagens), serie: serie('hospedagens', ANO_ATUAL) },
+    { rotulo: 'Empresas do turismo', valor: atual.empresas, icone: 'loja', cor: 'var(--rosa)', variacao: variacao(atual.empresas, anterior.empresas), serie: serie('empresas', ANO_ATUAL) },
+    { rotulo: 'Empregos no setor', valor: numero(atual.empregos), icone: 'pessoas', cor: 'var(--lilas)', variacao: variacao(atual.empregos, anterior.empregos), serie: serie('empregos', ANO_ATUAL) },
   ]
 
   return (
@@ -57,7 +56,7 @@ export default function Inicio() {
       <section className="container secao">
         <div className="secao__cab">
           <div>
-            <Sobretitulo>Destaques de 2025</Sobretitulo>
+            <Sobretitulo>Destaques de {ANO_ATUAL}</Sobretitulo>
             <h2 className="titulo-1">Como está o turismo agora</h2>
           </div>
           <Link className="ot-btn ot-btn--fantasma" to="/indicadores-publicos">
@@ -66,7 +65,7 @@ export default function Inicio() {
         </div>
         <div className="grade-5">
           {destaques.map((d) => (
-            <Indicador key={d.rotulo} {...d} comparacao="vs. 2024" />
+            <Indicador key={d.rotulo} {...d} comparacao={`vs. ${ANO_ANTERIOR}`} />
           ))}
         </div>
         <p className="ot-fonte" style={{ marginTop: 12 }}>Valores ilustrativos para o protótipo. Fonte prevista: OT-SRS / SMCELT.</p>
@@ -84,32 +83,8 @@ export default function Inicio() {
             Com análises mensais e pesquisas de demanda, o painel é transparente para investidores, empresários e a gestão pública construírem um destino cada vez mais atrativo.
           </p>
           </div>
-          <Foto chave="vista-cidade" alt="Vista de Santa Rita do Sapucaí com casas, prédios e a serra ao fundo" className="proposito__foto" proporcao="4 / 3" />
+          <Foto chave="estatua-santa-rita" alt="Estátua de Santa Rita de Cássia na entrada da cidade, com a avenida e prédios ao fundo" className="proposito__foto" proporcao="31 / 20" />
         </div>
-      </section>
-
-      <section className="container secao">
-        <div className="secao__cab">
-          <div>
-            <Sobretitulo>Você sabia?</Sobretitulo>
-            <h2 className="titulo-1">Curiosidades de Santa Rita do Sapucaí</h2>
-          </div>
-          <Link className="ot-btn ot-btn--fantasma" to="/explorar">
-            Explorar lugares <Icone nome="seta" />
-          </Link>
-        </div>
-        <ul className="curiosidades">
-          {CURIOSIDADES.slice(0, 3).map((c) => (
-            <li key={c.titulo} className="curiosidade">
-              <div className="curiosidade__corpo">
-                <span className="ot-indicador__icone" style={{ '--cor': c.cor }}><Icone nome={c.icone} /></span>
-                <span className="curiosidade__destaque">{c.destaque}</span>
-                <h3 className="titulo-3">{c.titulo}</h3>
-                <p className="corpo-s suave">{c.texto}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
       </section>
 
       <section className="container secao">
