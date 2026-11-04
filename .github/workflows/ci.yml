@@ -12,9 +12,12 @@ concurrency:
 
 jobs:
   quality-and-build:
-    name: Validate Lint, Tests & Build
+    name: Validate Lint, Tests, Coverage & Build
     runs-on: ubuntu-latest
     continue-on-error: true
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -43,9 +46,23 @@ jobs:
         continue-on-error: true
         run: npm run lint --if-present
 
-      - name: Run Unit Tests
+      - name: Run Unit Tests with Coverage
         continue-on-error: true
-        run: npm run test:ci --if-present
+        run: npm run test:coverage --if-present
+
+      - name: Publish Coverage Report to Summary & PR
+        if: always()
+        continue-on-error: true
+        uses: davelosert/vitest-coverage-report-action@v2
+
+      - name: Upload HTML Coverage Artifact
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage-report
+          path: coverage/
+          retention-days: 14
 
       - name: Verify Production Build
         continue-on-error: true
