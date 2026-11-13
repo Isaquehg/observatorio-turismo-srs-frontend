@@ -1,5 +1,4 @@
 // Conteúdo da área do turista. Fotos do Wikimedia Commons, com autor e licença em FOTOS.
-// Hospedagens são exemplos do protótipo: nomes fictícios e fotos ilustrativas de outras cidades de Minas.
 // Fatos das curiosidades: ETE FMC (1959) e Inatel (1965) conferidos na Wikipédia (FMC Electronic Technical School, Inatel). Estação e Delfim Moreira: só o que consta nas fontes consultadas; confirmar com a SMCELT antes de publicar.
 
 export const FOTOS = {
@@ -15,11 +14,6 @@ export const FOTOS = {
   'romeu-e-julieta': { autor: 'Monica Kaneko', licenca: 'CC BY-SA 2.0', fonte: 'https://commons.wikimedia.org/wiki/File:Bar_Guanabara_-_goiabada_com_queijo_(4775596692).jpg' },
   'cafe-coado': { autor: 'Melsj', licenca: 'CC BY-SA 4.0', fonte: 'https://commons.wikimedia.org/wiki/File:Caf%C3%A9_coado.jpg' },
   'hosp-pousada-jardim': { autor: 'José Marques de Oliveira', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Ibiti%C3%BAra_de_Minas_-_State_of_Minas_Gerais,_Brazil_-_panoramio_(3).jpg' },
-  'hosp-chale-mata': { autor: 'Marinelson Almeida', licenca: 'CC BY 2.0', fonte: 'https://commons.wikimedia.org/wiki/File:Os_diversos_Chal%C3%A9s_na_Serra_da_Mantiqueira_-_MG._(9601364709).jpg' },
-  'hosp-quarto-hotel': { autor: 'Elisete Reis', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Quarto_da_Pousada_de_Estoi.jpg' },
-  'hosp-cafezal': { autor: 'Leonardo Gazella', licenca: 'CC BY-SA 4.0', fonte: 'https://commons.wikimedia.org/wiki/File:Hotel_Fazenda_Bom_Cafe.jpg' },
-  'hosp-amanhecer': { autor: 'Francisco Boratto', licenca: 'CC BY-SA 4.0', fonte: 'https://commons.wikimedia.org/wiki/File:16-Amanhecer_no_Hotel_Fazenda_Bela_Vista.jpg' },
-  'hosp-quarto-madeira': { autor: 'Elisete Reis', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Quarto-Pousada_de_Bragan%C3%A7a.jpg' },
 }
 
 export const CURIOSIDADES = [
@@ -31,15 +25,48 @@ export const CURIOSIDADES = [
   { destaque: 'Presidente', titulo: 'Terra de Delfim Moreira', texto: 'Delfim Moreira, que presidiu o Brasil entre 1918 e 1919, viveu em Santa Rita do Sapucaí e morreu aqui em 1920. A cidade tem um museu com o nome dele.', icone: 'prefeitura', cor: 'var(--amarelo)' },
 ]
 
-export const TIPOS_HOSPEDAGEM_TURISTA = ['Todos', 'Hotel', 'Pousada', 'Chalé', 'Hostel']
-
+// Hospedagens e gastronomia: listas do portal oficial visitesrs.com.br (lidas em nov. 2026).
+// Endereços e telefones vêm do texto do portal: confirmar com a SMCELT antes de publicar.
 export const HOSPEDAGENS = [
-  { id: 1, nome: 'Pousada Recanto da Serra', tipo: 'Pousada', bairro: 'Centro', preco: '$$', foto: 'hosp-pousada-jardim', destaques: ['Café da manhã mineiro', 'Jardim', 'Wi-Fi'], cadastur: true },
-  { id: 2, nome: 'Chalés da Mantiqueira', tipo: 'Chalé', bairro: 'Zona rural', preco: '$$$', foto: 'hosp-chale-mata', destaques: ['Lareira', 'Trilhas por perto', 'Aceita pets'], cadastur: true },
-  { id: 3, nome: 'Hotel Vale da Eletrônica', tipo: 'Hotel', bairro: 'Centro', preco: '$$', foto: 'hosp-quarto-hotel', destaques: ['Perto do Inatel', 'Sala de reunião', 'Estacionamento'], cadastur: true },
-  { id: 4, nome: 'Pousada Flor do Café', tipo: 'Pousada', bairro: 'Estrada do Cafezal', preco: '$$', foto: 'hosp-cafezal', destaques: ['Vista do cafezal', 'Café especial da casa', 'Piscina'], cadastur: true },
-  { id: 5, nome: 'Sítio Águas Claras', tipo: 'Chalé', bairro: 'Zona rural', preco: '$', foto: 'hosp-amanhecer', destaques: ['Nascer do sol na serra', 'Lago', 'Cozinha equipada'], cadastur: false },
-  { id: 6, nome: 'Hostel Sapucaí', tipo: 'Hostel', bairro: 'Centro', preco: '$', foto: 'hosp-quarto-madeira', destaques: ['Quartos coletivos e privativos', 'Perto da rodoviária', 'Cozinha compartilhada'], cadastur: true },
+  { nome: 'Camping Pedra do Osso', tipo: 'Camping', endereco: 'R. Orlando Mattos da Costa, 100 · Santa Rita 2', telefone: '(35) 98404-0069' },
+  { nome: 'Crisal Hotel', tipo: 'Hotel', endereco: 'Av. João de Camargo, 255 · Centro', telefone: '(35) 3471-3322' },
+  { nome: 'Fazenda Pinhal', tipo: 'Fazenda', endereco: 'Estrada Vargedo, s/n · Vintém', telefone: '(35) 98853-2419' },
+  { nome: 'Fazenda Sagrada Família', tipo: 'Fazenda', endereco: 'Balaio', telefone: '(35) 3471-2365' },
+  { nome: 'Hostel Vila Fernando', tipo: 'Hostel', endereco: 'R. Antônio de Cássia Filho, 459, casa 2 · Santo Antônio', telefone: '(35) 98820-2106' },
+  { nome: 'Hotel Real Palace', tipo: 'Hotel', endereco: 'R. Silvestre Ferraz, 73 · Centro', telefone: '(35) 3471-7000' },
+  { nome: 'Hotel Tadini', tipo: 'Hotel', endereco: 'Av. Francisco Andrade Ribeiro, 99 · Família Andrade', telefone: '(35) 3473-0595' },
+  { nome: 'Pousada Rancho do Marçal', tipo: 'Pousada', endereco: 'Estrada do Balaio, s/n · Balaio', telefone: '(35) 99727-5537' },
+  { nome: 'Pousada do Barão', tipo: 'Pousada', endereco: 'Condomínio Costa, 105 · Centro', telefone: '(35) 9984-1921' },
+  { nome: 'Sapucaia Flat', tipo: 'Flat', endereco: 'R. Prof. Mendonça, 161 · Monte Líbano', telefone: '(35) 99966-1551' },
+]
+
+export const GASTRONOMIA = [
+  { nome: 'Bar e Restaurante do Bá', endereco: 'Av. Sapucaí, 77 · Boa Vista', telefone: '(35) 3471-1142' },
+  { nome: 'Barão Cafeteria', endereco: 'Condomínio Costa, 105 · Centro', telefone: '(35) 98885-0509' },
+  { nome: 'Beer House', endereco: 'Praça Delfim Moreira Júnior, 54 · Centro', telefone: '(35) 99196-5696' },
+  { nome: 'Culinária Nassar', endereco: 'Delivery', telefone: '(35) 99218-6255' },
+  { nome: 'Don Rafoni Smoke House', endereco: 'Av. João de Camargo, 120 · Vista Alegre', telefone: '(35) 99755-3000' },
+  { nome: 'Dulle Pizzaria e Trattoria', endereco: 'R. Maria Andrade Moreira, 180 · Família Andrade', telefone: '(35) 99902-2001' },
+  { nome: "Grandpa Joel's Coffee", endereco: 'R. Francisco M. da Costa, 123 · Centro', telefone: '(35) 99837-2491' },
+  { nome: "Japa's House", endereco: 'R. Cel. Francisco Palma, 73 · Centro', telefone: '(35) 99970-2435' },
+  { nome: 'La Fornalha', endereco: 'Av. Sinhá Moreira, 176 · Centro', telefone: '(35) 99863-1813' },
+  { nome: 'Maria Maria Gastrobar', endereco: 'R. Francisco Moreira da Costa, 274 · Centro' },
+  { nome: 'Nano Coffee Lab', endereco: 'R. Coronel Gabriel Capistrano, 138 · Centro', telefone: '(35) 99911-4539' },
+  { nome: 'No Trabalho Bar', endereco: 'Fazenda São José · Bairro Fortaleza', telefone: '(35) 99911-2760' },
+  { nome: 'O Cortês', endereco: 'Praça Santa Rita, 19 · Centro', telefone: '(35) 3471-7553' },
+  { nome: 'Padaria Mundial Pães', endereco: 'R. Coronel Joaquim Inácio, 127 · Centro' },
+  { nome: 'Padoca', endereco: 'Av. Frederico de Paula Cunha, 51 · Centro', telefone: '(35) 99139-2469' },
+  { nome: 'Padrinhos Bar', endereco: 'R. Cinco, 13 · Lot. Ipanema', telefone: '(35) 99915-3658' },
+  { nome: 'Pastello', endereco: 'R. Abraão Elias Kallas, 521 · Monte Líbano', telefone: '(35) 99818-7639' },
+  { nome: 'Pastelzinho Corporation', endereco: 'R. Dr. José Ribeiro de Carvalho, 70 · Centro', telefone: '(35) 99855-6499' },
+  { nome: 'Pesqueiro Tô a Toa', endereco: 'R. José Dias de Oliveira, 10 · São João', telefone: '(35) 99729-5594' },
+  { nome: 'Pesqueiro do Zetinho', endereco: 'Estrada do Balaio', telefone: '(35) 99741-3459' },
+  { nome: 'Pão de Sal Hamburgueria', endereco: 'Av. Frederico de Paula Cunha, 358 · Centro', telefone: '(35) 99831-0476' },
+  { nome: 'Pós-Doc Brewpub', endereco: 'R. Coronel Antônio Moreira da Costa, 312 · Centro', telefone: '(35) 98401-1948' },
+  { nome: 'Rancho Santa Fé', endereco: 'Estrada Portal da Serra Vintém, 35', telefone: '(35) 99714-5212' },
+  { nome: 'SIS Coffee', endereco: 'R. Comend. Custódio Ribeiro, 137 · Centro', telefone: '(35) 98867-2535' },
+  { nome: 'The Town Bar e Café', endereco: 'R. Genoveva da Fonseca, 214', telefone: '(35) 99769-6245' },
+  { nome: 'Trailler Santa Rita', endereco: 'Praça Francisco Falcão, s/n · Centro', telefone: '(35) 3471-7798' },
 ]
 
 export const SABORES = [

@@ -4,8 +4,8 @@ import Foto from '../../componentes/Foto'
 import BotaoFavorito from '../../componentes/BotaoFavorito'
 import { Sobretitulo } from '../../componentes/Basicos'
 import { useSessao } from '../../contexto/Sessao'
-import { CURIOSIDADES, SABORES, TIPOS_HOSPEDAGEM_TURISTA } from '../../dados/turismo'
-import { hospedagensVisiveis, pontosVisiveis } from '../../dados/explorar'
+import { CURIOSIDADES, GASTRONOMIA, SABORES } from '../../dados/turismo'
+import { FAIXAS_PRECO, hospedagensVisiveis, pontosVisiveis } from '../../dados/explorar'
 import { useFavoritos } from '../../util/favoritos'
 import { useTitulo } from '../../util/ganchos'
 import '../publico.css'
@@ -15,10 +15,16 @@ const SECOES = [
   { id: 'curiosidades', rotulo: 'Curiosidades' },
   { id: 'onde-ficar', rotulo: 'Onde ficar' },
   { id: 'sabores', rotulo: 'Sabores' },
+  { id: 'onde-comer', rotulo: 'Onde comer' },
   { id: 'o-que-visitar', rotulo: 'O que visitar' },
 ]
 
-const PRECO = { $: 'Econômico', $$: 'Intermediário', $$$: 'Mais sofisticado' }
+const PLURAL = { Hotel: 'Hotéis', Pousada: 'Pousadas', Hostel: 'Hostels', Fazenda: 'Fazendas', Camping: 'Campings', Flat: 'Flats' }
+
+function Telefone({ numero }) {
+  if (!numero) return null
+  return <a href={`tel:+55${numero.replace(/\D/g, '')}`}><Icone nome="telefone" tamanho="s" /> {numero}</a>
+}
 
 export default function Explorar() {
   useTitulo('Explorar a cidade')
@@ -26,6 +32,7 @@ export default function Explorar() {
   const [tipo, setTipo] = useState('Todos')
   const { ids, alternar } = useFavoritos()
   const todas = hospedagensVisiveis()
+  const tipos = ['Todos', ...new Set(todas.map((h) => h.tipo))]
   const hospedagens = tipo === 'Todos' ? todas : todas.filter((h) => h.tipo === tipo)
   const primeiroNome = sessao.nome.split(' ')[0]
 
@@ -78,13 +85,13 @@ export default function Explorar() {
           <div className="secao__cab">
             <div>
               <Sobretitulo>Onde ficar</Sobretitulo>
-              <h2 className="titulo-1">Hotéis, pousadas e chalés</h2>
+              <h2 className="titulo-1">Hotéis, pousadas e fazendas</h2>
             </div>
           </div>
           <div className="rolagem-x" role="group" aria-label="Tipo de hospedagem" style={{ marginBottom: 20 }}>
-            {TIPOS_HOSPEDAGEM_TURISTA.map((t) => (
+            {tipos.map((t) => (
               <button key={t} type="button" className="ot-chip" aria-pressed={tipo === t} onClick={() => setTipo(t)}>
-                {t === 'Todos' ? 'Todos' : `${t}s`}
+                {PLURAL[t] || t}
               </button>
             ))}
           </div>
@@ -93,27 +100,34 @@ export default function Explorar() {
             {hospedagens.map((h) => (
               <li key={h.id} className="cartao-foto">
                 <BotaoFavorito ativo={ids.includes(`hosp-${h.id}`)} nome={h.nome} aoAlternar={() => alternar(`hosp-${h.id}`)} />
-                <Foto chave={h.foto} alt={`Foto ilustrativa de ${h.tipo.toLowerCase()}`} />
+                {h.foto ? (
+                  <Foto chave={h.foto} alt={`Foto ilustrativa de ${h.tipo.toLowerCase()}`} />
+                ) : (
+                  <span className="cartao-foto__sem-foto" aria-hidden="true"><Icone nome="cama" tamanho="l" /></span>
+                )}
                 <div className="cartao-foto__corpo">
                   <div className="cartao-foto__tags">
                     <span className="ot-sobretitulo">{h.tipo}</span>
-                    {h.cadastur && <span className="ot-selo ot-selo--publicado"><Icone nome="escudo" /> Cadastur</span>}
+                    {h.exemplo && <span className="ot-selo ot-selo--novo">Exemplo do protótipo</span>}
                   </div>
                   <h3 className="titulo-3">{h.nome}</h3>
                   {h.descricao && <p className="corpo-s suave">{h.descricao}</p>}
                   <p className="cartao-foto__meta">
-                    <span><Icone nome="pin" tamanho="s" /> {h.bairro}</span>
-                    <span title={PRECO[h.preco]}><strong>{h.preco}</strong> · {PRECO[h.preco]}</span>
+                    <span><Icone nome="pin" tamanho="s" /> {h.endereco}</span>
+                    <Telefone numero={h.telefone} />
+                    {h.preco && <span title={FAIXAS_PRECO[h.preco]}><strong>{h.preco}</strong> · {FAIXAS_PRECO[h.preco]}</span>}
                   </p>
-                  <ul className="cartao-foto__destaques">
-                    {h.destaques.map((d) => <li key={d}>{d}</li>)}
-                  </ul>
+                  {h.destaques && (
+                    <ul className="cartao-foto__destaques">
+                      {h.destaques.map((d) => <li key={d}>{d}</li>)}
+                    </ul>
+                  )}
                 </div>
               </li>
             ))}
           </ul>
           <p className="ot-fonte" style={{ marginTop: 12 }}>
-            Estabelecimentos de exemplo para o protótipo, com fotos ilustrativas. O selo Cadastur indica cadastro ativo no Ministério do Turismo.
+            Hospedagens do portal oficial Visite Santa Rita (visitesrs.com.br). Ligue antes para confirmar disponibilidade.
           </p>
         </section>
 
@@ -138,6 +152,25 @@ export default function Explorar() {
           </ul>
         </section>
 
+        <section className="secao" id="onde-comer">
+          <div className="secao__cab">
+            <div>
+              <Sobretitulo>Onde comer</Sobretitulo>
+              <h2 className="titulo-1">Restaurantes, cafés e bares</h2>
+            </div>
+          </div>
+          <ul className="diretorio">
+            {GASTRONOMIA.map((g) => (
+              <li key={g.nome}>
+                <strong>{g.nome}</strong>
+                <span className="corpo-s suave"><Icone nome="pin" tamanho="s" /> {g.endereco}</span>
+                <span className="corpo-s"><Telefone numero={g.telefone} /></span>
+              </li>
+            ))}
+          </ul>
+          <p className="ot-fonte" style={{ marginTop: 12 }}>Lista do portal oficial Visite Santa Rita (visitesrs.com.br).</p>
+        </section>
+
         <section className="secao" id="o-que-visitar">
           <div className="secao__cab">
             <div>
@@ -152,19 +185,22 @@ export default function Explorar() {
                 {p.foto ? (
                   <Foto chave={p.foto} alt={p.nome} proporcao="auto" />
                 ) : (
-                  <span className="ponto__sem-foto" aria-hidden="true"><Icone nome="mapa" tamanho="l" /></span>
+                  <span className="ponto__sem-foto" aria-hidden="true"><Icone nome={p.icone || 'mapa'} tamanho="l" /></span>
                 )}
                 <div className="ponto__corpo">
-                  <span className="ot-sobretitulo ot-sobretitulo--azul">{p.categoria}</span>
+                  {p.categoria && <span className="ot-sobretitulo ot-sobretitulo--azul">{p.categoria}</span>}
                   <h3 className="titulo-2">{p.nome}</h3>
-                  <p className="corpo suave">{p.texto}</p>
-                  <p className="cartao-foto__meta"><span><Icone nome="pin" tamanho="s" /> {p.local}</span></p>
+                  {p.texto && <p className="corpo suave">{p.texto}</p>}
+                  <p className="cartao-foto__meta">
+                    <span><Icone nome="pin" tamanho="s" /> {p.local}</span>
+                    {p.quando && <span><Icone nome="relogio" tamanho="s" /> {p.quando}</span>}
+                  </p>
                 </div>
               </li>
             ))}
           </ul>
           <p className="ot-fonte" style={{ marginTop: 16 }}>
-            Fotos dos pontos turísticos: Wikimedia Commons, com autor e licença em cada imagem.
+            Lugares, endereços e horários do portal oficial Visite Santa Rita. Fotos: Wikimedia Commons, com autor e licença em cada imagem.
           </p>
         </section>
       </div>

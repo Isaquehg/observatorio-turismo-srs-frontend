@@ -83,3 +83,17 @@ a.ot-mini .corpo-s { color: var(--tinta-suave); }
 /* Ponto turístico sem foto (cadastrado pela prefeitura) */
 .ponto__sem-foto { display: grid; place-items: center; min-height: 260px; background: var(--ciano); color: var(--tinta); }
 @media (max-width: 600px) { .ponto__sem-foto { min-height: 160px; } }
+
+/* Hospedagem real ainda sem foto */
+.cartao-foto__sem-foto { display: grid; place-items: center; height: 88px; background: var(--amarelo); color: var(--tinta); }
+.cartao-foto__meta a { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Onde comer: lista compacta de nome, endereço e telefone */
+.diretorio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.diretorio li { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; background: var(--superficie); border-radius: var(--raio-m); box-shadow: var(--sombra-cartao); }
+.diretorio span, .diretorio a { display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 1080px) { .diretorio { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .diretorio { grid-template-columns: 1fr; } }
+
+/* Espaço para a estrela de favorito não cobrir o título do ponto */
+.ponto__corpo > :first-child { padding-right: 52px; }
