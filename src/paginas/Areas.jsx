@@ -8,8 +8,8 @@ export function AreaTurista() {
       secao: 'Meu espaço',
       itens: [
         { para: '/turista', rotulo: 'Início', icone: 'casa', fim: true },
-        { para: '/turista/explorar', rotulo: 'Explorar a cidade', icone: 'mapa' },
-        { para: '/turista/favoritos', rotulo: 'Meus favoritos', icone: 'estrela' },
+        { para: '/turista/explorar', rotulo: 'Guia da cidade', icone: 'mapa' },
+        { para: '/turista/favoritos', rotulo: 'Meu roteiro', icone: 'estrela' },
       ],
     },
     {

@@ -1,29 +1,12 @@
 // Conteúdo da área do turista. Fotos do Wikimedia Commons, com autor e licença em FOTOS.
-// Fatos das curiosidades: ETE FMC (1959) e Inatel (1965) conferidos na Wikipédia (FMC Electronic Technical School, Inatel). Estação e Delfim Moreira: só o que consta nas fontes consultadas; confirmar com a SMCELT antes de publicar.
 
 export const FOTOS = {
-  'vista-cidade': { autor: 'Fronteira', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Vista_de_Santa_Rita_do_Sapuca%C3%AD.JPG' },
   'praca-santa-rita': { autor: 'Luciene Rosa', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:COQUEIROS_NA_P%C3%87A_SANTA_RITA_-_panoramio.jpg' },
   'natal-praca': { autor: 'Luciene Rosa', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:NATAL_EM_SANTA_RITA_DO_SAPUCAI_-_panoramio.jpg' },
-  'ponte-pensil': { autor: 'Arquivo Público Mineiro', licenca: 'Domínio público', fonte: 'https://commons.wikimedia.org/wiki/File:Ponte_pensil_afonso_pena_em_santa_rita_do_sapucai.JPG' },
   'rio-sapucai': { autor: 'WOtP', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Rio_Sapuca%C3%AD_em_Santa_Rita_do_Sapuca%C3%AD.jpg' },
   'estacao-ferroviaria': { autor: 'Eduardo P', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Esta%C3%A7%C3%A3o_ferrovi%C3%A1ria_de_Santa_Rita_do_Sapuca%C3%AD.jpg' },
-  'cafe-da-tarde': { autor: 'Jonathan Wilkins', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:P%C3%A3o_de_Queijo_-_cheese_bread.jpg' },
-  'feijao-tropeiro': { autor: 'Moe Alves', licenca: 'CC BY 2.0', fonte: 'https://commons.wikimedia.org/wiki/File:Feij%C3%A3o_tropeiro.jpg' },
-  'pao-de-queijo': { autor: 'Murilo Manzini', licenca: 'CC BY-SA 4.0', fonte: 'https://commons.wikimedia.org/wiki/File:Cheesebread.jpg' },
-  'romeu-e-julieta': { autor: 'Monica Kaneko', licenca: 'CC BY-SA 2.0', fonte: 'https://commons.wikimedia.org/wiki/File:Bar_Guanabara_-_goiabada_com_queijo_(4775596692).jpg' },
-  'cafe-coado': { autor: 'Melsj', licenca: 'CC BY-SA 4.0', fonte: 'https://commons.wikimedia.org/wiki/File:Caf%C3%A9_coado.jpg' },
   'hosp-pousada-jardim': { autor: 'José Marques de Oliveira', licenca: 'CC BY-SA 3.0', fonte: 'https://commons.wikimedia.org/wiki/File:Ibiti%C3%BAra_de_Minas_-_State_of_Minas_Gerais,_Brazil_-_panoramio_(3).jpg' },
 }
-
-export const CURIOSIDADES = [
-  { destaque: '1959', titulo: 'A primeira escola técnica de eletrônica da América Latina', texto: 'A ETE FMC foi fundada na cidade por Sinhá Moreira e abriu caminho para tudo o que veio depois.', icone: 'estrela', cor: 'var(--amarelo)' },
-  { destaque: 'Vale da Eletrônica', titulo: 'Um polo de tecnologia no interior de Minas', texto: 'Dezenas de empresas de eletrônica, telecomunicações e software nasceram aqui, muitas de ex-alunos das escolas locais.', icone: 'grafico', cor: 'var(--ciano)' },
-  { destaque: '1965', titulo: 'Inatel, o instituto de telecomunicações', texto: 'O Instituto Nacional de Telecomunicações forma engenheiros desde a década de 1960 e mantém um centro de inovação aberto às empresas.', icone: 'nuvem', cor: 'var(--lilas)' },
-  { destaque: 'Cidade Criativa', titulo: '“Cidade Criativa, Cidade Feliz”', texto: 'O lema resume o jeito da cidade: tradição mineira, praça cheia e muita gente criando coisa nova.', icone: 'pessoas', cor: 'var(--rosa)' },
-  { destaque: 'Rio Sapucaí', titulo: 'A cidade leva o nome do rio', texto: 'O Sapucaí corta a cidade e dá nome a ela. Antigamente era atravessado por uma ponte pênsil, a Ponte Afonso Pena.', icone: 'mapa', cor: 'var(--azul-ceu)', foto: 'ponte-pensil', legenda: 'Ponte pênsil Afonso Pena, em foto histórica' },
-  { destaque: 'Presidente', titulo: 'Terra de Delfim Moreira', texto: 'Delfim Moreira, que presidiu o Brasil entre 1918 e 1919, viveu em Santa Rita do Sapucaí e morreu aqui em 1920. A cidade tem um museu com o nome dele.', icone: 'prefeitura', cor: 'var(--amarelo)' },
-]
 
 // Hospedagens e gastronomia: listas do portal oficial visitesrs.com.br (lidas em nov. 2026).
 // Endereços e telefones vêm do texto do portal: confirmar com a SMCELT antes de publicar.
@@ -67,14 +50,6 @@ export const GASTRONOMIA = [
   { nome: 'SIS Coffee', endereco: 'R. Comend. Custódio Ribeiro, 137 · Centro', telefone: '(35) 98867-2535' },
   { nome: 'The Town Bar e Café', endereco: 'R. Genoveva da Fonseca, 214', telefone: '(35) 99769-6245' },
   { nome: 'Trailler Santa Rita', endereco: 'Praça Francisco Falcão, s/n · Centro', telefone: '(35) 3471-7798' },
-]
-
-export const SABORES = [
-  { nome: 'Café da tarde mineiro', foto: 'cafe-da-tarde', texto: 'Pão de queijo, bolo de fubá e café passado na hora. Servido nas padarias do Centro e no café da manhã das pousadas.', onde: 'Padarias e pousadas' },
-  { nome: 'Feijão tropeiro', foto: 'feijao-tropeiro', texto: 'Feijão, farinha de mandioca, torresmo, linguiça e couve. O prato mais pedido no almoço de domingo.', onde: 'Restaurantes de comida mineira' },
-  { nome: 'Pão de queijo', foto: 'pao-de-queijo', texto: 'Feito com queijo da região e polvilho. Tem em toda esquina, mas o melhor é o que sai quentinho do forno.', onde: 'Padarias e lanchonetes' },
-  { nome: 'Romeu e Julieta', foto: 'romeu-e-julieta', texto: 'Queijo minas com goiabada: a sobremesa mais simples e mais mineira que existe.', onde: 'Restaurantes e empórios' },
-  { nome: 'Cafés especiais do Sul de Minas', foto: 'cafe-coado', texto: 'A região é uma das maiores produtoras de café do país. Prove o coado na hora e leve um pacote para casa.', onde: 'Cafeterias e fazendas da região' },
 ]
 
 export const PONTOS_TURISTICOS = [

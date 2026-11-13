@@ -2,65 +2,71 @@ import { Link } from 'react-router-dom'
 import Icone from '../../componentes/Icone'
 import { Sobretitulo } from '../../componentes/Basicos'
 import { useSessao } from '../../contexto/Sessao'
-import { todosOsLugares } from '../../dados/explorar'
+import { CALENDARIO, EVENTOS } from '../../dados/cidade'
+import { GRUPOS_ROTEIRO, todosOsLugares } from '../../dados/explorar'
 import { useFavoritos } from '../../util/favoritos'
 import { useTitulo } from '../../util/ganchos'
 import { TopoPainel } from '../comerciante/InicioComerciante'
 import '../painel.css'
 import './turista.css'
 
-const ATALHOS = [
-  { para: '/turista/explorar#onde-ficar', rotulo: 'Onde ficar', texto: 'Hotéis, pousadas e chalés.', icone: 'cama', cor: 'var(--amarelo)' },
-  { para: '/turista/explorar#sabores', rotulo: 'O que provar', texto: 'Sabores mineiros da região.', icone: 'garfo', cor: 'var(--rosa)' },
-  { para: '/turista/explorar#o-que-visitar', rotulo: 'O que visitar', texto: 'Pontos turísticos da cidade.', icone: 'mapa', cor: 'var(--ciano)' },
+// Festas fixas da cidade (dados da página "Conheça a cidade")
+const AGENDA = [
+  ...EVENTOS.map((e) => ({ nome: e.nome, quando: e.quando, texto: e.resumo })),
+  ...CALENDARIO.map((c) => ({ nome: c.nome, quando: c.mes, texto: c.texto })),
 ]
 
 export default function InicioTurista() {
   useTitulo('Área do turista')
   const { sessao } = useSessao()
   const { ids } = useFavoritos()
-  const favoritos = todosOsLugares().filter((l) => ids.includes(l.id))
+  const salvos = todosOsLugares().filter((l) => ids.includes(l.id))
 
   return (
     <div className="surgir">
       <TopoPainel sobretitulo="Área do turista" titulo={`Olá, ${sessao.nome.split(' ')[0]}!`} cor="var(--azul-ceu)" />
       <p className="corpo suave" style={{ marginTop: -12, marginBottom: 24 }}>
-        Curiosidades, onde ficar, o que comer e o que visitar na Cidade Criativa do Sul de Minas.
+        Monte o roteiro da sua visita: escolha onde ficar, onde comer e o que visitar no guia da cidade.
       </p>
 
-      <div className="grade-3">
-        {ATALHOS.map((a) => (
-          <Link key={a.para} to={a.para} className="ot-mini ot-mini--linha">
-            <span className="ot-indicador__icone" style={{ '--cor': a.cor, width: 56, height: 56 }}><Icone nome={a.icone} /></span>
-            <div>
-              <span className="corpo" style={{ display: 'block', fontWeight: 700 }}>{a.rotulo}</span>
-              <span className="corpo-s suave">{a.texto}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <section aria-labelledby="titulo-roteiro">
+        <div className="secao__cab" style={{ marginBottom: 16 }}>
+          <h2 className="titulo-2" id="titulo-roteiro">Meu roteiro</h2>
+          {salvos.length > 0 && <Link className="ot-btn ot-btn--fantasma" to="/turista/favoritos">Ver roteiro <Icone nome="seta" /></Link>}
+        </div>
+        <div className="grade-3">
+          {GRUPOS_ROTEIRO.map((g) => {
+            const n = salvos.filter((l) => l.categoria === g.categoria).length
+            return (
+              <Link key={g.categoria} to={`/turista/explorar#${g.ancora}`} className="ot-mini ot-mini--linha">
+                <span className="ot-indicador__icone" style={{ '--cor': g.cor, width: 56, height: 56 }}><Icone nome={g.icone} /></span>
+                <div>
+                  <span className="corpo" style={{ display: 'block', fontWeight: 700 }}>{g.titulo}</span>
+                  <span className="corpo-s">{n ? `${n} ${n === 1 ? 'lugar guardado' : 'lugares guardados'}` : 'Nenhum ainda · ver opções'}</span>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      </section>
 
-      <section className="secao">
+      <section className="secao" aria-labelledby="titulo-agenda">
         <div className="secao__cab">
           <div>
-            <Sobretitulo>Salvos por você</Sobretitulo>
-            <h2 className="titulo-1">Meus favoritos</h2>
+            <Sobretitulo>Agenda da cidade</Sobretitulo>
+            <h2 className="titulo-2" id="titulo-agenda">Festas e eventos para encaixar na viagem</h2>
           </div>
-          {favoritos.length > 3 && (
-            <Link className="ot-btn ot-btn--fantasma" to="/turista/favoritos">Ver todos ({favoritos.length}) <Icone nome="seta" /></Link>
-          )}
+          <Link className="ot-btn ot-btn--fantasma" to="/conheca-a-cidade#eventos">Saiba mais <Icone nome="seta" /></Link>
         </div>
-        {favoritos.length ? (
-          <ul className="favoritos-lista">
-            {favoritos.slice(0, 3).map((f) => (
-              <li key={f.id}><span><strong>{f.nome}</strong><span className="corpo-s suave">{f.local}</span></span></li>
-            ))}
-          </ul>
-        ) : (
-          <p className="corpo suave">
-            Você ainda não salvou nenhum lugar. Toque na estrela dos cards em <Link to="/turista/explorar">Explorar a cidade</Link>.
-          </p>
-        )}
+        <ul className="agenda">
+          {AGENDA.map((a) => (
+            <li key={a.nome}>
+              <span className="agenda__quando"><Icone nome="calendario" tamanho="s" /> {a.quando}</span>
+              <strong>{a.nome}</strong>
+              <span className="corpo-s suave">{a.texto}</span>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   )

@@ -1,4 +1,4 @@
-import { HOSPEDAGENS, PONTOS_TURISTICOS } from './turismo'
+import { GASTRONOMIA, HOSPEDAGENS, PONTOS_TURISTICOS } from './turismo'
 import { LUGARES } from './cidade'
 import { MEU_NEGOCIO, inventarioInicial } from './painel'
 import { ler } from '../util/armazenamento'
@@ -73,9 +73,18 @@ export function hospedagensVisiveis() {
   return [...reais, { ...EXEMPLO, id: 'exemplo', bairro: d.area || EXEMPLO.bairro, preco: d.preco || EXEMPLO.preco, destaques, descricao: d.descricao || '' }]
 }
 
+// Grupos do "Meu roteiro" do turista
+export const GRUPOS_ROTEIRO = [
+  { categoria: 'hospedagens', titulo: 'Onde ficar', icone: 'cama', cor: 'var(--amarelo)', ancora: 'onde-ficar' },
+  { categoria: 'restaurantes', titulo: 'Onde comer', icone: 'garfo', cor: 'var(--rosa)', ancora: 'onde-comer' },
+  { categoria: 'atrativos', titulo: 'O que visitar', icone: 'mapa', cor: 'var(--ciano)', ancora: 'o-que-visitar' },
+]
+
+// Tudo o que o turista pode guardar no roteiro, com os dados de contato para a viagem
 export function todosOsLugares() {
   return [
-    ...hospedagensVisiveis().map((h) => ({ id: `hosp-${h.id}`, nome: h.nome, categoria: 'hospedagens', local: h.bairro || h.endereco, texto: h.descricao || h.endereco, foto: h.foto })),
-    ...pontosVisiveis().map((p) => ({ id: p.id, nome: p.nome, categoria: 'atrativos', local: p.local, texto: p.texto, foto: p.foto })),
+    ...hospedagensVisiveis().map((h) => ({ id: `hosp-${h.id}`, nome: h.nome, categoria: 'hospedagens', local: h.endereco, telefone: h.telefone })),
+    ...GASTRONOMIA.map((g) => ({ id: `comer-${slug(g.nome)}`, nome: g.nome, categoria: 'restaurantes', local: g.endereco, telefone: g.telefone })),
+    ...pontosVisiveis().map((p) => ({ id: p.id, nome: p.nome, categoria: 'atrativos', local: p.local, quando: p.quando })),
   ]
 }
