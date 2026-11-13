@@ -2,6 +2,28 @@ import LayoutPainel from '../componentes/LayoutPainel'
 import { useEnvios } from '../contexto/Envios'
 import { MEU_NEGOCIO } from '../dados/painel'
 
+export function AreaTurista() {
+  const menu = [
+    {
+      secao: 'Meu espaço',
+      itens: [
+        { para: '/turista', rotulo: 'Início', icone: 'casa', fim: true },
+        { para: '/turista/explorar', rotulo: 'Explorar a cidade', icone: 'mapa' },
+        { para: '/turista/favoritos', rotulo: 'Meus favoritos', icone: 'estrela' },
+      ],
+    },
+    {
+      secao: 'Consultar',
+      itens: [
+        { para: '/conheca-a-cidade', rotulo: 'Conheça a cidade', icone: 'pin', externo: true },
+        { para: '/indicadores', rotulo: 'Indicadores da cidade', icone: 'painel', externo: true },
+        { para: '/relatorios', rotulo: 'Relatórios', icone: 'arquivo', externo: true },
+      ],
+    },
+  ]
+  return <LayoutPainel perfil="turista" menu={menu} />
+}
+
 export function AreaComerciante() {
   const menu = [
     {

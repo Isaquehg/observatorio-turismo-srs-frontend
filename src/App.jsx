@@ -7,11 +7,13 @@ import Indicadores from './paginas/Indicadores'
 import IndicadoresPublicos from './paginas/IndicadoresPublicos'
 import Relatorios from './paginas/Relatorios'
 import ExplorarTurista from './paginas/turista/Explorar'
+import InicioTurista from './paginas/turista/InicioTurista'
+import Favoritos from './paginas/turista/Favoritos'
 import Sobre from './paginas/Sobre'
 import Explorar from './paginas/Explorar'
 import Entrar from './paginas/Entrar'
 import NaoEncontrada from './paginas/NaoEncontrada'
-import { AreaComerciante, AreaPrefeitura } from './paginas/Areas'
+import { AreaComerciante, AreaPrefeitura, AreaTurista } from './paginas/Areas'
 import InicioComerciante from './paginas/comerciante/InicioComerciante'
 import Enviar from './paginas/comerciante/Enviar'
 import Historico from './paginas/comerciante/Historico'
@@ -95,15 +97,18 @@ export default function App() {
             <Route path="indicadores" element={<Indicadores />} />
             <Route path="relatorios" element={<Relatorios />} />
           </Route>
-          <Route element={<RotaRestrita perfil="turista" />}>
-            <Route path="turista" element={<ExplorarTurista />} />
-          </Route>
           {/* O guia do Cadastur agora fica na área do comerciante */}
           <Route path="cadastur" element={<Navigate to="/comerciante/guia" replace />} />
           <Route path="*" element={<NaoEncontrada />} />
         </Route>
 
         <Route path="entrar" element={<Entrar />} />
+
+        <Route path="turista" element={<AreaTurista />}>
+          <Route index element={<InicioTurista />} />
+          <Route path="explorar" element={<ExplorarTurista />} />
+          <Route path="favoritos" element={<Favoritos />} />
+        </Route>
 
         <Route path="comerciante" element={<AreaComerciante />}>
           <Route index element={<InicioComerciante />} />

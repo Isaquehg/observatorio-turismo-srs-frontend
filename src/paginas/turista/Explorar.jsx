@@ -5,14 +5,13 @@ import BotaoFavorito from '../../componentes/BotaoFavorito'
 import { Sobretitulo } from '../../componentes/Basicos'
 import { useSessao } from '../../contexto/Sessao'
 import { CURIOSIDADES, PONTOS_TURISTICOS, SABORES, TIPOS_HOSPEDAGEM_TURISTA } from '../../dados/turismo'
-import { hospedagensVisiveis, todosOsLugares } from '../../dados/explorar'
+import { hospedagensVisiveis } from '../../dados/explorar'
 import { useFavoritos } from '../../util/favoritos'
 import { useTitulo } from '../../util/ganchos'
 import '../publico.css'
 import './turista.css'
 
 const SECOES = [
-  { id: 'favoritos', rotulo: 'Favoritos' },
   { id: 'curiosidades', rotulo: 'Curiosidades' },
   { id: 'onde-ficar', rotulo: 'Onde ficar' },
   { id: 'sabores', rotulo: 'Sabores' },
@@ -28,7 +27,6 @@ export default function Explorar() {
   const { ids, alternar } = useFavoritos()
   const todas = hospedagensVisiveis()
   const hospedagens = tipo === 'Todos' ? todas : todas.filter((h) => h.tipo === tipo)
-  const favoritos = todosOsLugares().filter((l) => ids.includes(l.id))
   const primeiroNome = sessao.nome.split(' ')[0]
 
   return (
@@ -43,7 +41,7 @@ export default function Explorar() {
             Curiosidades, onde ficar, o que comer e o que visitar na Cidade Criativa do Sul de Minas.
           </p>
           <nav className="explorar-hero__atalhos" aria-label="Nesta página">
-            {SECOES.filter((s) => s.id !== 'favoritos' || favoritos.length > 0).map((s) => (
+            {SECOES.map((s) => (
               <a key={s.id} href={`#${s.id}`} className="ot-chip" onClick={(e) => { e.preventDefault(); document.getElementById(s.id)?.scrollIntoView() }}>
                 {s.rotulo}
               </a>
@@ -54,25 +52,6 @@ export default function Explorar() {
       </section>
 
       <div className="container">
-        {favoritos.length > 0 && (
-          <section className="secao" id="favoritos">
-            <div className="secao__cab">
-              <div>
-                <Sobretitulo>Salvos por você</Sobretitulo>
-                <h2 className="titulo-1">Meus favoritos</h2>
-              </div>
-            </div>
-            <ul className="favoritos-lista">
-              {favoritos.map((f) => (
-                <li key={f.id}>
-                  <span><strong>{f.nome}</strong><span className="corpo-s suave">{f.local}</span></span>
-                  <button type="button" className="ot-btn ot-btn--fantasma ot-btn--p" onClick={() => alternar(f.id)} aria-label={`Tirar ${f.nome} dos favoritos`}>Remover</button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
         <section className="secao" id="curiosidades">
           <div className="secao__cab">
             <div>

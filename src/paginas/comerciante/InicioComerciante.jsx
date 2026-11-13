@@ -7,6 +7,7 @@ import { useEnvios } from '../../contexto/Envios'
 import { useSessao } from '../../contexto/Sessao'
 import { MEU_NEGOCIO } from '../../dados/painel'
 import { MESES_LONGOS, mesAno, mesAnoLongo, numero } from '../../util/formatar'
+import { iniciais } from '../../util/formatar'
 import { useTitulo } from '../../util/ganchos'
 import { periodoAtual, historicoCompleto } from './prazo'
 import '../painel.css'
@@ -22,7 +23,7 @@ export function TopoPainel({ sobretitulo, titulo, children, cor = 'var(--rosa)' 
       <div className="painel__topo-acoes">
         {children}
         <span className="ot-usuario">
-          <span className="ot-usuario__avatar" style={{ '--cor': cor }}>{sessao.perfil === 'prefeitura' ? 'ST' : 'RS'}</span>
+          <span className="ot-usuario__avatar" style={{ '--cor': cor }}>{sessao.perfil === 'prefeitura' ? 'ST' : iniciais(sessao.nome)}</span>
           {sessao.nome}
         </span>
       </div>
