@@ -99,3 +99,6 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 })
+// jsdom has no <dialog> API; Dialogo (Basicos.jsx) calls showModal/close
+window.HTMLDialogElement.prototype.showModal = vi.fn(function () { this.open = true })
+window.HTMLDialogElement.prototype.close = vi.fn(function () { this.open = false })

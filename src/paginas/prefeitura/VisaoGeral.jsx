@@ -5,7 +5,7 @@ import { Campo } from '../../componentes/Basicos'
 import { BarrasVerticais } from '../../componentes/Graficos'
 import { useEnvios } from '../../contexto/Envios'
 import { useAvisos } from '../../contexto/Avisos'
-import { INDICADORES_PUBLICAVEIS } from '../../dados/painel'
+import { HOJE, INDICADORES_PUBLICAVEIS } from '../../dados/painel'
 import { MESES_LONGOS, numero } from '../../util/formatar'
 import { useTitulo } from '../../util/ganchos'
 import { TopoPainel } from '../comerciante/InicioComerciante'
@@ -24,12 +24,12 @@ const RESPOSTA_MENSAL = [
 
 function saudacao() {
   const h = new Date().getHours()
-  return h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite'
+  return h < 5 ? 'Boa noite' : h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite'
 }
 
 function PublicarRapido() {
   const { avisar } = useAvisos()
-  const hoje = new Date()
+  const hoje = HOJE
   const periodos = [1, 2, 3].map((i) => {
     const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1)
     return `${MESES_LONGOS[d.getMonth()].replace(/^./, (l) => l.toUpperCase())} de ${d.getFullYear()}`

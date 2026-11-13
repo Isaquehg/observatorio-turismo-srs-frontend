@@ -1,7 +1,7 @@
-import { historicoComerciante, MEU_NEGOCIO } from '../../dados/painel'
+import { HOJE, historicoComerciante, MEU_NEGOCIO } from '../../dados/painel'
 
 // O mês de referência é sempre o anterior ao atual; o prazo vai até o dia 10.
-export function periodoAtual(hoje = new Date()) {
+export function periodoAtual(hoje = HOJE) {
   const ref = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1)
   const prazo = new Date(hoje.getFullYear(), hoje.getMonth(), 10, 23, 59)
   const dias = Math.ceil((prazo - hoje) / 86400000)

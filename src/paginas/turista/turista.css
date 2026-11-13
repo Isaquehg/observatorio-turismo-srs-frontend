@@ -12,31 +12,7 @@
 .ot-foto__credito a { color: #fff; text-decoration: none; }
 .ot-foto__credito a:hover { text-decoration: underline; }
 
-.explorar-hero {
-  display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--esp-6); align-items: center;
-  margin: var(--esp-5) var(--esp-5) 0; padding: 48px clamp(24px, 5vw, 64px);
-  border-radius: var(--raio-xl); max-width: 1440px;
-}
-@media (min-width: 1489px) { .explorar-hero { margin-inline: auto; } }
-.explorar-hero__abertura { margin-top: 16px; max-width: 40ch; opacity: .95; }
-.explorar-hero__atalhos { display: flex; flex-wrap: wrap; gap: var(--esp-2); margin-top: 28px; }
-.explorar-hero__atalhos .ot-chip { text-decoration: none; border-color: rgba(255, 255, 255, .6); }
-.explorar-hero__foto { border-radius: var(--raio-l); box-shadow: var(--sombra-flutuante); }
-@media (max-width: 900px) {
-  .explorar-hero { grid-template-columns: 1fr; margin: var(--esp-3) var(--esp-3) 0; padding: 36px var(--esp-5) var(--esp-5); gap: var(--esp-5); }
-}
-
-/* Curiosidades */
-.curiosidades { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-.curiosidade { display: flex; flex-direction: column; overflow: hidden; background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); }
-.curiosidade--foto { grid-row: span 2; }
-.curiosidade__corpo { display: flex; flex-direction: column; gap: var(--esp-2); padding: var(--esp-5); }
-.curiosidade__corpo .ot-indicador__icone { margin-bottom: 4px; }
-.curiosidade__destaque { font: 700 .875rem/1.2 var(--font-texto); letter-spacing: .08em; text-transform: uppercase; color: var(--magenta-texto); }
-@media (max-width: 1080px) { .curiosidades { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px) { .curiosidades { grid-template-columns: 1fr; } .curiosidade--foto { grid-row: auto; } }
-
-/* Cartões com foto: hospedagens e sabores */
+/* Cartões com foto: hospedagens */
 .cartoes-foto { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .cartoes-foto--sabores { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .cartao-foto { display: flex; flex-direction: column; overflow: hidden; background: var(--superficie); border-radius: var(--raio-l); box-shadow: var(--sombra-cartao); transition: box-shadow .2s ease; }
@@ -62,7 +38,7 @@
 @media (max-width: 600px) { .ponto { grid-template-columns: 1fr; } .ponto .ot-foto { aspect-ratio: 3 / 2 !important; min-height: 0; } }
 
 /* Favoritos */
-.cartao-foto, .ponto, .explorar__card { position: relative; }
+.cartao-foto, .ponto, .diretorio li { position: relative; }
 .favorito {
   position: absolute; top: 12px; right: 12px; z-index: 1;
   display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
@@ -70,7 +46,51 @@
 }
 .favorito[aria-pressed="true"] { background: var(--amarelo); }
 .favorito[aria-pressed="true"] svg { fill: currentColor; }
-.favoritos-lista { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.favoritos-lista li { display: flex; align-items: center; justify-content: space-between; gap: var(--esp-3); padding: 14px 16px; background: var(--superficie); border-radius: var(--raio-m); box-shadow: var(--sombra-cartao); }
-.favoritos-lista .corpo-s { display: block; }
-@media (max-width: 960px) { .favoritos-lista { grid-template-columns: 1fr; } }
+/* Atalhos da Início do turista: cartão clicável, sem sublinhado de link */
+a.ot-mini { color: inherit; text-decoration: none; transition: box-shadow .2s ease; }
+a.ot-mini:hover { box-shadow: var(--sombra-flutuante); }
+a.ot-mini .corpo-s { color: var(--tinta-suave); }
+
+/* Ponto turístico sem foto (cadastrado pela prefeitura) */
+.ponto__sem-foto { display: grid; place-items: center; min-height: 260px; background: var(--ciano); color: var(--tinta); }
+@media (max-width: 600px) { .ponto__sem-foto { min-height: 160px; } }
+
+/* Hospedagem real ainda sem foto */
+.cartao-foto__sem-foto { display: grid; place-items: center; height: 88px; background: var(--amarelo); color: var(--tinta); }
+.cartao-foto__meta a { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Onde comer: lista compacta de nome, endereço e telefone */
+.diretorio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.diretorio li { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; background: var(--superficie); border-radius: var(--raio-m); box-shadow: var(--sombra-cartao); }
+.diretorio span, .diretorio a { display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 1080px) { .diretorio { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .diretorio { grid-template-columns: 1fr; } }
+
+/* Espaço para a estrela de favorito não cobrir o título do ponto */
+.ponto__corpo > :first-child { padding-right: 52px; }
+
+/* Guia da cidade */
+.guia__atalhos { display: flex; flex-wrap: wrap; gap: var(--esp-2); margin-top: var(--esp-4); }
+.guia__atalhos .ot-chip { text-decoration: none; }
+.diretorio li { padding-right: 64px; }
+.diretorio .favorito { top: 8px; right: 8px; }
+
+/* Meu roteiro */
+.roteiro__grupo + .roteiro__grupo { margin-top: var(--esp-6); }
+.roteiro__titulo { display: flex; align-items: center; gap: var(--esp-3); margin-bottom: var(--esp-3); }
+.roteiro__lista { display: grid; gap: 12px; }
+.roteiro__lista li { display: flex; align-items: center; justify-content: space-between; gap: var(--esp-3); padding: 16px 20px; background: var(--superficie); border-radius: var(--raio-m); box-shadow: var(--sombra-cartao); }
+.roteiro__dados { display: flex; flex-direction: column; gap: 4px; }
+.roteiro__dados span, .roteiro__dados a { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Agenda da cidade na Início */
+.agenda { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.agenda li { display: flex; flex-direction: column; gap: 6px; padding: 16px 20px; background: var(--superficie); border-radius: var(--raio-m); box-shadow: var(--sombra-cartao); }
+.agenda__quando { display: inline-flex; align-items: center; gap: 6px; font: 700 .875rem/1.2 var(--font-texto); color: var(--magenta-texto); }
+
+/* Imprimir o roteiro sem o menu e os botões */
+@media print {
+  .lateral, .painel__barra-movel, .painel__topo-acoes, .roteiro__lista button, .pular-conteudo { display: none !important; }
+  .painel__principal { margin: 0 !important; }
+  .roteiro__lista li { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+}

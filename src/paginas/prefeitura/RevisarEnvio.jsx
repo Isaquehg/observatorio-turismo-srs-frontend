@@ -35,7 +35,7 @@ export default function RevisarEnvio({ envio, aoFechar, modoInicial = 'ver' }) {
 
   const devolver = () => {
     if (motivo.trim().length < 10) {
-      setErro('Explique o motivo em poucas palavras — o estabelecimento vai ler isso.')
+      setErro('Explique o motivo em poucas palavras. O estabelecimento vai ler esta mensagem.')
       return
     }
     despachar({ tipo: 'devolver', id: envio.id, motivo: motivo.trim() })

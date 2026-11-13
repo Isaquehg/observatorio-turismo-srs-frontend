@@ -1,5 +1,10 @@
 // Estabelecimentos, envios e inventário de exemplo para as áreas logadas.
 
+// Os envios, o histórico e os relatórios de exemplo giram em torno desta data. Com a data real,
+// em novembro o painel mostrava relatório "previsto para 30 out." e um mês de envio pulado.
+// shortcut: data fixa do protótipo; trocar por new Date() quando os dados vierem da API.
+export const HOJE = new Date(2026, 9, 4) // 4 de outubro de 2026
+
 export const MEU_NEGOCIO = {
   nome: 'Pousada Recanto da Serra',
   tipo: 'Pousada',
@@ -53,7 +58,7 @@ export const inventarioInicial = [
   { id: 4, nome: 'Rodoviária Municipal', local: 'Centro', categoria: 'Equipamento de apoio', atualizado: '2025-01-08', situacao: 'desatualizado' },
   { id: 5, nome: 'Centro de Atendimento ao Turista', local: 'Centro', categoria: 'Serviço turístico', atualizado: '2026-06-30', situacao: 'em-dia' },
   { id: 6, nome: 'Cachoeira da zona rural', local: 'Zona rural', categoria: 'Atrativo natural', atualizado: '2025-09-19', situacao: 'revisar' },
-  { id: 7, nome: 'Praça Santa Rita', local: 'Centro', categoria: 'Atrativo cultural', atualizado: '2026-05-11', situacao: 'em-dia' },
+  { id: 7, nome: 'Praça Santa Rita', local: 'Centro', categoria: 'Atrativo cultural', atualizado: '2026-05-11', situacao: 'em-dia', publicar: true },
   { id: 8, nome: 'Feira de artesanato de domingo', local: 'Centro', categoria: 'Evento permanente', atualizado: '2026-04-02', situacao: 'em-dia' },
   { id: 9, nome: 'Trilha do Ribeirão', local: 'Zona rural', categoria: 'Atrativo natural', atualizado: '2026-02-17', situacao: 'em-dia' },
   { id: 10, nome: 'Estacionamento turístico', local: 'Centro', categoria: 'Equipamento de apoio', atualizado: '2026-07-09', situacao: 'em-dia' },
