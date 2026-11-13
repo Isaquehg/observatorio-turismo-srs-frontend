@@ -4,8 +4,8 @@ import Foto from '../../componentes/Foto'
 import BotaoFavorito from '../../componentes/BotaoFavorito'
 import { Sobretitulo } from '../../componentes/Basicos'
 import { useSessao } from '../../contexto/Sessao'
-import { CURIOSIDADES, PONTOS_TURISTICOS, SABORES, TIPOS_HOSPEDAGEM_TURISTA } from '../../dados/turismo'
-import { hospedagensVisiveis } from '../../dados/explorar'
+import { CURIOSIDADES, SABORES, TIPOS_HOSPEDAGEM_TURISTA } from '../../dados/turismo'
+import { hospedagensVisiveis, pontosVisiveis } from '../../dados/explorar'
 import { useFavoritos } from '../../util/favoritos'
 import { useTitulo } from '../../util/ganchos'
 import '../publico.css'
@@ -146,10 +146,14 @@ export default function Explorar() {
             </div>
           </div>
           <ul className="pontos">
-            {PONTOS_TURISTICOS.map((p, i) => (
-              <li key={p.nome} className="ponto">
-                <BotaoFavorito ativo={ids.includes(`ponto-${i}`)} nome={p.nome} aoAlternar={() => alternar(`ponto-${i}`)} />
-                <Foto chave={p.foto} alt={p.nome} proporcao="auto" />
+            {pontosVisiveis().map((p) => (
+              <li key={p.id} className="ponto">
+                <BotaoFavorito ativo={ids.includes(p.id)} nome={p.nome} aoAlternar={() => alternar(p.id)} />
+                {p.foto ? (
+                  <Foto chave={p.foto} alt={p.nome} proporcao="auto" />
+                ) : (
+                  <span className="ponto__sem-foto" aria-hidden="true"><Icone nome="mapa" tamanho="l" /></span>
+                )}
                 <div className="ponto__corpo">
                   <span className="ot-sobretitulo ot-sobretitulo--azul">{p.categoria}</span>
                   <h3 className="titulo-2">{p.nome}</h3>

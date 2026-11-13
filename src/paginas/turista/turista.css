@@ -79,3 +79,7 @@
 a.ot-mini { color: inherit; text-decoration: none; transition: box-shadow .2s ease; }
 a.ot-mini:hover { box-shadow: var(--sombra-flutuante); }
 a.ot-mini .corpo-s { color: var(--tinta-suave); }
+
+/* Ponto turístico sem foto (cadastrado pela prefeitura) */
+.ponto__sem-foto { display: grid; place-items: center; min-height: 260px; background: var(--ciano); color: var(--tinta); }
+@media (max-width: 600px) { .ponto__sem-foto { min-height: 160px; } }

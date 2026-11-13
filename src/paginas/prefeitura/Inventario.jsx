@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icone from '../../componentes/Icone'
 import { Aviso, Campo, Dialogo, Selo } from '../../componentes/Basicos'
 import { useAvisos } from '../../contexto/Avisos'
 import { CATEGORIAS_INVENTARIO, SITUACAO_INVENTARIO, inventarioInicial } from '../../dados/painel'
+import { CHAVE_INVENTARIO, ehAtrativo, lerInventario } from '../../dados/explorar'
+import { gravar } from '../../util/armazenamento'
 import { baixarCsv, dataCurta, normalizar } from '../../util/formatar'
 import { useTitulo } from '../../util/ganchos'
 import { TopoPainel } from '../comerciante/InicioComerciante'
@@ -15,10 +17,10 @@ const GRUPOS = [
 ]
 
 const hojeIso = () => new Date().toISOString().slice(0, 10)
-const VAZIO = { nome: '', local: 'Centro', categoria: CATEGORIAS_INVENTARIO[0] }
+const VAZIO = { nome: '', local: 'Centro', categoria: CATEGORIAS_INVENTARIO[0], descricao: '', publicar: false }
 
 function FormularioItem({ item, aoSalvar, aoFechar }) {
-  const [dados, setDados] = useState(item || VAZIO)
+  const [dados, setDados] = useState({ ...VAZIO, ...item })
   const [erro, setErro] = useState('')
   const editando = !!item?.id
 
@@ -28,7 +30,11 @@ function FormularioItem({ item, aoSalvar, aoFechar }) {
       setErro('Dê um nome ao item, como "Mirante da serra".')
       return
     }
-    aoSalvar({ ...dados, nome: dados.nome.trim() })
+    if (dados.publicar && dados.descricao.trim().length < 20) {
+      setErro('Para mostrar no site, escreva uma descrição de ao menos 20 caracteres.')
+      return
+    }
+    aoSalvar({ ...dados, nome: dados.nome.trim(), descricao: dados.descricao.trim() })
   }
 
   return (
@@ -49,6 +55,16 @@ function FormularioItem({ item, aoSalvar, aoFechar }) {
           <option>Distritos</option>
         </select>
       </Campo>
+      {ehAtrativo(dados.categoria) && (
+        <>
+          <Campo id="item-descricao" rotulo="Descrição para o turista" ajuda={`${dados.descricao.length}/160 caracteres`}>
+            <textarea id="item-descricao" className="ot-entrada" rows={3} maxLength={160} value={dados.descricao} onChange={(e) => { setDados({ ...dados, descricao: e.target.value }); setErro('') }} />
+          </Campo>
+          <label className="ot-check">
+            <input type="checkbox" checked={dados.publicar} onChange={(e) => setDados({ ...dados, publicar: e.target.checked })} /> Mostrar no site para turistas (em “O que visitar”)
+          </label>
+        </>
+      )}
       <div className="ot-dialogo__acoes">
         <button type="button" className="ot-btn ot-btn--secundario" onClick={aoFechar}>Cancelar</button>
         <button type="submit" className="ot-btn ot-btn--primario"><Icone nome="check" /> {editando ? 'Salvar e marcar revisado' : 'Adicionar item'}</button>
@@ -60,7 +76,8 @@ function FormularioItem({ item, aoSalvar, aoFechar }) {
 export default function Inventario() {
   useTitulo('Inventário turístico')
   const { avisar } = useAvisos()
-  const [itens, setItens] = useState(inventarioInicial)
+  const [itens, setItens] = useState(lerInventario)
+  useEffect(() => gravar(CHAVE_INVENTARIO, itens), [itens])
   const [busca, setBusca] = useState('')
   const [categoria, setCategoria] = useState('todas')
   const [situacao, setSituacao] = useState('todas')
@@ -162,7 +179,7 @@ export default function Inventario() {
                   const s = SITUACAO_INVENTARIO[i.situacao]
                   return (
                     <tr key={i.id}>
-                      <td><strong>{i.nome}</strong><span className="ot-tabela__sub">{i.local}</span></td>
+                      <td><strong>{i.nome}</strong><span className="ot-tabela__sub">{i.local}{i.publicar && ehAtrativo(i.categoria) ? ' · Visível no site' : ''}</span></td>
                       <td data-rotulo="Categoria">{i.categoria}</td>
                       <td data-rotulo="Atualizado em">{dataCurta(i.atualizado)}</td>
                       <td data-rotulo="Situação"><Selo situacao={s.selo} icone={s.icone}>{s.rotulo}</Selo></td>
