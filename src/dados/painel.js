@@ -1,5 +1,10 @@
 // Estabelecimentos, envios e inventário de exemplo para as áreas logadas.
 
+// Os envios, o histórico e os relatórios de exemplo giram em torno desta data. Com a data real,
+// em novembro o painel mostrava relatório "previsto para 30 out." e um mês de envio pulado.
+// shortcut: data fixa do protótipo; trocar por new Date() quando os dados vierem da API.
+export const HOJE = new Date(2026, 9, 4) // 4 de outubro de 2026
+
 export const MEU_NEGOCIO = {
   nome: 'Pousada Recanto da Serra',
   tipo: 'Pousada',

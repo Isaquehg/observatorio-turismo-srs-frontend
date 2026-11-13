@@ -33,6 +33,7 @@ export function TopoPainel({ sobretitulo, titulo, children, cor = 'var(--rosa)' 
 
 export default function InicioComerciante() {
   useTitulo('Área do comerciante')
+  const { sessao } = useSessao()
   const { envios } = useEnvios()
   const historico = historicoCompleto(envios)
   const periodo = periodoAtual()
@@ -43,7 +44,7 @@ export default function InicioComerciante() {
 
   return (
     <div className="surgir">
-      <TopoPainel sobretitulo="Área do comerciante" titulo={`Olá, ${MEU_NEGOCIO.nome}`} />
+      <TopoPainel sobretitulo={MEU_NEGOCIO.nome} titulo={`Olá, ${sessao.nome.split(' ')[0]}!`} />
 
       {enviadoAgora ? (
         <div className="faixa faixa--ok">

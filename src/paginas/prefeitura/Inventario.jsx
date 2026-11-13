@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Icone from '../../componentes/Icone'
 import { Aviso, Campo, Dialogo, Selo } from '../../componentes/Basicos'
 import { useAvisos } from '../../contexto/Avisos'
-import { CATEGORIAS_INVENTARIO, SITUACAO_INVENTARIO, inventarioInicial } from '../../dados/painel'
+import { CATEGORIAS_INVENTARIO, HOJE, SITUACAO_INVENTARIO, inventarioInicial } from '../../dados/painel'
 import { CHAVE_INVENTARIO, ehAtrativo, lerInventario } from '../../dados/explorar'
 import { gravar } from '../../util/armazenamento'
 import { baixarCsv, dataCurta, normalizar } from '../../util/formatar'
@@ -16,7 +16,7 @@ const GRUPOS = [
   { rotulo: 'Infraestrutura de apoio', icone: 'predio', cor: 'var(--amarelo)', base: 31, filtro: (i) => i.categoria === 'Equipamento de apoio' },
 ]
 
-const hojeIso = () => new Date().toISOString().slice(0, 10)
+const hojeIso = () => HOJE.toISOString().slice(0, 10)
 const VAZIO = { nome: '', local: 'Centro', categoria: CATEGORIAS_INVENTARIO[0], descricao: '', publicar: false }
 
 function FormularioItem({ item, aoSalvar, aoFechar }) {
@@ -117,7 +117,7 @@ export default function Inventario() {
 
   return (
     <div className="surgir">
-      <TopoPainel sobretitulo="Painel da Prefeitura · Fase 2" titulo="Inventário turístico" cor="var(--ciano)">
+      <TopoPainel sobretitulo="Painel da Prefeitura" titulo="Inventário turístico" cor="var(--ciano)">
         <button type="button" className="ot-btn ot-btn--secundario" onClick={exportar}><Icone nome="download" /> Exportar</button>
         <button type="button" className="ot-btn ot-btn--primario" onClick={() => setEditando(VAZIO)}><Icone nome="mais" /> Novo item</button>
       </TopoPainel>
