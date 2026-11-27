@@ -57,3 +57,4 @@ public/          ilustrações e logos do design system
 - **Responsivo de 320px a telas largas**: navegação vira gaveta no celular, tabelas viram cartões, gráficos são desenhados na largura real do contêiner (o texto não encolhe), barras verticais deitam quando falta espaço.
 - **Acessibilidade**: texto mínimo de 14px (corpo 18px), alvos de 48px, foco visível, erros escritos em palavras, `prefers-reduced-motion`, tabelas equivalentes aos gráficos para leitores de tela, navegação por setas nas abas e nos perfis.
 - **Gráficos em SVG feitos à mão**, sem biblioteca: ficam no estilo do design system e o bundle continua pequeno (~95 KB gzip).
+ 
