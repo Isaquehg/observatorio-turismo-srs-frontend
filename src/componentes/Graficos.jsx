@@ -60,7 +60,7 @@ export function GraficoLinha({ series, rotulos, max = 100, sufixo = '%', altura 
   const w = Math.max(largura, 280)
   const areaW = w - margem.esq - margem.dir
   const areaH = altura - margem.topo - margem.base
-  const x = (i) => margem.esq + 10 + (i / (rotulos.length - 1)) * (areaW - 20)
+  const x = (i) => margem.esq + 10 + (i / Math.max(rotulos.length - 1, 1)) * (areaW - 20)
   const y = (v) => margem.topo + areaH - (v / max) * areaH
   const passoRotulo = w < 420 ? 2 : 1
   const linhasGuia = [0, 25, 50, 75, 100].map((p) => (p / 100) * max)
@@ -174,7 +174,7 @@ export function GraficoLinha({ series, rotulos, max = 100, sufixo = '%', altura 
 export function Rosca({ fatias, centro, subcentro, descricao, sufixo = '%' }) {
   const [ref, visivel] = useEntrada()
   const [ativa, setAtiva] = useState(null)
-  const total = fatias.reduce((a, f) => a + f.valor, 0)
+  const total = fatias.reduce((a, f) => a + f.valor, 0) || 1
   const r = 82
   const circ = 2 * Math.PI * r
   const folga = 3
@@ -228,7 +228,7 @@ export function Rosca({ fatias, centro, subcentro, descricao, sufixo = '%' }) {
 
 export function BarrasHorizontais({ itens, descricao, destaque, sufixo = '' }) {
   const [ref, visivel] = useEntrada()
-  const max = Math.max(...itens.map((i) => i.valor))
+  const max = Math.max(0, ...itens.map((i) => i.valor)) || 1
   return (
     <ul className="barras-h" ref={ref} aria-label={descricao}>
       {itens.map((item, i) => (
@@ -260,7 +260,7 @@ export function BarrasVerticais({ itens, destaque, descricao }) {
 
 function Colunas({ itens, destaque, descricao }) {
   const [ref, visivel] = useEntrada()
-  const max = Math.max(...itens.map((i) => i.valor)) * 1.1
+  const max = (Math.max(0, ...itens.map((i) => i.valor)) || 1) * 1.1
   return (
     <div className="barras-v" ref={ref} role="img" aria-label={descricao}>
       {itens.map((item, i) => {

@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import Icone from '../../componentes/Icone'
-import { Selo } from '../../componentes/Basicos'
+import { Aviso, Selo } from '../../componentes/Basicos'
 import { useEnvios } from '../../contexto/Envios'
 import { useAvisos } from '../../contexto/Avisos'
-import { naoEnviaram } from '../../dados/painel'
 import { mesAno, normalizar } from '../../util/formatar'
 import { useTitulo } from '../../util/ganchos'
 import { TopoPainel } from '../comerciante/InicioComerciante'
@@ -11,12 +10,50 @@ import RevisarEnvio from './RevisarEnvio'
 import '../painel.css'
 
 export function TabelaEnvios({ lista, aoRevisar, compacta = false }) {
-  const { despachar } = useEnvios()
+  const { aprovarEnvio, reabrirEnvio } = useEnvios()
   const { avisar } = useAvisos()
+  const [processandoId, setProcessandoId] = useState(null)
 
-  const aprovar = (e) => {
-    despachar({ tipo: 'aprovar', id: e.id })
-    avisar(`${e.nome} aprovado`, { texto: 'O dado entra no próximo cálculo dos indicadores.' })
+  const aprovar = async (e) => {
+    if (e.temAlertasBloqueantes) {
+      aoRevisar(e)
+      return
+    }
+    setProcessandoId(e.id)
+    try {
+      await aprovarEnvio(e.id)
+      avisar(`${e.nome} aprovado`, { texto: 'O dado entra no próximo cálculo dos indicadores.' })
+    } catch (causa) {
+      if (causa?.codigo === 'SUBMISSION_HAS_BLOCKING_ALERTS') {
+        aoRevisar(e)
+        avisar('Atenção: alertas bloqueantes', {
+          texto: causa.message,
+          tipo: 'alerta',
+        })
+      } else {
+        avisar('Não foi possível aprovar', {
+          texto: causa?.message || 'Recarregue a página e tente novamente.',
+          tipo: 'erro',
+        })
+      }
+    } finally {
+      setProcessandoId(null)
+    }
+  }
+
+  const reabrir = async (e) => {
+    setProcessandoId(e.id)
+    try {
+      await reabrirEnvio(e.id)
+      avisar('Envio reaberto', { texto: `${e.nome} voltou para a fila de validação.`, tipo: 'info' })
+    } catch (causa) {
+      avisar('Não foi possível reabrir', {
+        texto: causa?.message || 'Verifique se o envio já está completo para revisão.',
+        tipo: 'erro',
+      })
+    } finally {
+      setProcessandoId(null)
+    }
   }
 
   return (
@@ -37,31 +74,34 @@ export function TabelaEnvios({ lista, aoRevisar, compacta = false }) {
               <td>
                 <strong>{e.nome}</strong>
                 <span className="ot-tabela__sub">{e.tipo}</span>
-                {compacta && e.problema && <Selo situacao="recusado" icone="alerta" className="selo-linha">{e.problema}</Selo>}
+                {compacta && e.atrasado && <Selo situacao="analise" icone="relogio" className="selo-linha">Há mais de 3 dias</Selo>}
               </td>
               <td data-rotulo="Período">
                 {mesAno(e.ano, e.mes)}
                 {!compacta && <span className="ot-tabela__sub">{e.recebido}</span>}
               </td>
-              <td className="ot-num" data-rotulo="Ocupação" style={e.problema ? { color: 'var(--erro)', fontWeight: 700 } : undefined}>
+              <td className="ot-num" data-rotulo="Ocupação" style={e.ocupacao != null && e.ocupacao >= 95 ? { color: 'var(--erro)', fontWeight: 700 } : undefined}>
                 {e.ocupacao == null ? '—' : `${e.ocupacao}%`}
               </td>
               {!compacta && (
                 <td data-rotulo="Situação">
-                  {e.problema && e.situacao === 'analise' ? (
-                    <Selo situacao="recusado" icone="alerta">{e.problema}</Selo>
-                  ) : (
-                    <Selo situacao={e.situacao} />
-                  )}
+                  <Selo situacao={e.situacao} />
                   {e.atrasado && e.situacao === 'analise' && <span className="ot-tabela__sub">Há mais de 3 dias</span>}
                 </td>
               )}
               <td className="ot-tabela__acoes">
-                <button type="button" className="ot-btn ot-btn--fantasma ot-btn--p" onClick={() => aoRevisar(e)}>
+                <button type="button" className="ot-btn ot-btn--fantasma ot-btn--p" disabled={processandoId === e.id} onClick={() => aoRevisar(e)}>
                   {e.situacao === 'analise' ? 'Revisar' : 'Detalhes'}
                 </button>
                 {e.situacao === 'analise' && (
-                  <button type="button" className="ot-btn ot-btn--solido ot-btn--p" disabled={!!e.problema} onClick={() => aprovar(e)} aria-label={`Aprovar envio de ${e.nome}`}>
+                  <button
+                    type="button"
+                    className="ot-btn ot-btn--solido ot-btn--p"
+                    disabled={processandoId === e.id}
+                    aria-busy={processandoId === e.id}
+                    onClick={() => aprovar(e)}
+                    aria-label={`Aprovar envio de ${e.nome}`}
+                  >
                     <Icone nome="check" tamanho="s" /> Aprovar
                   </button>
                 )}
@@ -69,10 +109,8 @@ export function TabelaEnvios({ lista, aoRevisar, compacta = false }) {
                   <button
                     type="button"
                     className="ot-btn ot-btn--fantasma ot-btn--p"
-                    onClick={() => {
-                      despachar({ tipo: 'reabrir', id: e.id })
-                      avisar('Envio reaberto', { texto: `${e.nome} voltou para a fila de validação.`, tipo: 'info' })
-                    }}
+                    disabled={processandoId === e.id}
+                    onClick={() => reabrir(e)}
                   >
                     Reabrir
                   </button>
@@ -88,22 +126,37 @@ export function TabelaEnvios({ lista, aoRevisar, compacta = false }) {
 
 export default function Envios() {
   useTitulo('Validar envios')
-  const { envios, pendentes } = useEnvios()
+  const {
+    envios,
+    pendentes,
+    faltantes,
+    carregando,
+    erro,
+    recarregar,
+    enviarLembrete,
+  } = useEnvios()
   const { avisar } = useAvisos()
   const [aba, setAba] = useState('analise')
   const [busca, setBusca] = useState('')
   const [revisando, setRevisando] = useState(null)
+  const [enviandoLembreteId, setEnviandoLembreteId] = useState(null)
 
   const abas = [
     { id: 'analise', rotulo: 'Para validar', total: pendentes.length },
     { id: 'publicado', rotulo: 'Aprovados', total: envios.filter((e) => e.situacao === 'publicado').length },
     { id: 'recusado', rotulo: 'Devolvidos', total: envios.filter((e) => e.situacao === 'recusado').length },
-    { id: 'faltam', rotulo: 'Não enviaram', total: naoEnviaram.length },
+    { id: 'faltam', rotulo: 'Não enviaram', total: faltantes.length },
   ]
 
   const termo = normalizar(busca.trim())
-  const lista = envios.filter((e) => e.situacao === aba && (!termo || normalizar(e.nome).includes(termo)))
-  const faltam = naoEnviaram.filter((n) => !termo || normalizar(n).includes(termo))
+  const lista = envios.filter(
+    (e) =>
+      e.situacao === aba &&
+      (!termo || normalizar(`${e.nome} ${e.cnpj}`).includes(termo)),
+  )
+  const faltamFiltrados = faltantes.filter(
+    (item) => !termo || normalizar(`${item.nome} ${item.cnpj}`).includes(termo),
+  )
   const atual = revisando && envios.find((e) => e.id === revisando.id)
 
   // Setas do teclado trocam de aba (padrão de tablist)
@@ -114,6 +167,49 @@ export default function Envios() {
     const prox = abas[(i + passo + abas.length) % abas.length]
     setAba(prox.id)
     ev.currentTarget.querySelector(`#aba-${prox.id}`)?.focus()
+  }
+
+  const lembrarIndividual = async (item) => {
+    setEnviandoLembreteId(item.id)
+    try {
+      const resultado = await enviarLembrete([item.id])
+      const registro = resultado?.reminders?.[0]
+      if (registro?.status === 'failed') {
+        avisar('Lembrete não enviado', {
+          texto: registro.error || `${item.nome} não possui e-mail vinculado.`,
+          tipo: 'alerta',
+        })
+      } else {
+        avisar('Lembrete enviado', {
+          texto: `${item.nome} recebe um e-mail com o link de envio.`,
+        })
+      }
+    } catch (causa) {
+      avisar('Erro ao enviar lembrete', {
+        texto: causa?.message || 'Não foi possível disparar o lembrete agora.',
+        tipo: 'erro',
+      })
+    } finally {
+      setEnviandoLembreteId(null)
+    }
+  }
+
+  const lembrarTodos = async () => {
+    setEnviandoLembreteId('todos')
+    try {
+      const resultado = await enviarLembrete()
+      const total = resultado?.reminders?.length ?? faltamFiltrados.length
+      avisar('Lembretes enviados', {
+        texto: `${total} estabelecimento(s) programado(s) para receber o aviso por e-mail.`,
+      })
+    } catch (causa) {
+      avisar('Erro ao enviar lembretes', {
+        texto: causa?.message || 'Não foi possível disparar os lembretes em lote.',
+        tipo: 'erro',
+      })
+    } finally {
+      setEnviandoLembreteId(null)
+    }
   }
 
   return (
@@ -150,24 +246,64 @@ export default function Envios() {
         </div>
 
         <div id="painel-envios" role="tabpanel" aria-labelledby={`aba-${aba}`}>
-          {aba === 'faltam' ? (
-            <>
-              <ul className="faltam">
-                {faltam.map((n) => (
-                  <li key={n}>
-                    <span>{n}</span>
-                    <button type="button" className="ot-btn ot-btn--fantasma ot-btn--p" onClick={() => avisar('Lembrete enviado', { texto: `${n} recebe um e-mail com o link de envio.` })}>
-                      <Icone nome="sino" tamanho="s" /> Lembrar
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <div style={{ padding: '16px 0 12px' }}>
-                <button type="button" className="ot-btn ot-btn--secundario" onClick={() => avisar('Lembretes enviados', { texto: `${faltam.length} estabelecimentos vão receber o aviso por e-mail.` })}>
-                  <Icone nome="sino" /> Lembrar todos ({faltam.length})
-                </button>
+          {carregando ? (
+            <div className="ot-vazio" role="status" aria-live="polite">
+              <span className="girando" aria-hidden="true" />
+              <p className="corpo suave">Carregando envios…</p>
+            </div>
+          ) : erro ? (
+            <Aviso tipo="erro" style={{ marginBlock: 16 }} titulo="Não foi possível carregar os envios">
+              {erro}{' '}
+              <button type="button" className="link-botao" onClick={recarregar}>
+                Tentar novamente
+              </button>
+            </Aviso>
+          ) : aba === 'faltam' ? (
+            faltamFiltrados.length > 0 ? (
+              <>
+                <ul className="faltam">
+                  {faltamFiltrados.map((item) => (
+                    <li key={item.id}>
+                      <div>
+                        <span>{item.nome}</span>
+                        {item.ultimoLembrete && (
+                          <span className="ot-tabela__sub">
+                            Último lembrete: {item.ultimoLembrete.enviadoEm}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="ot-btn ot-btn--fantasma ot-btn--p"
+                        disabled={enviandoLembreteId === item.id || enviandoLembreteId === 'todos'}
+                        onClick={() => lembrarIndividual(item)}
+                      >
+                        <Icone nome="sino" tamanho="s" /> Lembrar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <div style={{ padding: '16px 0 12px' }}>
+                  <button
+                    type="button"
+                    className="ot-btn ot-btn--secundario"
+                    disabled={enviandoLembreteId !== null}
+                    aria-busy={enviandoLembreteId === 'todos'}
+                    onClick={lembrarTodos}
+                  >
+                    <Icone nome="sino" /> Lembrar todos ({faltamFiltrados.length})
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="ot-vazio">
+                <span className="ot-vazio__icone ot-bolha" style={{ background: 'var(--ciano)' }}><Icone nome="check-circulo" tamanho="l" /></span>
+                <h3 className="titulo-3">{termo ? 'Nada por aqui' : 'Todos enviaram!'}</h3>
+                <p className="corpo suave">
+                  {termo ? 'Nenhum estabelecimento corresponde a essa busca.' : 'Não há estabelecimentos pendentes para o período.'}
+                </p>
               </div>
-            </>
+            )
           ) : lista.length ? (
             <TabelaEnvios lista={lista} aoRevisar={setRevisando} />
           ) : (
@@ -178,7 +314,6 @@ export default function Envios() {
             </div>
           )}
         </div>
-        <p className="ot-fonte" style={{ margin: '12px 0 8px' }}>Estabelecimentos e valores de exemplo para o protótipo.</p>
       </section>
 
       <RevisarEnvio envio={atual} aoFechar={() => setRevisando(null)} />

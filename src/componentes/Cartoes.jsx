@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Icone from './Icone'
 import { Minilinha } from './Graficos'
 import { Variacao, Dialogo } from './Basicos'
-import { categoriaDe } from '../dados/relatorios'
+import { CATEGORIAS_RELATORIO, categoriaDe } from '../dados/relatorios'
 import { mesAno } from '../util/formatar'
 import { useAvisos } from '../contexto/Avisos'
 
@@ -30,22 +30,43 @@ export function Indicador({ rotulo, valor, unidade, icone, cor, variacao, compar
 }
 
 function dataRelatorio(iso) {
-  const [ano, mes] = iso.split('-').map(Number)
+  if (!iso) return '—'
+  const [ano, mes] = String(iso).slice(0, 10).split('-').map(Number)
+  if (!ano || !mes) return iso
   return mesAno(ano, mes)
+}
+
+function resolverCategoria(id) {
+  return categoriaDe(id) || CATEGORIAS_RELATORIO[1]
+}
+
+function formatarMetaPdf(relatorio) {
+  const partes = ['PDF']
+  if (relatorio?.paginas != null) partes.push(`${relatorio.paginas} páginas`)
+  if (relatorio?.tamanho) partes.push(relatorio.tamanho)
+  return partes.join(' · ')
 }
 
 export function useDownloadRelatorio() {
   const { avisar } = useAvisos()
-  return (r) =>
-    avisar('Arquivo indisponível no protótipo', {
-      texto: `“${r.titulo}” será baixado em PDF quando o acervo do Observatório estiver no ar.`,
+  return (r) => {
+    // Opens the real S3 PDF URL returned by the back-end when available
+    if (r?.arquivoUrl) {
+      window.open(r.arquivoUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
+    avisar('Arquivo indisponível', {
+      texto: `“${r?.titulo || 'Relatório'}” ainda não possui arquivo PDF vinculado.`,
       tipo: 'info',
     })
+  }
 }
 
 export function ResumoRelatorio({ relatorio, aoFechar }) {
   const baixar = useDownloadRelatorio()
-  const cat = relatorio && categoriaDe(relatorio.categoria)
+  const cat = relatorio && resolverCategoria(relatorio.categoria)
+  const achados = Array.isArray(relatorio?.achados) ? relatorio.achados : []
+  const anoCitacao = relatorio?.data ? String(relatorio.data).slice(0, 4) : ''
   return (
     <Dialogo
       aberto={!!relatorio}
@@ -68,25 +89,27 @@ export function ResumoRelatorio({ relatorio, aoFechar }) {
           <div className="ot-relatorio__meta" style={{ marginTop: -4 }}>
             <span className="ot-sobretitulo" style={{ fontSize: '.8125rem' }}>{cat.rotulo}</span>
             <span><Icone nome="calendario" tamanho="s" /> {dataRelatorio(relatorio.data)}</span>
-            <span><Icone nome="arquivo" tamanho="s" /> {relatorio.paginas} páginas</span>
+            <span><Icone nome="arquivo" tamanho="s" /> {formatarMetaPdf(relatorio)}</span>
           </div>
-          <p className="corpo">{relatorio.resumo}</p>
-          <div className="ot-cartao ot-cartao--contorno" style={{ background: 'var(--papel)' }}>
-            <p style={{ fontWeight: 700, marginBottom: 8 }}>Principais achados</p>
-            <ul style={{ margin: 0, paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {relatorio.achados.map((a) => <li key={a}>{a}</li>)}
-            </ul>
-          </div>
-          <p className="ot-fonte">Como citar: Observatório do Turismo de Santa Rita do Sapucaí (OT-SRS). {relatorio.titulo}. SMCELT, {relatorio.data.slice(0, 4)}.</p>
+          {relatorio.resumo && <p className="corpo">{relatorio.resumo}</p>}
+          {achados.length > 0 && (
+            <div className="ot-cartao ot-cartao--contorno" style={{ background: 'var(--papel)' }}>
+              <p style={{ fontWeight: 700, marginBottom: 8 }}>Principais achados</p>
+              <ul style={{ margin: 0, paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {achados.map((a) => <li key={a}>{a}</li>)}
+              </ul>
+            </div>
+          )}
+          <p className="ot-fonte">Como citar: Observatório do Turismo de Santa Rita do Sapucaí (OT-SRS). {relatorio.titulo}. SMCELT{anoCitacao ? `, ${anoCitacao}` : ''}.</p>
         </>
       )}
     </Dialogo>
   )
 }
 
-export function CartaoRelatorio({ relatorio, aoAbrir }) {
+export function CartaoRelatorio({ relatorio, aoAbrir, acoesExtras }) {
   const baixar = useDownloadRelatorio()
-  const cat = categoriaDe(relatorio.categoria)
+  const cat = resolverCategoria(relatorio.categoria)
   return (
     <article className="ot-relatorio">
       <div className="ot-relatorio__capa" style={{ '--cor-capa': cat.cor }} aria-hidden="true">
@@ -107,13 +130,14 @@ export function CartaoRelatorio({ relatorio, aoAbrir }) {
         </h3>
         <div className="ot-relatorio__meta">
           <span><Icone nome="calendario" tamanho="s" /> {dataRelatorio(relatorio.data)}</span>
-          <span><Icone nome="arquivo" tamanho="s" /> PDF · {relatorio.paginas} páginas · {relatorio.tamanho}</span>
+          <span><Icone nome="arquivo" tamanho="s" /> {formatarMetaPdf(relatorio)}</span>
         </div>
       </div>
       <div className="ot-relatorio__acoes">
         <button type="button" className="ot-btn ot-btn--secundario" onClick={() => baixar(relatorio)} aria-label={`Baixar ${relatorio.titulo}`}>
           <Icone nome="download" /> Baixar
         </button>
+        {acoesExtras}
       </div>
     </article>
   )

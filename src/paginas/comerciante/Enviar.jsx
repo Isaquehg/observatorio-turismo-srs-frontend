@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import Icone from '../../componentes/Icone'
 import { Adesivo } from '../../componentes/Adesivo'
 import { Aviso, Campo } from '../../componentes/Basicos'
 import { useEnvios } from '../../contexto/Envios'
 import { useAvisos } from '../../contexto/Avisos'
-import { MEU_NEGOCIO } from '../../dados/painel'
+import {
+  MOTIVOS_VIAGEM,
+  ORIGENS_HOSPEDES,
+  motivoParaCodigo,
+  origemParaCodigo,
+} from '../../util/enviosApi'
 import { MESES_LONGOS, mesAnoLongo, numero } from '../../util/formatar'
 import { ler, gravar } from '../../util/armazenamento'
 import { useTitulo } from '../../util/ganchos'
@@ -15,36 +20,47 @@ import '../painel.css'
 
 const ETAPAS = ['Período', 'Ocupação', 'Hóspedes', 'Revisar e enviar']
 const CHAVE_RASCUNHO = 'ot-srs:rascunho'
-const MOTIVOS = ['Lazer e descanso', 'Negócios e trabalho', 'Eventos e festas', 'Visita a parentes e amigos', 'Estudos', 'Outro']
-const ORIGENS = ['Sul de Minas', 'Outras regiões de MG', 'São Paulo', 'Rio de Janeiro', 'Outros estados', 'Exterior']
 
 const diasNoMes = (ano, mes) => new Date(ano, mes, 0).getDate()
 const soNumeros = (v) => v.replace(/\D/g, '').slice(0, 6)
 const n = (v) => (v === '' ? NaN : Number(v))
 
-function opcoesDePeriodo() {
+function opcoesDePeriodo(extra = null) {
   const { ano, mes } = periodoAtual()
-  return [0, 1, 2].map((i) => {
+  const lista = [0, 1, 2].map((i) => {
     const d = new Date(ano, mes - 1 - i, 1)
     return { ano: d.getFullYear(), mes: d.getMonth() + 1 }
   })
+  if (extra?.ano && extra?.mes && !lista.some((p) => p.ano === extra.ano && p.mes === extra.mes)) {
+    lista.push({ ano: extra.ano, mes: extra.mes })
+  }
+  return lista
 }
 
-function validarEtapa(etapa, d) {
+function validarEtapa(etapa, d, capacidade) {
   const e = {}
   const dias = diasNoMes(d.ano, d.mes)
   if (etapa === 1) {
     if (!(n(d.quartos) > 0)) e.quartos = 'Informe quantos quartos estavam disponíveis.'
+    else if (capacidade.quartos != null && n(d.quartos) > capacidade.quartos) {
+      e.quartos = `Maior que a capacidade cadastrada (${capacidade.quartos} quartos). Se aumentou, atualize em Meu estabelecimento.`
+    }
     if (!(n(d.leitos) > 0)) e.leitos = 'Informe o número de leitos.'
     else if (n(d.leitos) < n(d.quartos)) e.leitos = 'O número de leitos não pode ser menor que o de quartos.'
-    else if (n(d.leitos) > MEU_NEGOCIO.leitos) e.leitos = `Maior que a capacidade cadastrada (${MEU_NEGOCIO.leitos} leitos). Se aumentou, atualize em Meu estabelecimento.`
+    else if (capacidade.leitos != null && n(d.leitos) > capacidade.leitos) {
+      e.leitos = `Maior que a capacidade cadastrada (${capacidade.leitos} leitos). Se aumentou, atualize em Meu estabelecimento.`
+    }
     if (d.diarias === '') e.diarias = 'Informe as diárias vendidas, mesmo que seja 0.'
-    else if (n(d.quartos) > 0 && n(d.diarias) > n(d.quartos) * dias) e.diarias = `Passa do possível: com ${d.quartos} quartos em ${dias} dias, o máximo é ${numero(n(d.quartos) * dias)}.`
+    else if (n(d.quartos) > 0 && n(d.diarias) > n(d.quartos) * dias) {
+      e.diarias = `Passa do possível: com ${d.quartos} quartos em ${dias} dias, o máximo é ${numero(n(d.quartos) * dias)}.`
+    }
     if (d.funcionarios === '') e.funcionarios = 'Informe o número de funcionários, mesmo que seja 0.'
   }
   if (etapa === 2) {
     if (!(n(d.hospedes) > 0)) e.hospedes = 'Informe quantos hóspedes você recebeu no mês.'
-    else if (n(d.hospedes) > n(d.leitos) * dias) e.hospedes = 'Esse número passa da capacidade de leitos do mês. Confira, por favor.'
+    else if (n(d.hospedes) > n(d.leitos) * dias) {
+      e.hospedes = 'Esse número passa da capacidade de leitos do mês. Confira, por favor.'
+    }
     if (!d.motivo) e.motivo = 'Escolha o motivo mais comum.'
     if (!d.origem) e.origem = 'Escolha de onde veio a maioria.'
   }
@@ -73,28 +89,106 @@ function CampoNumero({ id, valor, aoMudar, erro, ...resto }) {
 export default function Enviar() {
   useTitulo('Enviar dados')
   const [params] = useSearchParams()
-  const { despachar } = useEnvios()
+  const { envios, estabelecimento, salvarEnvio } = useEnvios()
   const { avisar } = useAvisos()
-  const periodos = opcoesDePeriodo()
   const tituloRef = useRef(null)
 
-  const doLink = params.get('mes') ? { ano: Number(params.get('ano')), mes: Number(params.get('mes')) } : null
+  const idParam = params.get('id') ? Number(params.get('id')) : null
+  const anoParam = params.get('ano')
+  const mesParam = params.get('mes')
+  const doLink = useMemo(
+    () => (mesParam ? { ano: Number(anoParam), mes: Number(mesParam) } : null),
+    [anoParam, mesParam],
+  )
+
+  const envioEmEdicao = useMemo(() => {
+    if (idParam) {
+      return envios.find((item) => item.id === idParam && ['draft', 'returned'].includes(item.status)) || null
+    }
+    if (doLink) {
+      return (
+        envios.find(
+          (item) =>
+            item.ano === doLink.ano &&
+            item.mes === doLink.mes &&
+            ['draft', 'returned'].includes(item.status),
+        ) || null
+      )
+    }
+    return null
+  }, [envios, idParam, doLink])
+
+  const periodos = useMemo(
+    () => opcoesDePeriodo(envioEmEdicao || doLink),
+    [envioEmEdicao, doLink],
+  )
+
   const [dados, setDados] = useState(() => {
     const base = {
-      ano: periodos[0].ano, mes: periodos[0].mes,
-      quartos: String(MEU_NEGOCIO.quartos), leitos: String(MEU_NEGOCIO.leitos),
-      diarias: '', funcionarios: '', hospedes: '', motivo: '', origem: '', observacoes: '', confirmo: false,
+      ano: periodos[0].ano,
+      mes: periodos[0].mes,
+      quartos: '',
+      leitos: '',
+      diarias: '',
+      funcionarios: '',
+      hospedes: '',
+      motivo: '',
+      origem: '',
+      observacoes: '',
+      confirmo: false,
     }
     if (doLink) return { ...base, ...doLink }
     return { ...base, ...ler(CHAVE_RASCUNHO, {}) }
   })
+
   const [etapa, setEtapa] = useState(0)
   const [erros, setErros] = useState({})
-  const [concluido, setConcluido] = useState(false)
+  const [erroApi, setErroApi] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [salvandoRascunho, setSalvandoRascunho] = useState(false)
+  const [envioConcluido, setEnvioConcluido] = useState(null)
   const primeiraVez = useRef(true)
+  const hidratadoRef = useRef(null)
+
+  // Hydrates form defaults from the merchant's registered capacity when creating a fresh submission
+  useEffect(() => {
+    if (!estabelecimento || envioEmEdicao) return
+    setDados((atual) => ({
+      ...atual,
+      quartos:
+        atual.quartos === '' && estabelecimento.rooms_count != null
+          ? String(estabelecimento.rooms_count)
+          : atual.quartos,
+      leitos:
+        atual.leitos === '' && estabelecimento.beds_count != null
+          ? String(estabelecimento.beds_count)
+          : atual.leitos,
+    }))
+  }, [estabelecimento, envioEmEdicao])
+
+  // Pre-fills all fields when correcting a returned submission or resuming a backend draft
+  useEffect(() => {
+    if (!envioEmEdicao || hidratadoRef.current === envioEmEdicao.id) return
+    hidratadoRef.current = envioEmEdicao.id
+    setDados({
+      ano: envioEmEdicao.ano,
+      mes: envioEmEdicao.mes,
+      quartos: envioEmEdicao.quartos == null ? '' : String(envioEmEdicao.quartos),
+      leitos: envioEmEdicao.leitos == null ? '' : String(envioEmEdicao.leitos),
+      diarias: envioEmEdicao.diarias == null ? '' : String(envioEmEdicao.diarias),
+      funcionarios: envioEmEdicao.funcionarios == null ? '' : String(envioEmEdicao.funcionarios),
+      hospedes: envioEmEdicao.hospedes == null ? '' : String(envioEmEdicao.hospedes),
+      motivo: envioEmEdicao.motivoViagem || '',
+      origem: envioEmEdicao.origemHospedes || '',
+      observacoes: envioEmEdicao.observacoes || '',
+      confirmo: false,
+    })
+  }, [envioEmEdicao])
 
   useEffect(() => {
-    if (!doLink && ler(CHAVE_RASCUNHO, null)) avisar('Rascunho recuperado', { texto: 'Continuamos de onde você parou.', tipo: 'info' })
+    if (!doLink && !idParam && ler(CHAVE_RASCUNHO, null)) {
+      avisar('Rascunho recuperado', { texto: 'Continuamos de onde você parou.', tipo: 'info' })
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Leva o foco para o título a cada etapa: quem usa leitor de tela sabe onde está
@@ -104,19 +198,44 @@ export default function Enviar() {
       return
     }
     tituloRef.current?.focus()
-  }, [etapa, concluido])
+  }, [etapa, envioConcluido])
 
   const mudar = (campo) => (valor) => {
     setDados((d) => ({ ...d, [campo]: valor }))
     if (erros[campo]) setErros((e) => ({ ...e, [campo]: undefined }))
+    if (erroApi) setErroApi('')
   }
 
+  const capacidade = {
+    quartos: estabelecimento?.rooms_count ?? null,
+    leitos: estabelecimento?.beds_count ?? null,
+  }
   const dias = diasNoMes(dados.ano, dados.mes)
-  const ocupacao = n(dados.quartos) > 0 && dados.diarias !== '' ? Math.round((n(dados.diarias) / (n(dados.quartos) * dias)) * 100) : null
+  const ocupacao =
+    n(dados.quartos) > 0 && dados.diarias !== ''
+      ? Math.round((n(dados.diarias) / (n(dados.quartos) * dias)) * 100)
+      : null
   const nomeMes = MESES_LONGOS[dados.mes - 1]
+  const vinculoPendente = estabelecimento?.link_status === 'pending'
+
+  const montarPayload = (submit) => ({
+    idExistente: envioEmEdicao?.id,
+    ano: dados.ano,
+    mes: dados.mes,
+    roomsAvailable: dados.quartos === '' ? null : n(dados.quartos),
+    bedsAvailable: dados.leitos === '' ? null : n(dados.leitos),
+    roomNightsSold: dados.diarias === '' ? null : n(dados.diarias),
+    employeesCount: dados.funcionarios === '' ? null : n(dados.funcionarios),
+    guestsCount: dados.hospedes === '' ? null : n(dados.hospedes),
+    mainTravelReason: motivoParaCodigo(dados.motivo),
+    mainOrigin: origemParaCodigo(dados.origem),
+    notes: dados.observacoes,
+    submit,
+  })
 
   const avancar = () => {
-    const e = validarEtapa(etapa, dados)
+    setErroApi('')
+    const e = validarEtapa(etapa, dados, capacidade)
     setErros(e)
     if (Object.keys(e).length) {
       document.getElementById(Object.keys(e)[0])?.focus()
@@ -126,26 +245,44 @@ export default function Enviar() {
     else enviar()
   }
 
-  const enviar = () => {
-    despachar({
-      tipo: 'novo',
-      envio: {
-        nome: MEU_NEGOCIO.nome, tipo: MEU_NEGOCIO.tipo, ano: dados.ano, mes: dados.mes,
-        recebido: 'Agora há pouco', enviadoEm: 'hoje',
-        ocupacao, leitos: n(dados.leitos), diarias: n(dados.diarias), hospedes: n(dados.hospedes), funcionarios: n(dados.funcionarios),
-        situacao: 'analise',
-      },
-    })
-    gravar(CHAVE_RASCUNHO, null)
-    setConcluido(true)
+  const enviar = async () => {
+    setEnviando(true)
+    setErroApi('')
+    try {
+      const resultado = await salvarEnvio(montarPayload(true))
+      gravar(CHAVE_RASCUNHO, null)
+      setEnvioConcluido(resultado)
+    } catch (causa) {
+      const primeiroDetalhe = Array.isArray(causa?.detalhes)
+        ? causa.detalhes.find((item) => item?.message)?.message
+        : ''
+      setErroApi(primeiroDetalhe || causa?.message || 'Não foi possível enviar os dados para a Prefeitura.')
+    } finally {
+      setEnviando(false)
+    }
   }
 
-  const salvarRascunho = () => {
-    gravar(CHAVE_RASCUNHO, dados)
-    avisar('Rascunho salvo', { texto: 'Pode fechar a página. Seus números ficam guardados neste aparelho.' })
+  const salvarRascunho = async () => {
+    setSalvandoRascunho(true)
+    setErroApi('')
+    try {
+      await salvarEnvio(montarPayload(false))
+      gravar(CHAVE_RASCUNHO, null)
+      avisar('Rascunho salvo', { texto: 'Seus números foram salvos com segurança na sua conta.' })
+    } catch (causa) {
+      // Keeps a local copy so the merchant never loses progress if offline
+      gravar(CHAVE_RASCUNHO, dados)
+      avisar('Rascunho salvo neste aparelho', {
+        texto: causa?.message || 'Não foi possível salvar no servidor agora, mas guardamos localmente.',
+        tipo: 'alerta',
+      })
+    } finally {
+      setSalvandoRascunho(false)
+    }
   }
 
-  if (concluido) {
+  if (envioConcluido) {
+    const ocupacaoFinal = envioConcluido.ocupacao ?? ocupacao
     return (
       <div className="surgir">
         <TopoPainel sobretitulo="Área do comerciante" titulo="Enviar dados" />
@@ -161,9 +298,9 @@ export default function Enviar() {
               A equipe da SMCELT confere os números em até 3 dias úteis. Se algo estiver fora do esperado, a gente avisa por e-mail e você corrige por aqui.
             </p>
             <dl className="concluido__resumo">
-              <div><dt>Ocupação</dt><dd className="ot-num">{ocupacao}%</dd></div>
-              <div><dt>Hóspedes</dt><dd className="ot-num">{numero(n(dados.hospedes))}</dd></div>
-              <div><dt>Diárias</dt><dd className="ot-num">{numero(n(dados.diarias))}</dd></div>
+              <div><dt>Ocupação</dt><dd className="ot-num">{ocupacaoFinal == null ? '—' : `${ocupacaoFinal}%`}</dd></div>
+              <div><dt>Hóspedes</dt><dd className="ot-num">{numero(envioConcluido.hospedes ?? n(dados.hospedes))}</dd></div>
+              <div><dt>Diárias</dt><dd className="ot-num">{numero(envioConcluido.diarias ?? n(dados.diarias))}</dd></div>
             </dl>
             <div className="linha-acoes">
               <Link to="/comerciante" className="ot-btn ot-btn--primario">Voltar ao início</Link>
@@ -178,6 +315,12 @@ export default function Enviar() {
   return (
     <div className="surgir">
       <TopoPainel sobretitulo="Área do comerciante" titulo="Enviar dados do mês" />
+
+      {vinculoPendente && (
+        <Aviso tipo="alerta" style={{ marginBottom: 20 }} titulo="Vínculo em confirmação pela SMCELT">
+          Você já pode preencher seus dados, mas o envio oficial será liberado assim que a SMCELT confirmar o vínculo com o estabelecimento.
+        </Aviso>
+      )}
 
       <div className="painel__grade">
         <section className="ot-cartao formulario">
@@ -214,9 +357,9 @@ export default function Enviar() {
                     )
                   })}
                 </fieldset>
-                {doLink && (
+                {(envioEmEdicao?.situacao === 'recusado' || doLink) && (
                   <Aviso tipo="alerta" titulo="Corrigindo um envio devolvido">
-                    O número de leitos estava maior que a capacidade cadastrada. Confira esse campo na próxima etapa.
+                    {envioEmEdicao?.motivo || 'Confira os números solicitados pela SMCELT nas próximas etapas.'}
                   </Aviso>
                 )}
                 <div className="ot-aviso">
@@ -263,13 +406,13 @@ export default function Enviar() {
                   <Campo id="motivo" rotulo="Motivo mais comum da viagem" erro={erros.motivo}>
                     <select id="motivo" className="ot-selecao" value={dados.motivo} onChange={(e) => mudar('motivo')(e.target.value)} aria-invalid={!!erros.motivo}>
                       <option value="">Escolha uma opção</option>
-                      {MOTIVOS.map((m) => <option key={m}>{m}</option>)}
+                      {MOTIVOS_VIAGEM.map((m) => <option key={m.codigo} value={m.rotulo}>{m.rotulo}</option>)}
                     </select>
                   </Campo>
                   <Campo id="origem" rotulo="De onde veio a maioria" erro={erros.origem}>
                     <select id="origem" className="ot-selecao" value={dados.origem} onChange={(e) => mudar('origem')(e.target.value)} aria-invalid={!!erros.origem}>
                       <option value="">Escolha uma opção</option>
-                      {ORIGENS.map((m) => <option key={m}>{m}</option>)}
+                      {ORIGENS_HOSPEDES.map((m) => <option key={m.codigo} value={m.rotulo}>{m.rotulo}</option>)}
                     </select>
                   </Campo>
                   <Campo id="observacoes" rotulo="Algo fora do comum?" extra="(opcional)" ajuda="Reforma, evento na cidade, quartos fechados…">
@@ -329,21 +472,47 @@ export default function Enviar() {
                   <span>Confirmo que os números são do meu estabelecimento e estão corretos.</span>
                 </label>
                 {erros.confirmo && <span className="ot-ajuda ot-ajuda--erro"><Icone nome="alerta" tamanho="s" /> {erros.confirmo}</span>}
+                {erroApi && (
+                  <Aviso tipo="erro" titulo="Não foi possível enviar">
+                    {erroApi}
+                  </Aviso>
+                )}
               </div>
             )}
 
             <div className="formulario__acoes">
               {etapa > 0 ? (
-                <button type="button" className="ot-btn ot-btn--secundario" onClick={() => { setErros({}); setEtapa(etapa - 1) }}>
+                <button type="button" className="ot-btn ot-btn--secundario" disabled={enviando} onClick={() => { setErros({}); setErroApi(''); setEtapa(etapa - 1) }}>
                   <Icone nome="seta-esq" /> Voltar
                 </button>
               ) : (
                 <span />
               )}
               <div className="formulario__acoes-dir">
-                <button type="button" className="ot-btn ot-btn--fantasma" onClick={salvarRascunho}>Salvar rascunho</button>
-                <button type="submit" className="ot-btn ot-btn--primario">
-                  {etapa === 3 ? <>Enviar para a Prefeitura <Icone nome="check" /></> : <>Continuar <Icone nome="seta" /></>}
+                <button
+                  type="button"
+                  className="ot-btn ot-btn--fantasma"
+                  disabled={enviando || salvandoRascunho}
+                  aria-busy={salvandoRascunho}
+                  onClick={salvarRascunho}
+                >
+                  {salvandoRascunho ? 'Salvando…' : 'Salvar rascunho'}
+                </button>
+                <button
+                  type="submit"
+                  className="ot-btn ot-btn--primario"
+                  disabled={enviando || salvandoRascunho}
+                  aria-busy={enviando}
+                >
+                  {enviando ? (
+                    <>
+                      <span className="girando" aria-hidden="true" /> Enviando…
+                    </>
+                  ) : etapa === 3 ? (
+                    <>Enviar para a Prefeitura <Icone nome="check" /></>
+                  ) : (
+                    <>Continuar <Icone nome="seta" /></>
+                  )}
                 </button>
               </div>
             </div>

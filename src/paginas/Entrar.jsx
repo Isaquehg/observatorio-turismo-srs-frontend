@@ -5,6 +5,7 @@ import { Adesivo } from '../componentes/Adesivo'
 import { Aviso, Sobretitulo } from '../componentes/Basicos'
 import { PERFIS, useSessao } from '../contexto/Sessao'
 import { useAvisos } from '../contexto/Avisos'
+import { requisicaoApi } from '../util/api'
 import { useTitulo } from '../util/ganchos'
 import './entrar.css'
 
@@ -30,6 +31,11 @@ function validar(perfil, usuario, senha, cadastro) {
   const erros = {}
   if (cadastro) {
     if (cadastro.nome.trim().length < 3) erros.nome = 'Digite seu nome completo.'
+    if (perfil === 'comerciante') {
+      const emailComerciante = cadastro.email.trim()
+      if (!emailComerciante) erros.email = 'Preencha o seu e-mail.'
+      else if (!EMAIL.test(emailComerciante)) erros.email = 'Esse e-mail não parece completo. Confira se tem @ e o domínio.'
+    }
     if (senha && senha !== cadastro.confirmar) erros.confirmar = 'As senhas não são iguais.'
   }
   const u = usuario.trim()
@@ -48,17 +54,33 @@ function validar(perfil, usuario, senha, cadastro) {
   return erros
 }
 
+// Maps standardized backend validation details onto local form field names
+function mapearErrosApi(erro, perfil, criar) {
+  const campos = {}
+  if (Array.isArray(erro?.detalhes)) {
+    for (const detalhe of erro.detalhes) {
+      if (!detalhe?.field || !detalhe?.message) continue
+      if (detalhe.field === 'name') campos.nome = detalhe.message
+      else if (detalhe.field === 'identifier' || detalhe.field === 'tax_id') campos.usuario = detalhe.message
+      else if (detalhe.field === 'email') campos[criar && perfil === 'comerciante' ? 'email' : 'usuario'] = detalhe.message
+      else if (detalhe.field === 'password') campos.senha = detalhe.message
+    }
+  }
+  return campos
+}
+
 export default function Entrar() {
   useTitulo('Entrar')
   const [params, setParams] = useSearchParams()
   const local = useLocation()
   const navegar = useNavigate()
-  const { entrar } = useSessao()
+  const { entrar, cadastrar, solicitarAcesso } = useSessao()
   const { avisar } = useAvisos()
 
   const inicial = PERFIS[params.get('perfil')] ? params.get('perfil') : 'comerciante'
   const [perfil, setPerfil] = useState(inicial)
   const [usuario, setUsuario] = useState('')
+  const [emailComerciante, setEmailComerciante] = useState('')
   const [senha, setSenha] = useState('')
   const [verSenha, setVerSenha] = useState(false)
   const [manter, setManter] = useState(true)
@@ -66,19 +88,23 @@ export default function Entrar() {
   const [nome, setNome] = useState('')
   const [confirmar, setConfirmar] = useState('')
   const [erros, setErros] = useState({})
+  const [erroApi, setErroApi] = useState('')
   const [enviando, setEnviando] = useState(false)
   const usuarioRef = useRef(null)
+  const emailRef = useRef(null)
   const senhaRef = useRef(null)
   const nomeRef = useRef(null)
   const p = PERFIS[perfil]
 
   useEffect(() => {
     setErros({})
+    setErroApi('')
   }, [perfil, criar])
 
   const escolher = (id) => {
     setPerfil(id)
     setUsuario('')
+    setEmailComerciante('')
     setParams(criar ? { perfil: id, modo: 'criar' } : { perfil: id }, { replace: true, state: local.state })
   }
 
@@ -97,35 +123,89 @@ export default function Entrar() {
   const alternarModo = () => {
     const proximo = !criar
     setCriar(proximo)
+    setEmailComerciante('')
     setSenha('')
     setConfirmar('')
     setParams(proximo ? { perfil, modo: 'criar' } : { perfil }, { replace: true, state: local.state })
   }
 
-  const enviar = (e) => {
+  // Requests a password reset email when a valid email address is entered
+  const solicitarRecuperacao = async () => {
+    const emailInformado = usuario.trim()
+    if (perfil !== 'comerciante' && EMAIL.test(emailInformado)) {
+      try {
+        await requisicaoApi('/auth/forgot-password', {
+          method: 'POST',
+          autenticado: false,
+          body: JSON.stringify({ email: emailInformado }),
+        })
+      } catch {
+        // Keep generic notification so account existence is never leaked
+      }
+    }
+    avisar('Enviamos as instruções', {
+      texto: 'Se o cadastro existir, um link para criar nova senha chega no seu e-mail em alguns minutos.',
+      tipo: 'info',
+      duracao: 7000,
+    })
+  }
+
+  const enviar = async (e) => {
     e.preventDefault()
-    const encontrados = validar(perfil, usuario, senha, criar && { nome, confirmar })
+    setErroApi('')
+    const encontrados = validar(perfil, usuario, senha, criar && { nome, email: emailComerciante, confirmar })
     setErros(encontrados)
     if (encontrados.nome) return nomeRef.current?.focus()
     if (encontrados.usuario) return usuarioRef.current?.focus()
+    if (encontrados.email) return emailRef.current?.focus()
     if (encontrados.senha) return senhaRef.current?.focus()
     if (encontrados.confirmar) return document.getElementById('confirmar')?.focus()
 
     setEnviando(true)
-    setTimeout(() => {
-      setEnviando(false)
-      // Prefeitura: o acesso é liberado pela SMCELT, então o cadastro vira um pedido
+    try {
+      // City hall access is reviewed by SMCELT, so registration submits an access request
       if (criar && perfil === 'prefeitura') {
+        await solicitarAcesso({ nome: nome.trim(), email: usuario.trim(), senha })
         avisar('Pedido enviado', { texto: 'A SMCELT confere o seu e-mail institucional e libera o acesso. Você recebe a resposta por e-mail.', duracao: 8000 })
         alternarModo()
         return
       }
-      const sessao = entrar(perfil, usuario.trim(), manter, criar ? nome.trim() : undefined)
+
+      const sessao = criar
+        ? await cadastrar({
+            perfil,
+            nome: nome.trim(),
+            identificador: usuario.trim(),
+            email: emailComerciante.trim(),
+            senha,
+            manter,
+          })
+        : await entrar(perfil, usuario.trim(), senha, manter)
+
       avisar(criar ? `Conta criada, ${sessao.nome.split(' ')[0]}!` : `Olá, ${sessao.nome.split(' ')[0]}!`, {
-        texto: perfil === 'turista' ? 'Separamos dicas de onde ficar, comer e passear.' : 'Você entrou na sua área.',
+        texto: sessao.perfil === 'turista' ? 'Separamos dicas de onde ficar, comer e passear.' : 'Você entrou na sua área.',
       })
-      navegar(local.state?.voltarPara || p.inicio, { replace: true })
-    }, 650)
+      navegar(local.state?.voltarPara || PERFIS[sessao.perfil]?.inicio || p.inicio, { replace: true })
+    } catch (erro) {
+      const errosCampos = mapearErrosApi(erro, perfil, criar)
+      if (Object.keys(errosCampos).length > 0) {
+        setErros(errosCampos)
+        if (errosCampos.nome) nomeRef.current?.focus()
+        else if (errosCampos.usuario) usuarioRef.current?.focus()
+        else if (errosCampos.email) emailRef.current?.focus()
+        else if (errosCampos.senha) senhaRef.current?.focus()
+      }
+      const detalheSemCampo = Array.isArray(erro?.detalhes)
+        ? erro.detalhes.find((item) => item?.message)?.message
+        : ''
+      setErroApi(
+        Object.keys(errosCampos).length === 0 && detalheSemCampo
+          ? detalheSemCampo
+          : erro?.message || 'Não foi possível concluir a autenticação. Tente novamente.',
+      )
+    } finally {
+      setEnviando(false)
+    }
   }
 
   return (
@@ -213,6 +293,7 @@ export default function Entrar() {
               onChange={(e) => {
                 const v = e.target.value
                 setUsuario(perfil === 'comerciante' ? mascaraCnpj(v) : v)
+                if (erroApi) setErroApi('')
               }}
               inputMode={perfil === 'comerciante' ? 'numeric' : 'email'}
               autoComplete={perfil === 'comerciante' ? 'username' : 'email'}
@@ -225,10 +306,35 @@ export default function Entrar() {
             )}
           </div>
 
+          {criar && perfil === 'comerciante' && (
+            <div className="ot-campo">
+              <label className="ot-rotulo" htmlFor="email-comerciante">E-mail</label>
+              <input
+                ref={emailRef}
+                className="ot-entrada"
+                id="email-comerciante"
+                name="email"
+                type="email"
+                value={emailComerciante}
+                onChange={(e) => {
+                  setEmailComerciante(e.target.value)
+                  if (erroApi) setErroApi('')
+                }}
+                autoComplete="email"
+                placeholder="contato@estabelecimento.com.br"
+                aria-invalid={!!erros.email}
+                aria-describedby={erros.email ? 'email-comerciante-erro' : undefined}
+              />
+              {erros.email && (
+                <span className="ot-ajuda ot-ajuda--erro" id="email-comerciante-erro"><Icone nome="alerta" tamanho="s" /> {erros.email}</span>
+              )}
+            </div>
+          )}
+
           <div className="ot-campo">
             <div className="entrar__senha-cab">
               <label className="ot-rotulo" htmlFor="senha">Senha</label>
-              {!criar && <button type="button" className="link-botao" onClick={() => avisar('Enviamos as instruções', { texto: 'Se o cadastro existir, um link para criar nova senha chega no seu e-mail em alguns minutos.', tipo: 'info', duracao: 7000 })}>
+              {!criar && <button type="button" className="link-botao" onClick={solicitarRecuperacao}>
                 Esqueci minha senha
               </button>}
             </div>
@@ -241,7 +347,10 @@ export default function Entrar() {
                 name="senha"
                 type={verSenha ? 'text' : 'password'}
                 value={senha}
-                onChange={(e) => setSenha(e.target.value)}
+                onChange={(e) => {
+                  setSenha(e.target.value)
+                  if (erroApi) setErroApi('')
+                }}
                 autoComplete={criar ? 'new-password' : 'current-password'}
                 aria-invalid={!!erros.senha}
                 aria-describedby={erros.senha ? 'senha-erro' : 'senha-ajuda'}
@@ -290,8 +399,14 @@ export default function Entrar() {
           </p>
         </form>
 
-        {Object.keys(erros).length > 0 && (
-          <Aviso tipo="erro" titulo="Faltou pouco">Confira os campos marcados acima.</Aviso>
+        {erroApi ? (
+          <Aviso tipo="erro" titulo={criar ? 'Não foi possível criar a conta' : 'Não foi possível entrar'}>
+            {erroApi}
+          </Aviso>
+        ) : (
+          Object.keys(erros).length > 0 && (
+            <Aviso tipo="erro" titulo="Faltou pouco">Confira os campos marcados acima.</Aviso>
+          )
         )}
 
         <div className="entrar__publico">
