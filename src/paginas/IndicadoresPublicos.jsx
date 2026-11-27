@@ -1,19 +1,21 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icone from '../componentes/Icone'
-import { Migalhas, Selo } from '../componentes/Basicos'
+import { Aviso, Migalhas, Selo } from '../componentes/Basicos'
 import { Indicador } from '../componentes/Cartoes'
 import { GraficoLinha, Rosca } from '../componentes/Graficos'
-import { ANOS, ATUALIZADO_EM, ORIGENS, dadosPorAno, resumoDoAno, serie } from '../dados/indicadores'
 import { useSessao } from '../contexto/Sessao'
-import { numero, variacao, diferenca, dataCurta, MESES_CURTOS, MESES_LONGOS } from '../util/formatar'
+import {
+  buscarDashboard,
+  calcularOcupacaoMedia,
+  formatarDataSegura,
+  formatarVisitantesCurto,
+  montarSerieOcupacaoMensal,
+  normalizarOrigens,
+} from '../util/indicadoresApi'
+import { numero, variacao, diferenca, MESES_CURTOS, MESES_LONGOS } from '../util/formatar'
 import { useTitulo } from '../util/ganchos'
 import './publico.css'
-
-const ANO = ANOS[ANOS.length - 1]
-const ANTERIOR = ANO - 1
-// Gráficos e destaques usam o último ano fechado (o ano corrente ainda está em andamento)
-const ANO_GRAFICO = ANO - 1
-const ANTERIOR_GRAFICO = ANO_GRAFICO - 1
 
 const COM_LOGIN = [
   { icone: 'filtro', texto: 'Indicadores completos, com filtros por ano e por setor' },
@@ -25,28 +27,187 @@ const COM_LOGIN = [
 export default function IndicadoresPublicos() {
   useTitulo('Indicadores públicos')
   const { sessao } = useSessao()
-  const d = dadosPorAno[ANO]
-  const ant = dadosPorAno[ANTERIOR]
-  const g = dadosPorAno[ANO_GRAFICO]
-  const gAnt = dadosPorAno[ANTERIOR_GRAFICO]
-  const atual = resumoDoAno(ANO)
-  const anterior = resumoDoAno(ANTERIOR)
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
+  const [tentativa, setTentativa] = useState(0)
+  const [dados, setDados] = useState(null)
 
-  const visitantes = ANOS.map((a) => dadosPorAno[a].visitantes)
-  const cartoes = [
-    { rotulo: 'Visitantes estimados', valor: `${Math.round(d.visitantes / 1000)} mil`, icone: 'mala', cor: 'var(--azul-ceu)', variacao: variacao(d.visitantes, ant.visitantes), serie: visitantes },
-    { rotulo: 'Ocupação média', valor: atual.ocupacao, unidade: '%', icone: 'ocupacao', cor: 'var(--amarelo)', variacao: diferenca(atual.ocupacao, anterior.ocupacao, ' p.p.'), serie: serie('ocupacao', ANO) },
-    { rotulo: 'Meios de hospedagem', valor: atual.hospedagens, icone: 'predio', cor: 'var(--ciano)', variacao: diferenca(atual.hospedagens, anterior.hospedagens), serie: serie('hospedagens', ANO) },
-    { rotulo: 'Empregos no setor', valor: numero(atual.empregos), icone: 'pessoas', cor: 'var(--lilas)', variacao: variacao(atual.empregos, anterior.empregos), serie: serie('empregos', ANO) },
-  ]
+  // Loads published public dashboard aggregates and previous-year comparison from GET /api/dashboard
+  useEffect(() => {
+    const controlador = new AbortController()
+    let ativo = true
 
-  const pico = g.ocupacaoMensal.indexOf(Math.max(...g.ocupacaoMensal))
-  const origemPrincipal = g.origem.indexOf(Math.max(...g.origem))
-  const fatos = [
-    { valor: `${g.ocupacaoMensal[pico]}%`, texto: `foi a ocupação em ${MESES_LONGOS[pico]}, o mês mais movimentado de ${ANO_GRAFICO}.` },
-    { valor: `${g.origem[origemPrincipal]}%`, texto: `dos visitantes vieram da principal região de origem: ${ORIGENS[origemPrincipal].nome}.` },
-    { valor: numero(atual.leitos), texto: `leitos disponíveis em ${atual.hospedagens} hotéis, pousadas, hostels e chalés.` },
-  ]
+    async function carregar() {
+      setCarregando(true)
+      setErro('')
+      try {
+        const inicial = await buscarDashboard({}, { signal: controlador.signal })
+        if (!ativo) return
+
+        const anos = Array.isArray(inicial?.available_years)
+          ? [...inicial.available_years].sort((a, b) => b - a)
+          : []
+
+        if (anos.length === 0) {
+          setDados({
+            anoPrincipal: null,
+            anoAnterior: null,
+            atual: null,
+            anterior: null,
+            atualizadoEm: inicial?.last_updated || inicial?.reference_date || null,
+          })
+          return
+        }
+
+        const anoPrincipal = anos[0]
+        const anoAnterior = anos.includes(anoPrincipal - 1) ? anoPrincipal - 1 : null
+
+        const [atual, anterior] = await Promise.all([
+          buscarDashboard({ year: anoPrincipal }, { signal: controlador.signal }),
+          anoAnterior
+            ? buscarDashboard({ year: anoAnterior }, { signal: controlador.signal })
+            : Promise.resolve(null),
+        ])
+
+        if (!ativo) return
+        setDados({
+          anoPrincipal,
+          anoAnterior,
+          atual,
+          anterior,
+          atualizadoEm:
+            atual?.last_updated ||
+            atual?.reference_date ||
+            inicial?.last_updated ||
+            inicial?.reference_date ||
+            null,
+        })
+      } catch (causa) {
+        if (!ativo || causa?.name === 'AbortError') return
+        setErro(causa?.message || 'Não foi possível carregar os indicadores públicos.')
+      } finally {
+        if (ativo) setCarregando(false)
+      }
+    }
+
+    carregar()
+    return () => {
+      ativo = false
+      controlador.abort()
+    }
+  }, [tentativa])
+
+  const dataAtualizacao = formatarDataSegura(dados?.atualizadoEm)
+  const atual = dados?.atual
+  const anterior = dados?.anterior
+  const anoPrincipal = dados?.anoPrincipal
+  const anoAnterior = dados?.anoAnterior
+
+  const resumoAtual = atual?.annual_summary || atual?.summary || null
+  const resumoAnterior = anterior?.annual_summary || anterior?.summary || null
+  const ocupacaoAtual = atual
+    ? calcularOcupacaoMedia(atual.occupancy_monthly, resumoAtual?.occupancy_rate)
+    : null
+  const ocupacaoAnterior = anterior
+    ? calcularOcupacaoMedia(anterior.occupancy_monthly, resumoAnterior?.occupancy_rate)
+    : null
+
+  const { atual: ocupacaoMensal, anterior: ocupacaoMensalAnterior } = montarSerieOcupacaoMensal(
+    atual?.occupancy_monthly,
+  )
+  const temOcupacao = ocupacaoMensal.some((v) => v != null)
+  const temOcupacaoAnterior = ocupacaoMensalAnterior.some((v) => v != null)
+  const origens = normalizarOrigens(atual?.origin_distribution)
+
+  const serieVisitantes = (atual?.highlights || [])
+    .map((h) => h.visitors)
+    .filter((v) => typeof v === 'number')
+  const serieOcupacao = ocupacaoMensal.filter((v) => v != null)
+  const serieEmpregos = (atual?.highlights || [])
+    .map((h) => h.jobs)
+    .filter((v) => typeof v === 'number')
+
+  const cartoes = resumoAtual
+    ? [
+        {
+          rotulo: 'Visitantes estimados',
+          valor: formatarVisitantesCurto(resumoAtual.visitors),
+          icone: 'mala',
+          cor: 'var(--azul-ceu)',
+          variacao: resumoAnterior ? variacao(resumoAtual.visitors, resumoAnterior.visitors) : null,
+          serie: serieVisitantes,
+        },
+        {
+          rotulo: 'Ocupação média',
+          valor: ocupacaoAtual ?? '—',
+          unidade: ocupacaoAtual != null ? '%' : undefined,
+          icone: 'ocupacao',
+          cor: 'var(--amarelo)',
+          variacao:
+            ocupacaoAtual != null && ocupacaoAnterior != null
+              ? diferenca(ocupacaoAtual, ocupacaoAnterior, ' p.p.')
+              : null,
+          serie: serieOcupacao,
+        },
+        {
+          rotulo: 'Meios de hospedagem',
+          valor: numero(resumoAtual.accommodations ?? 0),
+          icone: 'predio',
+          cor: 'var(--ciano)',
+          variacao: resumoAnterior
+            ? diferenca(resumoAtual.accommodations ?? 0, resumoAnterior.accommodations ?? 0)
+            : null,
+          serie: null,
+        },
+        {
+          rotulo: 'Empregos no setor',
+          valor: numero(resumoAtual.jobs ?? 0),
+          icone: 'pessoas',
+          cor: 'var(--lilas)',
+          variacao: resumoAnterior ? variacao(resumoAtual.jobs ?? 0, resumoAnterior.jobs ?? 0) : null,
+          serie: serieEmpregos,
+        },
+      ]
+    : []
+
+  const fatos = []
+  if (resumoAtual && anoPrincipal) {
+    if (temOcupacao) {
+      let indicePico = -1
+      let valorPico = -1
+      ocupacaoMensal.forEach((valor, indice) => {
+        if (valor != null && valor > valorPico) {
+          valorPico = valor
+          indicePico = indice
+        }
+      })
+      if (indicePico >= 0) {
+        fatos.push({
+          chave: 'pico',
+          valor: `${valorPico}%`,
+          texto: `foi a ocupação em ${MESES_LONGOS[indicePico]}, o mês mais movimentado de ${anoPrincipal}.`,
+        })
+      }
+    }
+
+    if (origens.length > 0) {
+      const origemPrincipal = origens.reduce(
+        (maior, item) => (item.valor > maior.valor ? item : maior),
+        origens[0],
+      )
+      fatos.push({
+        chave: 'origem',
+        valor: `${origemPrincipal.valor}%`,
+        texto: `dos visitantes vieram da principal região de origem: ${origemPrincipal.nome}.`,
+      })
+    }
+
+    fatos.push({
+      chave: 'leitos',
+      valor: numero(resumoAtual.beds ?? 0),
+      texto: `leitos disponíveis em ${numero(resumoAtual.accommodations ?? 0)} hotéis, pousadas, hostels e chalés.`,
+    })
+  }
 
   return (
     <div className="container pag surgir">
@@ -60,76 +221,136 @@ export default function IndicadoresPublicos() {
             Um retrato do turismo em Santa Rita do Sapucaí, aberto para qualquer pessoa. Não precisa de conta.
           </p>
         </div>
-        <div className="pag__cab-lado">
-          <Selo situacao="publicado">Atualizado em {dataCurta(ATUALIZADO_EM)}</Selo>
+        {dataAtualizacao && (
+          <div className="pag__cab-lado">
+            <Selo situacao="publicado">Atualizado em {dataAtualizacao}</Selo>
+          </div>
+        )}
+      </div>
+
+      {carregando && (
+        <div className="ot-cartao ot-vazio" role="status" aria-live="polite">
+          <span className="girando" aria-hidden="true" />
+          <p className="corpo suave">Carregando indicadores públicos…</p>
         </div>
-      </div>
+      )}
 
-      <div className="grade-4">
-        {cartoes.map((c) => (
-          <Indicador key={c.rotulo} {...c} comparacao={`vs. ${ANTERIOR}`} />
-        ))}
-      </div>
+      {!carregando && erro && (
+        <Aviso tipo="erro" titulo="Não foi possível carregar os indicadores">
+          {erro}{' '}
+          <button type="button" className="link-botao" onClick={() => setTentativa((t) => t + 1)}>
+            Tentar novamente
+          </button>
+        </Aviso>
+      )}
 
-      <div className="indicadores__grade">
-        <section className="ot-cartao grafico col-7">
-          <div className="ot-cartao__cab">
-            <div>
-              <h2 className="titulo-3">Ocupação dos hotéis e pousadas</h2>
-              <p className="corpo-s suave">Média de cada mês, em {ANO_GRAFICO} e {ANTERIOR_GRAFICO}</p>
-            </div>
-          </div>
-          <div className="ot-legenda-grafico">
-            <span><i style={{ background: 'var(--roxo)' }} />{ANO_GRAFICO}</span>
-            <span><i style={{ background: 'var(--lilas)', height: 4 }} />{ANTERIOR_GRAFICO}</span>
-          </div>
-          <div className="grafico__corpo">
-            <GraficoLinha
-              descricao={`Taxa de ocupação hoteleira mês a mês em ${ANO_GRAFICO}, comparada a ${ANTERIOR_GRAFICO}`}
-              rotulos={MESES_CURTOS}
-              series={[
-                { nome: String(ANO_GRAFICO), valores: g.ocupacaoMensal, cor: '#6C5CE0', area: '#B986ED' },
-                { nome: String(ANTERIOR_GRAFICO), valores: gAnt.ocupacaoMensal, cor: '#B986ED' },
-              ]}
-            />
-          </div>
-          <p className="ot-fonte">Fonte: OT-SRS · valores ilustrativos</p>
-        </section>
-
-        <section className="ot-cartao grafico col-5">
-          <div className="ot-cartao__cab">
-            <div>
-              <h2 className="titulo-3">De onde vêm os visitantes</h2>
-              <p className="corpo-s suave">Pesquisa de perfil do turista, {ANO_GRAFICO}</p>
-            </div>
-          </div>
-          <div className="grafico__corpo" style={{ display: 'flex', alignItems: 'center' }}>
-            <Rosca
-              descricao={`Origem dos visitantes em ${ANO_GRAFICO}`}
-              centro={`${Math.round(g.visitantes / 1000)} mil`}
-              subcentro="visitantes"
-              fatias={ORIGENS.map((o, i) => ({ ...o, valor: g.origem[i] }))}
-            />
-          </div>
-          <p className="ot-fonte">Fonte: OT-SRS · valores ilustrativos</p>
-        </section>
-      </div>
-
-      <section className="secao" style={{ paddingTop: 'var(--esp-7)' }}>
-        <div className="secao__cab">
-          <div>
-            <h2 className="titulo-1">O que esses números dizem</h2>
-          </div>
+      {!carregando && !erro && !atual && (
+        <div className="ot-cartao ot-vazio">
+          <span className="ot-vazio__icone ot-bolha"><Icone nome="grafico" tamanho="l" /></span>
+          <h2 className="titulo-3">Nenhum indicador publicado ainda</h2>
+          <p className="corpo suave" style={{ maxWidth: '42ch' }}>
+            Assim que a SMCELT publicar os primeiros indicadores, eles aparecem automaticamente aqui.
+          </p>
         </div>
-        <ul className="fatos">
-          {fatos.map((f) => (
-            <li key={f.valor} className="fatos__item">
-              <span className="numero ot-num">{f.valor}</span>
-              <p className="corpo suave">{f.texto}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      )}
+
+      {!carregando && !erro && atual && resumoAtual && (
+        <>
+          <div className="grade-4">
+            {cartoes.map((c) => (
+              <Indicador
+                key={c.rotulo}
+                {...c}
+                comparacao={anoAnterior ? `vs. ${anoAnterior}` : `em ${anoPrincipal}`}
+              />
+            ))}
+          </div>
+
+          <div className="indicadores__grade">
+            <section className="ot-cartao grafico col-7">
+              <div className="ot-cartao__cab">
+                <div>
+                  <h2 className="titulo-3">Ocupação dos hotéis e pousadas</h2>
+                  <p className="corpo-s suave">
+                    {temOcupacaoAnterior
+                      ? `Média de cada mês, em ${anoPrincipal} e ${anoPrincipal - 1}`
+                      : `Média de cada mês, em ${anoPrincipal}`}
+                  </p>
+                </div>
+              </div>
+              {temOcupacao && (
+                <div className="ot-legenda-grafico">
+                  <span><i style={{ background: 'var(--roxo)' }} />{anoPrincipal}</span>
+                  {temOcupacaoAnterior && (
+                    <span><i style={{ background: 'var(--lilas)', height: 4 }} />{anoPrincipal - 1}</span>
+                  )}
+                </div>
+              )}
+              <div className="grafico__corpo">
+                {temOcupacao ? (
+                  <GraficoLinha
+                    descricao={`Taxa de ocupação hoteleira mês a mês em ${anoPrincipal}`}
+                    rotulos={MESES_CURTOS}
+                    series={[
+                      { nome: String(anoPrincipal), valores: ocupacaoMensal, cor: '#6C5CE0', area: '#B986ED' },
+                      ...(temOcupacaoAnterior
+                        ? [{ nome: String(anoPrincipal - 1), valores: ocupacaoMensalAnterior, cor: '#B986ED' }]
+                        : []),
+                    ]}
+                  />
+                ) : (
+                  <p className="corpo suave" style={{ padding: '32px 0' }}>
+                    Ainda não há registros mensais de ocupação publicados para {anoPrincipal}.
+                  </p>
+                )}
+              </div>
+              <p className="ot-fonte">Fonte: OT-SRS / SMCELT</p>
+            </section>
+
+            <section className="ot-cartao grafico col-5">
+              <div className="ot-cartao__cab">
+                <div>
+                  <h2 className="titulo-3">De onde vêm os visitantes</h2>
+                  <p className="corpo-s suave">Pesquisa de perfil do turista, {anoPrincipal}</p>
+                </div>
+              </div>
+              <div className="grafico__corpo" style={{ display: 'flex', alignItems: 'center' }}>
+                {origens.length > 0 ? (
+                  <Rosca
+                    descricao={`Origem dos visitantes em ${anoPrincipal}`}
+                    centro={formatarVisitantesCurto(resumoAtual.visitors)}
+                    subcentro="visitantes"
+                    fatias={origens}
+                  />
+                ) : (
+                  <p className="corpo suave" style={{ padding: '32px 0' }}>
+                    Distribuição por origem indisponível para {anoPrincipal}.
+                  </p>
+                )}
+              </div>
+              <p className="ot-fonte">Fonte: OT-SRS / SMCELT</p>
+            </section>
+          </div>
+
+          {fatos.length > 0 && (
+            <section className="secao" style={{ paddingTop: 'var(--esp-7)' }}>
+              <div className="secao__cab">
+                <div>
+                  <h2 className="titulo-1">O que esses números dizem</h2>
+                </div>
+              </div>
+              <ul className="fatos">
+                {fatos.map((f) => (
+                  <li key={f.chave} className="fatos__item">
+                    <span className="numero ot-num">{f.valor}</span>
+                    <p className="corpo suave">{f.texto}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </>
+      )}
 
       {!sessao && (
         <section className="mais-dados">
@@ -149,7 +370,7 @@ export default function IndicadoresPublicos() {
       )}
 
       <p className="ot-fonte" style={{ marginTop: 'var(--esp-5)' }}>
-        Valores ilustrativos para o protótipo. Fonte prevista: OT-SRS / SMCELT.
+        Fonte: OT-SRS / SMCELT.
       </p>
     </div>
   )

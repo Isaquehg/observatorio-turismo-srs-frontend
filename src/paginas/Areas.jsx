@@ -1,8 +1,10 @@
 import LayoutPainel from '../componentes/LayoutPainel'
 import { useEnvios } from '../contexto/Envios'
-import { MEU_NEGOCIO } from '../dados/painel'
+import { useSessao } from '../contexto/Sessao'
 
 export function AreaComerciante() {
+  const { sessao } = useSessao()
+  const { estabelecimento } = useEnvios()
   const menu = [
     {
       secao: 'Meu negócio',
@@ -27,8 +29,8 @@ export function AreaComerciante() {
       menu={menu}
       rodapeLateral={
         <div className="lateral__cartao" style={{ '--cor': 'var(--rosa)' }}>
-          <strong>{MEU_NEGOCIO.nome}</strong>
-          CNPJ {MEU_NEGOCIO.cnpj}
+          <strong>{estabelecimento?.trade_name || sessao?.nome || 'Meu estabelecimento'}</strong>
+          CNPJ {estabelecimento?.tax_id || sessao?.identificador || '—'}
         </div>
       }
     />
@@ -36,13 +38,13 @@ export function AreaComerciante() {
 }
 
 export function AreaPrefeitura() {
-  const { pendentes } = useEnvios()
+  const { totalPendentes } = useEnvios()
   const menu = [
     {
       secao: 'Prefeitura',
       itens: [
         { para: '/prefeitura', rotulo: 'Visão geral', icone: 'painel', fim: true },
-        { para: '/prefeitura/envios', rotulo: 'Validar envios', icone: 'check-circulo', contador: pendentes.length },
+        { para: '/prefeitura/envios', rotulo: 'Validar envios', icone: 'check-circulo', contador: totalPendentes },
         { para: '/prefeitura/estabelecimentos', rotulo: 'Estabelecimentos', icone: 'predio' },
         { para: '/prefeitura/relatorios', rotulo: 'Relatórios gerenciais', icone: 'grafico' },
         { para: '/prefeitura/inventario', rotulo: 'Inventário turístico', icone: 'mapa', contador: 3 },

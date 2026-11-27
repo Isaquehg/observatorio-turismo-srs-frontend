@@ -1,11 +1,33 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { requisicaoApi, uploadPdfRelatorio } from './api'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  CHAVE_SESSAO,
+  definirTokenSessao,
+  obterBaseUrlApi,
+  requisicaoApi,
+  uploadPdfRelatorio,
+} from './api'
 import { gravar } from './armazenamento'
 
 describe('api utility unit tests', () => {
   beforeEach(() => {
     localStorage.clear()
+    definirTokenSessao(null)
     vi.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('should resolve API base URL from VITE_API_URL with safe local fallback', () => {
+    vi.stubEnv('VITE_API_URL', '')
+    expect(obterBaseUrlApi()).toBe('http://localhost:3000')
+
+    vi.stubEnv('VITE_API_URL', 'https://api.otsrs.gov.br/api/')
+    expect(obterBaseUrlApi()).toBe('https://api.otsrs.gov.br')
+
+    vi.stubEnv('VITE_API_URL', 'https://api.otsrs.gov.br///')
+    expect(obterBaseUrlApi()).toBe('https://api.otsrs.gov.br')
   })
 
   it('should perform a JSON request without token when user is not logged in', async () => {
@@ -26,8 +48,8 @@ describe('api utility unit tests', () => {
     expect(resultado).toEqual({ data: [{ id: 1 }] })
   })
 
-  it('should attach Bearer token when session exists in localStorage', async () => {
-    gravar('otsrs:sessao', { token: 'jwt-secret-token' })
+  it('should attach Bearer token when session exists in localStorage under ot-srs:sessao', async () => {
+    gravar(CHAVE_SESSAO, { token: 'jwt-secret-token' })
 
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
@@ -48,6 +70,44 @@ describe('api utility unit tests', () => {
     )
   })
 
+  it('should attach in-memory Bearer token for non-persistent sessions and skip it when autenticado is false', async () => {
+    definirTokenSessao('memory-only-token')
+
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: { id: 1 } }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: { token: 'new-token' } }),
+      })
+
+    await requisicaoApi('auth/me')
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining('/api/auth/me'),
+      expect.objectContaining({
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer memory-only-token',
+        },
+      }),
+    )
+
+    await requisicaoApi('/auth/login', { method: 'POST', autenticado: false })
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining('/api/auth/login'),
+      expect.objectContaining({
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+  })
+
   it('should return null when response status is 204 No Content', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
@@ -58,19 +118,24 @@ describe('api utility unit tests', () => {
     expect(resultado).toBeNull()
   })
 
-  it('should throw formatted error with status and code when API returns an error', async () => {
+  it('should throw formatted error with status, code, and details when API returns an error', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: false,
-      status: 401,
+      status: 400,
       json: async () => ({
-        error: { code: 'INVALID_CREDENTIALS', message: 'Credenciais inválidas.' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Os dados enviados são inválidos.',
+          details: [{ field: 'identifier', message: 'O CNPJ deve possuir 14 dígitos.' }],
+        },
       }),
     })
 
     await expect(requisicaoApi('/auth/login', { method: 'POST' })).rejects.toMatchObject({
-      message: 'Credenciais inválidas.',
-      status: 401,
-      codigo: 'INVALID_CREDENTIALS',
+      message: 'Os dados enviados são inválidos.',
+      status: 400,
+      codigo: 'VALIDATION_ERROR',
+      detalhes: [{ field: 'identifier', message: 'O CNPJ deve possuir 14 dígitos.' }],
     })
   })
 
@@ -86,11 +151,26 @@ describe('api utility unit tests', () => {
     await expect(requisicaoApi('/indicators')).rejects.toMatchObject({
       message: 'Erro na comunicação com o servidor (500)',
       status: 500,
+      detalhes: [],
     })
   })
 
+  it('should wrap network failures and rethrow AbortError without wrapping', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new TypeError('Failed to fetch'))
+
+    await expect(requisicaoApi('/auth/login', { method: 'POST' })).rejects.toMatchObject({
+      status: 0,
+      codigo: 'NETWORK_ERROR',
+    })
+
+    const abortError = new DOMException('Aborted', 'AbortError')
+    vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(abortError)
+
+    await expect(requisicaoApi('/auth/me')).rejects.toBe(abortError)
+  })
+
   it('should upload a PDF file using FormData without forcing application/json Content-Type', async () => {
-    gravar('otsrs:sessao', { token: 'admin-token' })
+    gravar(CHAVE_SESSAO, { token: 'admin-token' })
 
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
